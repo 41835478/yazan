@@ -23,23 +23,24 @@
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-body">
-                    <form action="#" class="form-horizontal">
+                    <form action="{{route('user.store')}}" class="form-horizontal" method="post">
+                    {!! csrf_field() !!}
                         <div class="form-group">
                             <label class="col-md-1 control-label">Default Input</label>
                             <div class="col-md-4">
-                                <input type="text" placeholder="Default input" class="form-control" />
+                                <input type="text" name="name" placeholder="Default input" class="form-control" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-1 control-label">Disabled Input</label>
                             <div class="col-md-4">
-                                <input type="text" placeholder="Disabled" disabled="true" class="form-control" />
+                                <input type="text"  placeholder="Disabled" disabled="true" class="form-control" />
                         	</div>
                       	</div>
                         <div class="form-group">
                             <label class="col-md-1 control-label">Circle Input</label>
                                 <div class="col-md-4">
-                                    <input type="text" placeholder=".input-circle" class="input-circle form-control" />
+                                    <input type="text" name="hehe" placeholder=".input-circle" class="input-circle form-control" />
                                 </div>
                         </div>
                         <div class="form-group">

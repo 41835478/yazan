@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 /*use App\Tasks;
 use App\Shop;*/
-use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Repositories\Role\RoleRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
@@ -73,7 +72,10 @@ class UserController extends Controller {
 	 * @param User $user
 	 * @return Response
 	 */
-	public function store(StoreUserRequest $userRequest) {
+	// public function store(StoreUserRequest $userRequest) {
+	public function store(Request $userRequest) {
+
+		dd($userRequest->all());
 		$getInsertedId = $this->users->create($userRequest);
 		return redirect()->route('admin.user.index');
 	}
