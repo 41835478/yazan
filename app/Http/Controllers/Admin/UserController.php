@@ -55,6 +55,7 @@ class UserController extends Controller {
 	 */
 	public function create() {
 
+		// $agents_level = config('yazan.agents_level');
 		//获得当前用户角色id
 		//$user_role_id = $this->users->getRoleInfoById()->id;
 		// dd($user_role_id);
@@ -62,8 +63,19 @@ class UserController extends Controller {
 		// 允许当前用户添加的角色列表
 		//$role_add_allow = $this->roles->getAllowList($user_role_id);
 		// p($role_add_allow);
+		//
+		$role_add_allow = array(
 
-		return view('admin.user.create');
+			'2' => '管理员',
+			'3' => '总代理',
+			'4' => '一级代理',
+			'5' => '二级代理',
+			'6' => '三级代理',
+			'7' => '四级代理',
+			'8' => '零售客户',
+		);
+
+		return view('admin.user.create', compact('role_add_allow'));
 	}
 
 	/**
@@ -75,7 +87,7 @@ class UserController extends Controller {
 	// public function store(StoreUserRequest $userRequest) {
 	public function store(Request $userRequest) {
 
-		dd('hehe');
+		// dd('hehe');
 		dd($userRequest->all());
 		$getInsertedId = $this->users->create($userRequest);
 		return redirect()->route('admin.user.index');
