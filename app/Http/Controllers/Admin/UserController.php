@@ -75,6 +75,7 @@ class UserController extends Controller {
 	// public function store(StoreUserRequest $userRequest) {
 	public function store(Request $userRequest) {
 
+		dd('hehe');
 		dd($userRequest->all());
 		$getInsertedId = $this->users->create($userRequest);
 		return redirect()->route('admin.user.index');
