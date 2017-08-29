@@ -10,20 +10,27 @@ use Session;
 
 class UserRepository implements UserRepositoryContract {
 
+	//默认查询数据
+	protected $select_columns = ['id', 'name', 'nick_name', 'telephone', 'email', 'wx_number', 'address', 'status', 'pid', 'livel', 'remark'];
+
 	// 获得用户信息
 	public function find($id) {
 		return User::with(tableUnionDesign('hasManyRoles', ['roles.id', 'name', 'slug']))
-			->select(['id', 'name', 'nick_name', 'telephone', 'email', 'wx_number', 'address', 'status', 'pid', 'livel', 'remark'])
+			->select($select_columns)
 			->findOrFail($id);
 	}
 
-	public function getAllUsers() {
+	public function getAllUsers($requestData) {
 		/*return User::with(['hasOneShop'=>function($query){
 			            $query->select('user_id','name','address');
 		*/
+		$query = new User(); // 返回的是一个User实例
+
+		$query = $query->addCondition($request->all()); //根据条件组合语句
+
 		return User::with(tableUnionDesign('hasManyRoles', ['roles.id', 'name', 'slug']))
 		// ->with(tableUnionDesign('belongsToShop', ['id','name','address','email']))
-			->select(['id', 'shop_id', 'name', 'nick_name'])
+			->select(['id', 'name', 'nick_name'])
 			->paginate(10);
 		// return User::with('hasOneShop')->paginate(10);
 	}

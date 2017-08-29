@@ -64,7 +64,11 @@ class UserController extends Controller {
 		// 允许当前用户添加的角色列表
 		//$role_add_allow = $this->roles->getAllowList($user_role_id);
 		// p($role_add_allow);
-		//
+
+		//所有总代理
+		$users = $this->users->getAllUsers();
+		dd($users);
+
 		$role_add_allow = array(
 
 			'2' => '管理员',
