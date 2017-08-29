@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 /*use App\Tasks;
 use App\Shop;*/
+use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Repositories\Role\RoleRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
@@ -71,8 +72,7 @@ class UserController extends Controller {
 			'4' => '一级代理',
 			'5' => '二级代理',
 			'6' => '三级代理',
-			'7' => '四级代理',
-			'8' => '零售客户',
+			'7' => '零售客户',
 		);
 
 		return view('admin.user.create', compact('role_add_allow'));
@@ -84,13 +84,11 @@ class UserController extends Controller {
 	 * @param User $user
 	 * @return Response
 	 */
-	// public function store(StoreUserRequest $userRequest) {
-	public function store(Request $userRequest) {
-
+	public function store(StoreUserRequest $userRequest) {
 		// dd('hehe');
-		dd($userRequest->all());
+		// dd($userRequest->all());
 		$getInsertedId = $this->users->create($userRequest);
-		return redirect()->route('admin.user.index');
+		return redirect()->route('user.index');
 	}
 
 	/**
