@@ -56,7 +56,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 		$query = $this;
 
-		if ($is_self) {
+		/*if ($is_self) {
 
 			if (!(Auth::user()->isSuperAdmin())) {
 
@@ -71,38 +71,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 					$query = $query->where('creater_id', Auth::id());
 				}
 			}
-		}
+		}*/
 
-		if (!empty($requestData['car_code'])) {
-			//有车源编码选择
+		if (!empty($requestData['status'])) {
+            //有用户状态选项
+            $query = $query->where('status', $requestData['status']);
 
-			$query = $query->where('car_code', $requestData['car_code']);
-
-			return $query;
-		}
+        } else {
+            $query = $query->where('status', '1');
+        }
 
 		//if(isset($requestData['car_status']) && $requestData['car_status'] != ''){
-		if (!empty($requestData['car_status'])) {
-			//有车源状态选项
-			if ($requestData['car_status'] == '1') {
-
-				$query = $query->where(function ($query) use ($requestData) {
-
-					$query = $query->where('car_status', $requestData['car_status']);
-					$query = $query->orWhere('car_status', '6');
-				});
-			} else {
-
-				$query = $query->where('car_status', $requestData['car_status']);
-			}
-		} else {
-
-			// $query = $query->whereIn('car_status', ['1', '2', '3', '4', '5', '6']);
-			if (!$is_self) {
-				//非自身车源
-				$query = $query->where('car_status', '1');
-			}
-		}
+		/*
 
 		if (!empty($requestData['gearbox'])) {
 			// dd($requestData['gearbox']);
@@ -184,7 +164,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 		if (!empty($requestData['need_follow'])) {
 			$query = $query->where('updated_at', '<=', $requestData['need_follow']);
-		}
+		}*/
 
 		return $query;
 	}

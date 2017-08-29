@@ -66,7 +66,8 @@ class UserController extends Controller {
 		// p($role_add_allow);
 
 		//所有总代理
-		$users = $this->users->getAllUsers();
+		$users = $this->users->getAllUsersByRole('3');
+		// dd(lastSql());
 		dd($users);
 
 		$role_add_allow = array(

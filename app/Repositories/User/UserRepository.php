@@ -26,14 +26,33 @@ class UserRepository implements UserRepositoryContract {
 		*/
 		$query = new User(); // 返回的是一个User实例
 
-		$query = $query->addCondition($request->all()); //根据条件组合语句
+		$query = $query->addCondition($requestData); //根据条件组合语句
 
-		return User::with(tableUnionDesign('hasManyRoles', ['roles.id', 'name', 'slug']))
-		// ->with(tableUnionDesign('belongsToShop', ['id','name','address','email']))
-			->select(['id', 'name', 'nick_name'])
-			->paginate(10);
+		return $query->with(tableUnionDesign('hasManyRoles', ['roles.id', 'name', 'slug']))
+			         ->select(['id', 'name', 'nick_name'])
+			         ->paginate(10);
 		// return User::with('hasOneShop')->paginate(10);
 	}
+
+    //根据用户角色获得用户
+    public function getAllUsersByRole($role_id){
+
+        /*$users = DB::table('yz_users')
+                   // ->leftJoin('role_user', 'yz_users.id', '=', 'role_user.user_id')
+
+                   // ->select('yz_users.*')
+                   ->get();*/
+
+        $users = DB::table('yz_users')
+                    ->join('role_user', function ($join) use ($role_id){
+                        $join->on('yz_users.id', '=', 'role_user.user_id')
+                             ->where('role_user.role_id', '=', $role_id);
+                        })
+                    ->select('yz_users.id', 'yz_users.name', 'yz_users.nick_name')
+                    ->get();
+
+        return $users;
+    }
 
 	public function getAllUsersWithDepartments() {
 		return User::select(array
