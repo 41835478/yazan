@@ -37,49 +37,48 @@
                     <table id="datatables" class="table table-striped table-no-border">
                         <thead class="bg-default">
                             <tr>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th>Office</th>
-                                <th>Age</th>
-                                <th>Start date</th>
-                                <th>Salary</th>
+                                <th>姓名</th>
+                                <th>角色</th>
+                                <th>电话</th>
+                                <th>创建日期</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Tiger Nixon</td>
-                                <td>System Architect</td>
-                                <td>Edinburgh</td>
-                                <td>61</td>
-                                <td>2011/04/25</td>
-                                <td>$320,800</td>
-                            </tr>
-                            <tr>
-                                <td>Garrett Winters</td>
-                                <td>Accountant</td>
-                                <td>Tokyo</td>
-                                <td>63</td>
-                                <td>2011/07/25</td>
-                                <td>$170,750</td>
-                            </tr>
-                            <tr>
-                                <td>Ashton Cox</td>
-                                <td>Junior Technical Author</td>
-                                <td>San Francisco</td>
-                                <td>66</td>
-                                <td>2009/01/12</td>
-                                <td>$86,000</td>
-                            </tr>
+                        @foreach ($users as $user)
+                        <tr>
+                            <td>
+                                <a target="_blank" href="{{route('user.show', ['user'=>$user->id])}}">
+                                    {{$user->nick_name}}
+                                </a>
+                            </td>
+                            <td>{{$user->hasManyRoles[0]->name or ''}}</td>                           
+                            <td>{{$user->telephone}}</td>                           
+                            <td>{{substr($user->created_at, 0 ,10)}}</td>      
+                            <td class="center">
+                                <a class="btn btn-warning" href="{{route('user.edit', ['user'=>$user->id])}}">
+                                    <i class="icon-edit icon-white"></i> 编辑
+                                </a>
+                                <input type="hidden" value="{{$user->id}}">
+                                <span>
+                                <form action="{{route('user.destroy', ['user'=>$user->id])}}" method="post" style="display: inherit;margin:0px;">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                    <button class="btn btn-danger delete-confrim" type="button">
+                                        <i class="icon-trash icon-white"></i> 删除
+                                    </button>
+                                </form>
+                                </span>
+                            </td>
+                        </tr>
+                        @endforeach 
                         </tbody>
                     </table>
                 </div>
-
-
-
                 <div class="col-md-7 col-sm-12">
                 	<div class="dataTables_paginate paging_simple_numbers" id="datatables_paginate">
                 	<div class="pagination pagination-centered">
-                	<ul class="pagination"><li class="disabled"><span>«</span></li> <li class="active"><span>1</span></li><li><a href="http://www.sjztcl.com/admin/want/index?page=2">2</a></li><li><a href="http://www.sjztcl.com/admin/want/index?page=3">3</a></li><li><a href="http://www.sjztcl.com/admin/want/index?page=4">4</a></li><li><a href="http://www.sjztcl.com/admin/want/index?page=5">5</a></li><li><a href="http://www.sjztcl.com/admin/want/index?page=6">6</a></li><li><a href="http://www.sjztcl.com/admin/want/index?page=7">7</a></li><li><a href="http://www.sjztcl.com/admin/want/index?page=8">8</a></li><li class="disabled"><span>...</span></li><li><a href="http://www.sjztcl.com/admin/want/index?page=80">80</a></li><li><a href="http://www.sjztcl.com/admin/want/index?page=81">81</a></li> <li><a href="http://www.sjztcl.com/admin/want/index?page=2" rel="next">»</a></li></ul></div>
+                	   {!! $users->links() !!}</div>
                 	</div>
                 </div>
             </div>

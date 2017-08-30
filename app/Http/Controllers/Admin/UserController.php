@@ -35,18 +35,18 @@ class UserController extends Controller {
 	 */
 	public function index() {
 		// dd(Auth::user());
-		// $users = $this->users->getAllUsers();
+		$users = $this->users->getAllUsers();
 		// dd(lastSql());
-		// dd($users);
+		// dd($users[0]->hasManyRoles->name);
 		/*foreach ($users as $key => $value) {
 			           dd($value->belongsToShop);
 		*/
-		/*return view('admin.user.index', compact(
+		return view('admin.user.index', compact(
 
 			'users'
-		));*/
+		));
 
-		return view('admin.user.index');
+		// return view('admin.user.index');
 	}
 
 	/**
@@ -66,9 +66,9 @@ class UserController extends Controller {
 		// p($role_add_allow);
 
 		//所有总代理
-		$users = $this->users->getAllUsersByRole('3');
+		$agents_total = $this->users->getAllUsersByRole('3');
 		// dd(lastSql());
-		dd($users);
+		// dd($agents_total);
 
 		$role_add_allow = array(
 
@@ -80,8 +80,38 @@ class UserController extends Controller {
 			'7' => '零售客户',
 		);
 
-		return view('admin.user.create', compact('role_add_allow'));
+		return view('admin.user.create', compact(
+				'role_add_allow', 
+				'agents_total'
+			));
 	}
+
+	//获得用户子代理(非递归)
+    public function getChildUser(Request $request){
+
+
+        $user_id = $request->input('pid');
+        
+        $junior_users = $this->users->getChildUser($user_id);
+
+        /*p($junior_users[0]->toArray());
+        p($junior_users->toJson());exit;*/
+
+        if($junior_users->count() > 0){
+
+            return response()->json(array(
+                'status' => 1,
+                'data'   => $junior_users,
+                'message'   => '获取品牌列表成功'
+            ));
+        }else{
+
+            return response()->json(array(
+                'status' => 0,
+                'message'   => '该用户无子代理'
+            ));
+        }        
+    }
 
 	/**
 	 * Store a newly created resource in storage.

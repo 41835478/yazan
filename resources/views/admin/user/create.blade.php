@@ -113,6 +113,9 @@
                             <div class="col-md-8">
                                 <select class="form-control" name="agents_total" id="agents_total" style="width:15%;display: inline-block;">
                                     <option  value="0">--总代理--</option>
+                                    @foreach($agents_total as $key=>$value)
+                                    <option value="{{$value->id}}" >{{$value->nick_name}}</option>
+                                    @endforeach                                  
                                 </select>
                                 <select class="form-control" name="agents_frist" id="agents_frist" style="width:15%;display: none;">
                                     <option  value="0">--一级代理--</option>
@@ -154,6 +157,7 @@
                         <div class="form-group">
 
                             <div class="col-md-4" style="text-align:center;">
+                                <input type="hidden" name="agents_ajax_request_url" value="{{route('user.getChildUser')}}">
                              	<button type="submit" class="btn btn-sm btn-success">添加</button>
                                 <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
                             </div>
@@ -170,49 +174,11 @@
 <script src="{{URL::asset('yazan/assets/plugins/bootstrap-validator/js/bootstrapValidator.min.js')}}"></script>
 <script src="{{URL::asset('yazan/global/plugins/select2/select2.min.js')}}"></script>
 <script src="{{URL::asset('yazan/assets/js/form-validation.js')}}"></script>
+<!-- 引入user模块js -->
+<script src="{{URL::asset('yazan/js/user.js')}}"></script>
 <script>
 	$(document).ready(function(){
-
-        // alert('hehe');
-
-        $('#role_id').change(function(event) {
-            /* 用户角色选择 */
-            var role_id= $(this).val();
-            /**
-             * 选择角色为代理商,则显示代理商等级输入框
-             * 跟进选择的代理商等级,显示代理链
-             * 一级代理显示总代理选择
-             * 二级代理显示总代及一级代理选择
-             *
-             */
-            console.log(role_id);
-            switch (role_id) {
-                case '4':// 添加一级代理
-                    $('#agents_chain').show();
-                    $('#agents_frist').hide();
-                    $('#agents_secend').hide();
-                    console.log('添加一级代理');
-                break;
-                case '5':// 添加二级代理
-                    $('#agents_chain').show();
-                    $('#agents_frist').css('display','inline-block');
-                    $('#agents_secend').hide();
-                    console.log('添加二级代理');
-                break;
-                case '6':// 添加三级代理
-                    $('#agents_chain').show();
-                    $('#agents_frist').css('display','inline-block');
-                    $('#agents_secend').css('display','inline-block');
-                    console.log('添加三级代理');
-                break;
-                default :
-                    $('#agents_chain').hide();
-                    //$('#pid_select').hide();
-                    console.log('不是代理');
-            }
-        });
-
-        $('#role_id').trigger('change'); //刷新页面时触发change事件
+        
 	});
 </script>
 @endsection

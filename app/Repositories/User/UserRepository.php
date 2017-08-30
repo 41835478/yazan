@@ -11,7 +11,7 @@ use Session;
 class UserRepository implements UserRepositoryContract {
 
 	//默认查询数据
-	protected $select_columns = ['id', 'name', 'nick_name', 'telephone', 'email', 'wx_number', 'address', 'status', 'pid', 'livel', 'remark'];
+	protected $select_columns = ['id', 'name', 'nick_name', 'telephone', 'email', 'wx_number', 'address', 'status', 'pid', 'level', 'created_at','remark'];
 
 	// 获得用户信息
 	public function find($id) {
@@ -20,7 +20,7 @@ class UserRepository implements UserRepositoryContract {
 			->findOrFail($id);
 	}
 
-	public function getAllUsers($requestData) {
+	public function getAllUsers($requestData = []) {
 		/*return User::with(['hasOneShop'=>function($query){
 			            $query->select('user_id','name','address');
 		*/
@@ -29,7 +29,7 @@ class UserRepository implements UserRepositoryContract {
 		$query = $query->addCondition($requestData); //根据条件组合语句
 
 		return $query->with(tableUnionDesign('hasManyRoles', ['roles.id', 'name', 'slug']))
-			         ->select(['id', 'name', 'nick_name'])
+			         ->select($this->select_columns)
 			         ->paginate(10);
 		// return User::with('hasOneShop')->paginate(10);
 	}
@@ -54,6 +54,15 @@ class UserRepository implements UserRepositoryContract {
         return $users;
     }
 
+    //获得用户子代理(非递归)
+    public function getChildUser($user_id) {
+
+        return User::select(['id', 'pid', 'nick_name'])
+            ->where('pid', $user_id)
+            ->where('status', '1')
+            ->get();
+    }
+
 	public function getAllUsersWithDepartments() {
 		return User::select(array
 			('users.name', 'users.id',
@@ -71,14 +80,25 @@ class UserRepository implements UserRepositoryContract {
 
 		$role_info = Role::findOrFail($role_id);
 
-		/*p($role_id);
-		dd(lastSql());*/
-		// dd($role_info);
+		/*p($requestData->agents_total);
+        p($requestData->agents_frist);
+        dd($requestData->agents_second);*/
+        //设置用户pid
+        if(!empty($requestData->agents_second)){
+            // 有二级代理
+            $pid = $requestData->agents_second;
+        }else if(!empty($requestData->agents_frist)){
+            // 有一级代理
+            $pid = $requestData->agents_frist;
+        }else{
+            // 总代理
+            $pid = $requestData->agents_total;
+        }
 
 		// 添加用户到用户表
-		$input = array_replace($requestData->all(), ['password' => "$password", 'creater_id' => Auth::id(), 'level' => $role_info->level]);
+		$input = array_replace($requestData->all(), ['password' => "$password", 'creater_id' => Auth::id(), 'level' => $role_info->level, 'pid'=>$pid]);
 
-		dd($input);
+		// dd($input);
 
 		$user = User::create($input);
 
