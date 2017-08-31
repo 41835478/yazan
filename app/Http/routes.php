@@ -38,6 +38,8 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::match(['get', 'post'], 'user/index', 'UserController@index')->name('admin.user.index');
 	//获得用户下级代理
 	Route::post('user/getChildUser', 'UserController@getChildUser')->name('user.getChildUser');
+	//用户地址/收货地址
+	Route::post('user/address', 'UserController@address')->name('user.address');
 
 	Route::resource('user', 'UserController'); //用户管理资源路由
 

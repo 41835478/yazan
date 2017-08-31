@@ -1,123 +1,107 @@
 @extends('layouts.main')
 
-<!-- 面包屑 -->
-@section('BreadcrumbTrail')
-<ul class="breadcrumb">
-	<li>
-		<i class="icon-home"></i>
-		<a href="{{route('admin.index')}}">主页</a>  
-		<i class="icon-angle-right"></i>
-	</li>
-	<li>
-		<i class="icon-home"></i>
-		<a href="{{route('admin.user.index')}}">用户管理</a> 
-		<i class="icon-angle-right"></i>
-	</li>
-	<li><a href="#1f">修改用户</a></li>
-</ul>
+@section('head_content')
+    <style type="text/css">
+        input.shaddress{
+            margin-bottom:5px;
+        }
+    </style>
 @endsection
 
+<!-- 面包屑 -->
+@section('BreadcrumbTrail')
+
+<section class="content-header">
+    <div class="pull-left">
+        <ol class="breadcrumb">
+            <li><a href="{{route('admin.index')}}">首页</a></li>
+            <li><a href="{{route('user.index')}}">用户列表</a></li>
+            <li class="active">修改用户</li>
+        </ol>
+    </div>
+</section>
+@endsection
 <!-- 主体 -->
 @section('content')
 
 @include('layouts.message')
 
-<div class="row-fluid sortable">
-	<div class="box span12">
-		<div class="box-content">
-			<form class="form-horizontal" action="{{route('admin.user.update', ['user'=>$user->id])}}" method="post">
-				{!! csrf_field() !!}
-				{{ method_field('PUT') }}
-				<fieldset>
-				   <div class="control-group">
-					<label class="control-label" for="name"><font style="color:red;">*</font>用户名</label>
-					<div class="controls">
-					  <input class="input-xlarge focused" id="name" name="name"  type="text" value="{{$user->name}}" placeholder="请输入用户名"/>
-					 
-					</div>
-				   </div>
-				   <div class="control-group">
-					<label class="control-label" for="name"><font style="color:red;">*</font>实际姓名</label>
-					<div class="controls">
-					  <input class="input-xlarge focused" id="nick_name" name="nick_name"  type="text" value="{{$user->nick_name}}" placeholder="请输入实际姓名"/>
-					 
-					</div>
-				   </div>
-					<div class="control-group">
-				  		<label class="control-label" for="focusedInput">
-				  			<font style="color:red;">*</font>联系电话
-				  		</label>
-				  		<div class="controls">
-				  			<input class="input-xlarge focused" id="telephone" name="telephone" type="text" value="{{$user->telephone}}">
-				  		</div>
-				 	</div>	
-				  	<div class="control-group">
-						<label class="control-label" for="selectError3">
-							<font style="color:red;">*</font>用户角色
-						</label>
-						<div class="controls">
-					  		<select id="role_id" name="role_id">
-					  			<option  value="0">---请选择角色---</option>
-					  			@foreach($role_add_allow as $role)
-					  			<option @if($user->hasManyRoles[0]->id == $role->id) selected @endif value="{{$role->id}}" >{{$role->name}}</option>
-					  			@endforeach
-							</select>
-						</div>
-					</div>
-					<div class="control-group" id="shop_show" style="display:none;">
-						<label class="control-label" for="selectError3">所属门店</label>
-						<div class="controls">
-						  <select id="shop_id" name="shop_id">
-						  	<option  value="21">--请选择门店--</option>
-						  	@foreach($shop_add_allow as $shop)
-						  	<option @if($user->shop_id == $shop->id) selected="selected" @endif  value="{{$shop->id}}">{{$shop->name}}</option>
-						  	@endforeach
-							</select>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" for="status">是否启用</label>
-						<div class="controls">
-					  		<select id="status" name="status">
-					  			<option value="1">启用</option>
-								<option value="0">停用</option>						
-							</select>
-						</div>
-				 	</div>										  
-				<div class="control-group">
-					<label class="control-label" for="focusedInput">地址</label>
-					<div class="controls">
-						 <textarea id="address" name="address" class="autogrow">{{$user->address}}</textarea>
-					</div>
-				  </div>
-				   <div class="control-group">
-					<label class="control-label" for="focusedInput">QQ号</label>
-					<div class="controls">
-					  <input class="input-xlarge focused" id="qq_number" name="qq_number" type="text" value="{{$user->qq_number}}">
-					</div>
-				  </div>
+<section class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <form action="{{route('user.update', ['user'=>$user->id])}}" class="form-horizontal" method="post">
+                    {!! csrf_field() !!}
+                    {{ method_field('PUT') }}
+                        <!-- 用户名 -->
+                        <!-- <div class="form-group">
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>用户名</label>
+                            <div class="col-md-4">
+                                <input type="text" name="name" required placeholder="用户名" class="form-control" value="{{$user->name}}"/>
+                            </div>
+                        </div> -->
+                        <!-- 昵称 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>昵称</label>
+                            <div class="col-md-4">
+                                <input type="text" required name="nick_name" placeholder="用户昵称" class="form-control" value="{{$user->nick_name}}"/>
+                            </div>
+                        </div>
+                        
+                        <!-- 联系电话 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>联系电话</label>
+                            <div class="col-md-4">
+                                <input type="text" required name="telephone" placeholder="手机号" class="form-control" value="{{$user->telephone}}" />
+                            </div>
+                        </div>
+                        <!-- 微信号 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>微信号</label>
+                            <div class="col-md-4">
+                                <input type="text" required name="wx_number" placeholder="微信号" class="form-control" value="{{$user->wx_number}}" />
+                            </div>
+                        </div>
+                        <!-- 邮箱 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>常用邮箱</label>
+                            <div class="col-md-4">
+                                <input type="email" required name="email" placeholder="常用邮箱" class="form-control" value="{{$user->email}}" />
+                            </div>
+                        </div>
+                        <!-- 备注 -->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">备注</label>
+                            <div class="col-md-4">
+                            <textarea id="remark" name="remark" required style="width:400px;">{{$user->remark}}</textarea>
+                            </div>
+                        </div>
 
-				   <div class="control-group">
-					<label class="control-label" for="focusedInput">微信公共号</label>
-					<div class="controls">
-					  <input class="input-xlarge focused" id="wx_number" name="wx_number" type="text" value="{{$user->wx_number}}">
-					</div>
-				  </div>
+                        <div class="form-group">
 
-				   <div class="control-group">
-					<label class="control-label" for="focusedInput">常用邮箱</label>
-					<div class="controls">
-					  <input class="input-xlarge focused" id="email" name="email" type="text" value="{{$user->email}}">
-					</div>
-				  </div>				
-				  <div class="form-actions">
-				  	<!-- <input type="hidden" name="user_id" value="{{$user->id}}" /> -->
-					<button type="submit" class="btn btn-primary">确定</button>
-					<button class="btn" onclick="window.history.go(-1);return false;">返回</button>
-				  </div>
-				</fieldset>
-			</form>				
-		</div>
-	</div>			
-</div>   
+                            <div class="col-md-4" style="text-align:center;">
+                                <button type="submit" class="btn btn-sm btn-success">修改</button>
+                                <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endsection
+@section('script_content')
+<!-- 引入表单验证js -->
+<script src="{{URL::asset('yazan/assets/plugins/bootstrap-validator/js/bootstrapValidator.min.js')}}"></script>
+<script src="{{URL::asset('yazan/global/plugins/select2/select2.min.js')}}"></script>
+<script src="{{URL::asset('yazan/assets/js/form-validation.js')}}"></script>
+<!-- 引入user模块js -->
+<!-- <script src="{{URL::asset('yazan/js/user.js')}}"></script> -->
+<script>
+    $(document).ready(function(){
+        
+    });
+</script>
 @endsection

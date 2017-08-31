@@ -59,8 +59,18 @@
                                 <a class="btn btn-warning" href="{{route('user.edit', ['user'=>$user->id])}}">
                                     <i class="icon-edit icon-white"></i> 编辑
                                 </a>
-                                <input type="hidden" value="{{$user->id}}">
+                                <input type="hidden" name="user_id" value="{{$user->id}}">
+                                <!-- <a class="btn btn-success" href="{{route('user.address', ['user'=>$user->id])}}">
+                                    <i class="icon-edit icon-white"></i> 地址管理
+                                </a> -->
                                 <span>
+                                <form action="{{route('user.address')}}" method="post" style="display: inherit;margin:0px;">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="user_id" value="{{$user->id}}">
+                                    <button class="btn btn-success" type="submit">
+                                        地址管理
+                                    </button>
+                                </form>
                                 <form action="{{route('user.destroy', ['user'=>$user->id])}}" method="post" style="display: inherit;margin:0px;">
                                     {{ csrf_field() }}
                                     {{ method_field('DELETE') }}
@@ -93,7 +103,8 @@
 <!-- <script src="{{URL::asset('yazan/assets/plugins/datatables/media/js/jquery.dataTables.min.js')}}"></script> -->
 <!-- <script src="{{URL::asset('yazan/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js')}}"></script> -->
 <!-- <script src="{{URL::asset('yazan/assets/js/table-datatables.js')}}"></script> -->
-
+<!-- 引入确认框js -->
+<script src="{{URL::asset('yazan/js/confirm.js')}}"></script> 
 <script type="text/javascript">
 
 	jQuery(document).ready(function($){

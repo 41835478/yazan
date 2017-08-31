@@ -20,6 +20,7 @@
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/css/style-plugins.css')}}">
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/css/style-responsive.css')}}">
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/css/themes/default.css')}}" id="theme-color">
+    <link href="{{URL::asset('yazan/confirm/css/jquery-confirm.css')}}" rel="stylesheet">
     @yield('head_content')
 </head>
 
@@ -154,6 +155,7 @@
     <script src="{{URL::asset('yazan/assets/js/quick-sidebar.js')}}"></script>
     <script src="{{URL::asset('yazan/assets/js/admin-setting.js')}}"></script>
     <script src="{{URL::asset('yazan/assets/js/layout.js')}}"></script>
+    <script src="{{URL::asset('yazan/confirm/js/jquery-confirm.js')}}"></script>
     @yield('script_content')
 </body>
 

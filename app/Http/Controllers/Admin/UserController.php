@@ -113,6 +113,11 @@ class UserController extends Controller {
         }        
     }
 
+    public function address(Request $request){
+
+    	dd($request->all());
+    }
+
 	/**
 	 * Store a newly created resource in storage.
 	 * 保存用户
@@ -134,9 +139,9 @@ class UserController extends Controller {
 	 */
 	public function show($id) {
 
-		/*return view('users.show')
-			        ->withUser($this->users->find($id))
-		*/
+		// dd($this->users->find($id));
+		return view('admin.user.show')->with('user',$this->users->find($id));
+		
 	}
 
 	/**
@@ -147,7 +152,7 @@ class UserController extends Controller {
 	 */
 	public function edit($id) {
 		//获得当前用户角色id
-		$user_role_id = $this->users->getRoleInfoById()->id;
+		/*$user_role_id = $this->users->getRoleInfoById()->id;
 		// dd($user_role_id);
 
 		// 允许当前用户添加的角色列表
@@ -162,12 +167,12 @@ class UserController extends Controller {
 		} else {
 
 			$shop_add_allow = Shop::select(['id', 'name'])->get();
-		}
+		}*/
 
 		$user = $this->users->find($id);
 		// dd($user);
 
-		return view('admin.user.edit', compact('user', 'role_add_allow', 'shop_add_allow'));
+		return view('admin.user.edit', compact('user'));
 	}
 
 	/**
@@ -176,10 +181,11 @@ class UserController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id, UpdateUserRequest $userRequest) {
+	public function update($id, Request $userRequest) {
+
 		$this->users->update($id, $userRequest);
 
-		return redirect()->back();
+		return redirect()->route('user.index');
 	}
 
 	/**
@@ -189,9 +195,10 @@ class UserController extends Controller {
 	 * @return Response
 	 */
 	public function destroy($id) {
+		
 		$this->users->destroy($id);
 
-		return redirect()->route('admin.user.index');
+		return redirect()->route('user.index');
 	}
 
 	public function resetPassword() {

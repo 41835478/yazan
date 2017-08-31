@@ -79,7 +79,7 @@ class AuthController extends Controller {
 		}
 
 		//如果要使用记住密码的话，需要在数据表里有remember_token字段
-		if (Auth::attempt(['name' => $name, 'password' => $password], $remember)) {
+		if (Auth::attempt(['name' => $name, 'password' => $password, 'status'=>'1'], $remember)) {
 
 			return redirect()->intended('/');
 		}

@@ -16,7 +16,7 @@ class UserRepository implements UserRepositoryContract {
 	// 获得用户信息
 	public function find($id) {
 		return User::with(tableUnionDesign('hasManyRoles', ['roles.id', 'name', 'slug']))
-			->select($select_columns)
+			->select($this->select_columns)
 			->findOrFail($id);
 	}
 
@@ -120,21 +120,18 @@ class UserRepository implements UserRepositoryContract {
 		/*p($requestData->role_id);
         dd($user->hasManyRoles[0]->id);*/
 
-		$user->name = $requestData->name;
+		// $user->name = $requestData->name;
 		$user->nick_name = $requestData->nick_name;
 		$user->telephone = $requestData->telephone;
-		$user->shop_id = $requestData->shop_id;
-		$user->status = $requestData->status;
-		$user->address = $requestData->address;
-		$user->qq_number = $requestData->qq_number;
 		$user->wx_number = $requestData->wx_number;
-		$user->email = $requestData->email;
+        $user->email     = $requestData->email;
+		$user->remark    = $requestData->remark;
 
 		// 更新用户
 		$user->save();
 
 		//如果角色有变化，更新UserRole表
-		if ($requestData->role_id != $user->hasManyRoles[0]->id) {
+		/*if ($requestData->role_id != $user->hasManyRoles[0]->id) {
 
 			$user_id = $id; //当前用户ID
 			$role_id = $user->hasManyRoles[0]->id; //角色ID
@@ -146,7 +143,7 @@ class UserRepository implements UserRepositoryContract {
 			$user_role->role_id = $requestData->role_id;
 
 			$user_role->save();
-		}
+		}*/
 
 		Session()->flash('sucess', '更新用户成功');
 
@@ -159,7 +156,11 @@ class UserRepository implements UserRepositoryContract {
 		}
 		try {
 			$user = User::findorFail($id);
-			$user->delete();
+			// $user->delete();
+            dd($user);
+            // 修改用户状态
+            $user->status    = '0';
+            $user->save();      // 
 			Session()->flash('sucess', '删除管理员成功');
 
 		} catch (\Illuminate\Database\QueryException $e) {

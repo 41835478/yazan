@@ -15,7 +15,7 @@
     <div class="pull-left">
         <ol class="breadcrumb">
             <li><a href="{{route('admin.index')}}">首页</a></li>
-            <li><a href="{{route('admin.index')}}">用户列表</a></li>
+            <li><a href="{{route('user.index')}}">用户列表</a></li>
             <li class="active">添加用户</li>
         </ol>
     </div>
