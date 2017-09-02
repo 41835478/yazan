@@ -8,33 +8,22 @@ use Gate;
 use DB;
 use App\Area;
 use App\Image;
-use App\Cars;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Repositories\Brand\BrandRepositoryContract;
-use App\Repositories\Car\CarRepositoryContract;
-use App\Repositories\Shop\ShopRepositoryContract;
-use App\Http\Requests\Cars\UpdateCarsRequest;
-use App\Http\Requests\Cars\StoreCarsRequest;
+use App\Repositories\Order\OrderRepositoryContract;
+//use App\Http\Requests\Order\UpdateOrderRequest;
+//use App\Http\Requests\Order\StoreOrderRequest;
 
 class OrderController extends Controller
 {   
-    protected $car;
-    protected $brands;
-    protected $shop;
+    protected $order;
 
     public function __construct(
 
-        CarRepositoryContract $car,
-        BrandRepositoryContract $brands,
-        ShopRepositoryContract $shop
+        OrderRepositoryContract $order
     ) {
     
-        $this->car = $car;
-        $this->brands = $brands;
-        $this->shop = $shop;
-
-
+        $this->order = $order;
         // $this->middleware('brand.create', ['only' => ['create']]);
     }
 
@@ -46,25 +35,26 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         // dd($request->method());
-        $all_top_brands = $this->brands->getChildBrand(0);
-        $request['car_status'] = '1';
-        $select_conditions  = $request->all();
+        //$all_top_brands = $this->brands->getChildBrand(0);
+        //$request['order_status'] = '1';
+        //$select_conditions  = $request->all();
         // dd($select_conditions);
-        $cars = $this->car->getAllcars($request);
+        $orders = $this->order->getAllorders($request);
         // dd(lastSql());
-        $shops = $this->shop->getShopsInProvence('10');
+        //$shops = $this->shop->getShopsInProvence('10');
 
         // dd($shops);
         // dd(lastSql());
-        // dd($cars);
-        /*foreach ($cars as $key => $value) {
+        // dd($orders);
+        /*foreach ($orders as $key => $value) {
             p($value->id);
             p($value->belongsToUser->nick_name);
         }
         exit;*/
-        $car_status_current = '1';
+        //$order_status_current = '1';
         
-        return view('admin.car.index', compact('cars','car_status_current', 'all_top_brands', 'select_conditions','shops'));
+        /*return view('admin.order.index', compact('orders','order_status_current', 'all_top_brands', 'select_conditions','shops'));*/
+        return view('admin.order.index', compact('orders'));
     }
 
     /**
@@ -72,7 +62,7 @@ class OrderController extends Controller
      * 我的车源列表
      * @return \Illuminate\Http\Response
      */
-    public function carself(Request $request)
+    public function orderself(Request $request)
     {
         
         // dd($request->method());
@@ -81,16 +71,16 @@ class OrderController extends Controller
             //初始搜索条件
             $select_conditions  = $request->all();
         }else{
-            $select_conditions['car_status'] = '1';
-            $request['car_status'] = '1';
+            $select_conditions['order_status'] = '1';
+            $request['order_status'] = '1';
         }
 
         $all_top_brands = $this->brands->getChildBrand(0);
-        $cars = $this->car->getAllcars($request, true);
+        $orders = $this->order->getAllorders($request, true);
         
-        // dd($select_conditions['car_status']);
+        // dd($select_conditions['order_status']);
 
-        return view('admin.car.self', compact('cars', 'select_conditions','all_top_brands'));
+        return view('admin.order.self', compact('orders', 'select_conditions','all_top_brands'));
     }
 
     /**
@@ -100,8 +90,8 @@ class OrderController extends Controller
      */
     public function create()
     {
-        // dd(Auth::user());
-        $car_code = getCarCode();
+        dd(Auth::user());
+        $order_code = getorderCode();
         $all_top_brands = $this->brands->getChildBrand(0);
         /*$year_type      = config('tcl.year_type'); //获取配置文件中所有车款年份
         $category_type  = config('tcl.category_type'); //获取配置文件中车型类别
@@ -109,7 +99,7 @@ class OrderController extends Controller
         $out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
         $inside_color   = config('tcl.inside_color'); //获取配置文件中内饰颜色
         $sale_number    = config('tcl.sale_number'); //获取配置文件中过户次数
-        $car_type       = config('tcl.car_type'); //获取配置文件车源类型
+        $order_type       = config('tcl.order_type'); //获取配置文件车源类型
         $customer_res   = config('tcl.customer_res'); //获取配置文件客户来源
         $safe_type      = config('tcl.safe_type'); //获取配置文件保险类别
         $capacity       = config('tcl.capacity'); //获取配置文件排量*/
@@ -122,7 +112,7 @@ class OrderController extends Controller
                     ->get();
 
         // dd($city_id);
-        return view('admin.car.create',compact(
+        return view('admin.order.create',compact(
             'all_top_brands',           
             'city_id',
             'provence_id',
@@ -147,13 +137,13 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function ajaxAdd(StoreCarsRequest $carRequest)
+    public function ajaxAdd(StoreordersRequest $orderRequest)
     {
-        // dd($carRequest->all());
-        $cars = $this->car->create($carRequest);
+        // dd($orderRequest->all());
+        $orders = $this->order->create($orderRequest);
         /*p('hehe');
-        dd($car);*/
-        return response()->json($cars); 
+        dd($order);*/
+        return response()->json($orders); 
     }
 
     /**
@@ -166,7 +156,7 @@ class OrderController extends Controller
     {
         // p($request->all());exit;
 
-        $this->car->interactiveAdd($request, $request->input('car_id'));
+        $this->order->interactiveAdd($request, $request->input('order_id'));
 
         return response()->json(array(
             'status'      => 1,
@@ -184,15 +174,15 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $cars = $this->car->find($id);
+        $orders = $this->order->find($id);
 
         $gearbox        = config('tcl.gearbox'); //获取配置文件中变速箱类别
         $out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
         $capacity       = config('tcl.capacity'); //获取配置文件排量
         $category_type  = config('tcl.category_type'); //获取配置文件中车型类别
 
-        // dd($cars->hasManyImages()->get());
-        return view('admin.car.show', compact('cars', 'gearbox', 'out_color', 'capacity', 'category_type'));
+        // dd($orders->hasManyImages()->get());
+        return view('admin.order.show', compact('orders', 'gearbox', 'out_color', 'capacity', 'category_type'));
     }
 
     /**
@@ -203,37 +193,37 @@ class OrderController extends Controller
      */
     public function edit($id)
     {
-        $cars = $this->car->find($id);
+        $orders = $this->order->find($id);
 
         $area = Area::withTrashed()
                     ->where('pid', '1')
                     ->where('status', '1')
                     ->get();
         $citys = Area::withTrashed()
-                     ->where('pid', $cars->plate_provence)
+                     ->where('pid', $orders->plate_provence)
                      ->where('status', '1')
                     ->get();
-        /*if (Gate::denies('update', $cars)) {
+        /*if (Gate::denies('update', $orders)) {
             //不允许编辑,基于Policy
             dd('no no');
         }*/
 
         foreach ($area as $key => $value) {
-            if($cars->plate_provence == $value->id){
+            if($orders->plate_provence == $value->id){
                 $provence =  $value;
             }
         }
 
         foreach ($citys as $key => $value) {
-            if($cars->plate_city == $value->id){
+            if($orders->plate_city == $value->id){
                 $city =  $value;
             }
         }
-        // dd($cars);
+        // dd($orders);
         // dd($area);
         // dd($city);
-        return view('admin.car.edit', compact(
-            'cars','provence','city','area'
+        return view('admin.order.edit', compact(
+            'orders','provence','city','area'
         ));
     }
 
@@ -245,25 +235,25 @@ class OrderController extends Controller
      */
     public function editImg($id)
     {
-        $car =  $this->car->find($id);
-        $imgs = $car->hasManyImages;
+        $order =  $this->order->find($id);
+        $imgs = $order->hasManyImages;
 
         /*$out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
         $inside_color   = config('tcl.inside_color'); //获取配置文件中内饰颜色
         $sale_number    = config('tcl.sale_number'); //获取配置文件中过户次数
-        $car_type       = config('tcl.car_type'); //获取配置文件车源类型
+        $order_type       = config('tcl.order_type'); //获取配置文件车源类型
         $customer_res   = config('tcl.customer_res'); //获取配置文件客户来源
         $safe_type      = config('tcl.safe_type'); //获取配置文件保险类别
         $capacity       = config('tcl.capacity'); //获取配置文件排量*/
         
-        /*if (Gate::denies('update', $cars)) {
+        /*if (Gate::denies('update', $orders)) {
             //不允许编辑,基于Policy
             dd('no no');
         }*/
 
         // dd($imgs);
-        return view('admin.car.editImg', compact(
-            'imgs','car'
+        return view('admin.order.editImg', compact(
+            'imgs','order'
         ));
     }
 
@@ -274,10 +264,10 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCarsRequest $carRequest, $id)
+    public function update(UpdateordersRequest $orderRequest, $id)
     {
-        $this->car->update($carRequest, $id);
-        return redirect()->route('admin.car.self')->withInput();
+        $this->order->update($orderRequest, $id);
+        return redirect()->route('admin.order.self')->withInput();
     }
 
     /**
@@ -305,23 +295,23 @@ class OrderController extends Controller
         p($request->input('status'));
         p($request->method());exit;*/
 
-        $car = $this->car->find($request->id);
+        $order = $this->order->find($request->id);
 
-        // $is_repeat = $this->car->isRepeat($car->vin_code);
+        // $is_repeat = $this->order->isRepeat($order->vin_code);
 
         if($request->input('status') == '0'){
             //激活车源
-            if($this->car->repeatCarNum($car->vin_code) > 0){
+            if($this->order->repeatorderNum($order->vin_code) > 0){
 
                 $msg = '已存在该车架号,无法激活';
             }else{
-                $this->car->statusChange($request, $request->input('id'));
+                $this->order->statusChange($request, $request->input('id'));
                 $msg = '车源已经激活';
             }
            
         }else{
             //废弃车源
-            $this->car->statusChange($request, $request->input('id'));
+            $this->order->statusChange($request, $request->input('id'));
             $msg = '车源已经废弃';
 
         }
@@ -345,13 +335,13 @@ class OrderController extends Controller
         p($request->input('status'));
         p($request->method());exit;*/
 
-        /*$car = $this->car->find($request->id);
+        /*$order = $this->order->find($request->id);
 
-        $car->status = $request->input('status');
+        $order->status = $request->input('status');
 
-        $car->save();*/
+        $order->save();*/
         // p($request->id);exit;
-        $this->car->quicklyFollow($request->input('id'));
+        $this->order->quicklyFollow($request->input('id'));
 
         return response()->json(array(
             'status' => 1,
@@ -363,7 +353,7 @@ class OrderController extends Controller
      * ajax获得车源信息
      * @return \Illuminate\Http\Response
      */
-    public function getCarInfo(Request $request)
+    public function getorderInfo(Request $request)
     {    
         $year_type      = config('tcl.year_type'); //获取配置文件中所有车款年份
         $category_type  = config('tcl.category_type'); //获取配置文件中车型类别
@@ -375,39 +365,39 @@ class OrderController extends Controller
         $safe_type      = config('tcl.safe_type'); //获取配置文件保险类别
         $capacity       = config('tcl.capacity'); //获取配置文件排量
         $mileage_config = config('tcl.mileage'); //获取配置文件中车源状态
-        $car_age = config('tcl.age'); //获取配置文件中车源状态
+        $order_age = config('tcl.age'); //获取配置文件中车源状态
        
-        $car = $this->car->find($request->input('car_id'));
-        // dd(substr((date($car->created_at)), 0, 10));
-        $car->capacity = $capacity[$car->capacity];
-        $car->car_type = $category_type[$car->car_type];
-        $car->gearbox = $gearbox[$car->gearbox];
-        $car->out_color = $out_color[$car->out_color];
-        $car->sale_number = $car->sale_number;
-        $car->inside_color = $inside_color[$car->inside_color];
-        $car->safe_type = $safe_type[$car->safe_type];
-        $car->customer = $car->belongsToCustomer->customer_name;
-        $car->creater = $car->belongsToUser->nick_name;
-        $car->creater_tel = $car->belongsToUser->creater_telephone;
-        $car->shop_name = $car->belongsToShop->shop_name;
-        if(Auth::id() == $car->creater_id){
-            $car->customer_info = $car->belongsToCustomer->customer_name.'('.$car->belongsToCustomer->customer_telephone.')';
+        $order = $this->order->find($request->input('order_id'));
+        // dd(substr((date($order->created_at)), 0, 10));
+        $order->capacity = $capacity[$order->capacity];
+        $order->order_type = $category_type[$order->order_type];
+        $order->gearbox = $gearbox[$order->gearbox];
+        $order->out_color = $out_color[$order->out_color];
+        $order->sale_number = $order->sale_number;
+        $order->inside_color = $inside_color[$order->inside_color];
+        $order->safe_type = $safe_type[$order->safe_type];
+        $order->customer = $order->belongsToCustomer->customer_name;
+        $order->creater = $order->belongsToUser->nick_name;
+        $order->creater_tel = $order->belongsToUser->creater_telephone;
+        $order->shop_name = $order->belongsToShop->shop_name;
+        if(Auth::id() == $order->creater_id){
+            $order->customer_info = $order->belongsToCustomer->customer_name.'('.$order->belongsToCustomer->customer_telephone.')';
         }else{
-            $car->customer_info = $car->belongsToCustomer->customer_name;
+            $order->customer_info = $order->belongsToCustomer->customer_name;
         }       
-        $car->created = substr((date($car->created_at)), 0, 10);
-        $car->want_price = $car->bottom_price.'-'.$car->top_price;
-        $car->plate_city = $car->belongsToCity->city_name;
+        $order->created = substr((date($order->created_at)), 0, 10);
+        $order->want_price = $order->bottom_price.'-'.$order->top_price;
+        $order->plate_city = $order->belongsToCity->city_name;
 
-        if(Auth::id() == $car->creater_id || Auth::user()->isSuperAdmin()){
-            $car->show_pg_info = true;
+        if(Auth::id() == $order->creater_id || Auth::user()->isSuperAdmin()){
+            $order->show_pg_info = true;
         }
         
-        // dd($car->belongsToArea->city_name);
+        // dd($order->belongsToArea->city_name);
         return response()->json(array(
             'status' => 1,
             'msg' => 'ok',
-            'data' => $car->toJson(),
+            'data' => $order->toJson(),
         ));      
     }
 
@@ -420,22 +410,22 @@ class OrderController extends Controller
         DB::transaction(function() use ($request){
             // dd($request->all());
             $img = Image::where('original_name', $request->img_name)
-                        ->where('car_id',   $request->img_car_id)
+                        ->where('order_id',   $request->img_order_id)
                         ->orWhere('filename', $request->img_name)
                         ->first();
             /*dd(lastSql());
             dd($img);*/
-            /*$car = Cars::where('id', $request->img_car_id)->first();
-            $car->is_show = '1';
-            $car->save();*/
+            /*$order = orders::where('id', $request->img_order_id)->first();
+            $order->is_show = '1';
+            $order->save();*/
 
-            Cars::where('id', $request->img_car_id)->update(['is_show'=>'1']);
+            orders::where('id', $request->img_order_id)->update(['is_show'=>'1']);
 
-            // dd($car);
+            // dd($order);
             $img->is_top = '1';
             $img->save();
             
-            Image::where('car_id', $request->img_car_id)
+            Image::where('order_id', $request->img_order_id)
                  ->where('id', '!=', $img->id)
                  ->update(['is_top' => '0']);
         // dd($img);      

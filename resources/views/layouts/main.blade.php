@@ -86,22 +86,22 @@
                     <section class="sidebar">
                         <ul class="sidebar-menu">
                             <li class="active">
-                                <a href="/"><i class="icon-home"></i><span class="sidebar-text">首页</span></a>
+                                <a href="{{route('admin.index')}}"><i class="icon-home"></i><span class="sidebar-text">首页</span></a>
                             </li>
                             <li>
-                                <a href="#"><i class="icon-rocket"></i><span class="sidebar-text">订单管理</span></a>
+                                <a href="{{route('order.index')}}"><i class="icon-rocket"></i><span class="sidebar-text">订单管理</span></a>
                             </li>
 
                             <li>
                                 <a href="#"><i class="icon-grid"></i><span class="sidebar-text">商品及分类</span></a>
                                 <ul class="nav nav-second-level">
                                     <li><a href="#">商品管理</a></li>
-                                    <li><a href="#">分类管理</a></li>
+                                    <li><a href="{{route('category.index')}}">分类管理</a></li>
                                 </ul>
                             </li>
 
                             <li>
-                                <a href="{{route('admin.user.index')}}"><i class="icon-layers"></i><span class="sidebar-text">用户管理</span></a>
+                                <a href="{{route('user.index')}}"><i class="icon-layers"></i><span class="sidebar-text">用户管理</span></a>
                             </li>
 
                             <!-- <li>

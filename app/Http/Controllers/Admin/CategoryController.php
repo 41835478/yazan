@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-
+use App\GoodsPrice;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Repositories\Brand\BrandRepositoryContract;
 use App\Repositories\Category\CategoryRepositoryContract;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Requests\Category\StoreCategoryRequest;
@@ -14,16 +13,13 @@ use App\Http\Requests\Category\StoreCategoryRequest;
 class CategoryController extends Controller
 {
     protected $category;
-    protected $brands;
 
     public function __construct(
 
-        CategoryRepositoryContract $category,
-        BrandRepositoryContract $brands
+        CategoryRepositoryContract $category
     ) {
     
         $this->category = $category;
-        $this->brands = $brands;
 
         // $this->middleware('brand.create', ['only' => ['create']]);
     }
@@ -33,8 +29,10 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        dd($request->all());
+
         $categorys = $this->category->getAllcategory();
         // dd(lastSql());
         // dd($categorys[0]->belongsToBrand);

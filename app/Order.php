@@ -22,7 +22,7 @@ class Order extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['order_code', 'goods_num', 'type_num', 'total_price', 'suppliers_id', 'suppliers_top_id', 'suppliers_level', 'exp_price', 'exp_company', 'suppliers_telephone', 'suppliers_name', 'creater_id', 'remark'];
+    protected $fillable = ['order_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'remark'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -51,11 +51,11 @@ class Order extends Model
     }
 
     // 搜索条件处理
-    public function addCondition($requestData, $is_self){
+    public function addCondition($requestData){
 
         $query = $this;
 
-        if($is_self){
+        /*if($is_self){
 
             if(!(Auth::user()->isSuperAdmin())){
 
@@ -70,7 +70,7 @@ class Order extends Model
                     $query = $query->where('creater_id', Auth::id());  
                 } 
             }           
-        }
+        }*/
 
         if(!empty($requestData['car_code'])){  //有车源编码选择
 
@@ -93,14 +93,14 @@ class Order extends Model
 
                 $query = $query->where('car_status', $requestData['car_status']);
             }
-        }else{
+        }/*else{
 
             // $query = $query->whereIn('car_status', ['1', '2', '3', '4', '5', '6']);
             if(!$is_self){
                 //非自身车源
-                $query = $query->where('car_status', '1');
-            }       
-        }  
+               $query = $query->where('car_status', '1');
+            }        
+        } */ 
 
         if(!empty($requestData['gearbox'])){
             // dd($requestData['gearbox']);

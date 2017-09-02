@@ -11,7 +11,7 @@
 			<a href="{{route('admin.index')}}">主页</a>  
 			<i class="icon-angle-right"></i>
 		</li>
-		<li><a href="#1f">车型列表</a></li>
+		<li><a href="#1f">商品种类列表</a></li>
 	</ul>
 @endsection
 
