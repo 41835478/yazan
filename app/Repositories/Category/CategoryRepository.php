@@ -16,17 +16,29 @@ use Debugbar;
 class CategoryRepository implements CategoryRepositoryContract
 {
 
+    //默认查询数据
+    protected $select_columns = ['id', 'pid', 'name', 'level', 'sort', 'status', 'recommend', 'creater_id', 'created_at'];
+
     // 根据ID获得车型信息
     public function find($id)
     {
-        return Category::select(['id', 'name', 'brand_id', 'year_type', 'sort', 'status', 'recommend'])
+        return Category::select($this->select_columns)
                        ->findOrFail($id);
     }
 
     // 获得车型列表
-    public function getAllcategory()
+    public function getAllCategory()
     {   
         return Category::paginate(10);
+    }
+
+    // 获得商品系列列表
+    public function getAllSeries()
+    {   
+        return Category::select($this->select_columns)
+                       ->where('status', '1')
+                       ->where('pid', '0')
+                       ->get();
     }
 
     // 创建车型

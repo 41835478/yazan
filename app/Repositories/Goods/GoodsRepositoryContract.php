@@ -1,12 +1,12 @@
 <?php
-namespace App\Repositories\Category;
+namespace App\Repositories\Goods;
  
-interface CategoryRepositoryContract
+interface GoodsRepositoryContract
 {
     
     public function find($id);
     
-    public function getAllCategory();
+    public function getAllGoods($requestData);
 
     public function create($requestData);
 
@@ -14,5 +14,5 @@ interface CategoryRepositoryContract
 
     public function destroy($id);
 
-    public function getChildCategoryByBrandId($brand_id);
+    public function isRepeat($vin_code);
 }

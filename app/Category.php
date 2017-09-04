@@ -16,7 +16,7 @@ class Category extends Model
      * @var string
      */
     // protected $table = 'users';
-    protected $table = 'tcl_category';
+    protected $table = 'yz_category';
     protected $primaryKey ='id';
 
     /**

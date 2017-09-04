@@ -82,11 +82,11 @@ class UserRepository implements UserRepositoryContract {
 
 		/*p($requestData->agents_total);
         p($requestData->agents_frist);
-        dd($requestData->agents_second);*/
+        dd($requestData->agents_secend);*/
         //设置用户pid
-        if(!empty($requestData->agents_second)){
+        if(!empty($requestData->agents_secend)){
             // 有二级代理
-            $pid = $requestData->agents_second;
+            $pid = $requestData->agents_secend;
         }else if(!empty($requestData->agents_frist)){
             // 有一级代理
             $pid = $requestData->agents_frist;

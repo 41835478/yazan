@@ -11,19 +11,31 @@ use App\Image;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\Order\OrderRepositoryContract;
+use App\Repositories\User\UserRepositoryContract;
+use App\Repositories\Goods\GoodsRepositoryContract;
+use App\Repositories\Category\CategoryRepositoryContract;
 //use App\Http\Requests\Order\UpdateOrderRequest;
 //use App\Http\Requests\Order\StoreOrderRequest;
 
 class OrderController extends Controller
 {   
     protected $order;
+    protected $user;
+    protected $goods;
+    protected $category;
 
     public function __construct(
 
-        OrderRepositoryContract $order
+        OrderRepositoryContract $order,
+        UserRepositoryContract $user,
+        GoodsRepositoryContract $goods,
+        CategoryRepositoryContract $category
     ) {
     
-        $this->order = $order;
+        $this->order    = $order;
+        $this->user     = $user;
+        $this->goods    = $goods;
+        $this->category = $category;
         // $this->middleware('brand.create', ['only' => ['create']]);
     }
 
@@ -90,28 +102,18 @@ class OrderController extends Controller
      */
     public function create()
     {
-        dd(Auth::user());
-        $order_code = getorderCode();
-        $all_top_brands = $this->brands->getChildBrand(0);
-        /*$year_type      = config('tcl.year_type'); //获取配置文件中所有车款年份
-        $category_type  = config('tcl.category_type'); //获取配置文件中车型类别
-        $gearbox        = config('tcl.gearbox'); //获取配置文件中车型类别
-        $out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
-        $inside_color   = config('tcl.inside_color'); //获取配置文件中内饰颜色
-        $sale_number    = config('tcl.sale_number'); //获取配置文件中过户次数
-        $order_type       = config('tcl.order_type'); //获取配置文件车源类型
-        $customer_res   = config('tcl.customer_res'); //获取配置文件客户来源
-        $safe_type      = config('tcl.safe_type'); //获取配置文件保险类别
-        $capacity       = config('tcl.capacity'); //获取配置文件排量*/
-        $city_id        = $this->shop->find(Auth::user()->shop_id)->city_id; //车源所在城市
-        $provence_id    = $this->shop->find(Auth::user()->shop_id)->provence_id; //车源所在省份
+        // dd(Auth::user());
+        //所有总代理
+        $all_series = $this->category->getAllSeries();
 
-        $area = Area::withTrashed()
-                    ->where('pid', '1')
-                    ->where('status', '1')
-                    ->get();
+        dd($all_series);
+        
+        $agents_total = $this->user->getAllUsersByRole('3');
 
-        // dd($city_id);
+        return view('admin.order.create',compact(
+            'agents_total'
+        ));
+
         return view('admin.order.create',compact(
             'all_top_brands',           
             'city_id',
@@ -128,7 +130,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->all());
     }
 
     /**
@@ -144,26 +146,6 @@ class OrderController extends Controller
         /*p('hehe');
         dd($order);*/
         return response()->json($orders); 
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * ajax存储跟进信息(互动)
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function interactiveAdd(Request $request)
-    {
-        // p($request->all());exit;
-
-        $this->order->interactiveAdd($request, $request->input('order_id'));
-
-        return response()->json(array(
-            'status'      => 1,
-            'msg'         => '添加成功',
-            'content'     => $request->input('content'),
-            'follow_time' => date('Y-m-d, H:i:s', time()),
-        )); 
     }
 
     /**
@@ -224,36 +206,6 @@ class OrderController extends Controller
         // dd($city);
         return view('admin.order.edit', compact(
             'orders','provence','city','area'
-        ));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * 图片编辑
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function editImg($id)
-    {
-        $order =  $this->order->find($id);
-        $imgs = $order->hasManyImages;
-
-        /*$out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
-        $inside_color   = config('tcl.inside_color'); //获取配置文件中内饰颜色
-        $sale_number    = config('tcl.sale_number'); //获取配置文件中过户次数
-        $order_type       = config('tcl.order_type'); //获取配置文件车源类型
-        $customer_res   = config('tcl.customer_res'); //获取配置文件客户来源
-        $safe_type      = config('tcl.safe_type'); //获取配置文件保险类别
-        $capacity       = config('tcl.capacity'); //获取配置文件排量*/
-        
-        /*if (Gate::denies('update', $orders)) {
-            //不允许编辑,基于Policy
-            dd('no no');
-        }*/
-
-        // dd($imgs);
-        return view('admin.order.editImg', compact(
-            'imgs','order'
         ));
     }
 
@@ -323,33 +275,6 @@ class OrderController extends Controller
     }
 
     /**
-     * 快速跟进，只修改跟进时间
-     * @return \Illuminate\Http\Response
-     */
-    public function follwQuickly(Request $request)
-    {    
-        /*if($request->ajax()){
-            echo "zhen de shi AJAX";
-        }
-        p($request->input('id'));
-        p($request->input('status'));
-        p($request->method());exit;*/
-
-        /*$order = $this->order->find($request->id);
-
-        $order->status = $request->input('status');
-
-        $order->save();*/
-        // p($request->id);exit;
-        $this->order->quicklyFollow($request->input('id'));
-
-        return response()->json(array(
-            'status' => 1,
-            'msg' => '跟进成功',
-        ));      
-    }
-
-    /**
      * ajax获得车源信息
      * @return \Illuminate\Http\Response
      */
@@ -399,41 +324,5 @@ class OrderController extends Controller
             'msg' => 'ok',
             'data' => $order->toJson(),
         ));      
-    }
-
-    /**
-     * ajax修改首图
-     * @return \Illuminate\Http\Response
-     */
-    public function changeFristImg(Request $request){
-
-        DB::transaction(function() use ($request){
-            // dd($request->all());
-            $img = Image::where('original_name', $request->img_name)
-                        ->where('order_id',   $request->img_order_id)
-                        ->orWhere('filename', $request->img_name)
-                        ->first();
-            /*dd(lastSql());
-            dd($img);*/
-            /*$order = orders::where('id', $request->img_order_id)->first();
-            $order->is_show = '1';
-            $order->save();*/
-
-            orders::where('id', $request->img_order_id)->update(['is_show'=>'1']);
-
-            // dd($order);
-            $img->is_top = '1';
-            $img->save();
-            
-            Image::where('order_id', $request->img_order_id)
-                 ->where('id', '!=', $img->id)
-                 ->update(['is_top' => '0']);
-        // dd($img);      
-        }); 
-
-        return response()->json(array(
-            'status' => 200,
-            'msg' => '修改成功',
-        ));       
     }
 }
