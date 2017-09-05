@@ -11,30 +11,29 @@ use App\Image;
 use App\Cars;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Repositories\Brand\BrandRepositoryContract;
+// use App\Repositories\Brand\BrandRepositoryContract;
+use App\Repositories\Category\CategoryRepositoryContract;
+use App\Repositories\Goods\GoodsRepositoryContract;
+/*use App\Repositories\Brand\BrandRepositoryContract;
 use App\Repositories\Car\CarRepositoryContract;
 use App\Repositories\Shop\ShopRepositoryContract;
 use App\Http\Requests\Cars\UpdateCarsRequest;
-use App\Http\Requests\Cars\StoreCarsRequest;
+use App\Http\Requests\Cars\StoreCarsRequest;*/
 
 class GoodsController extends Controller
 {   
-    protected $car;
-    protected $brands;
-    protected $shop;
+    protected $category;
+    protected $goods;
+
 
     public function __construct(
 
-        CarRepositoryContract $car,
-        BrandRepositoryContract $brands,
-        ShopRepositoryContract $shop
+        CategoryRepositoryContract $category,
+        GoodsRepositoryContract $goods
     ) {
     
-        $this->car = $car;
-        $this->brands = $brands;
-        $this->shop = $shop;
-
-
+        $this->category = $category;
+        $this->goods = $goods;
         // $this->middleware('brand.create', ['only' => ['create']]);
     }
 
@@ -65,6 +64,33 @@ class GoodsController extends Controller
         $car_status_current = '1';
         
         return view('admin.car.index', compact('cars','car_status_current', 'all_top_brands', 'select_conditions','shops'));
+    }
+
+    //获系列商品
+    public function getChildGoods(Request $request){
+
+        // p($request->all());exit;
+        $category_id = $request->input('category_id');
+        
+        $goods = $this->goods->getChildGoods($category_id);
+        
+        p($goods->toArray());
+        p($goods->toJson());exit;
+
+        if($goods->count() > 0){
+
+            return response()->json(array(
+                'status' => 1,
+                'data'   => $goods,
+                'message'   => '获商品列表成功'
+            ));
+        }else{
+
+            return response()->json(array(
+                'status' => 0,
+                'message'   => '该系列无商品'
+            ));
+        }        
     }
 
     /**

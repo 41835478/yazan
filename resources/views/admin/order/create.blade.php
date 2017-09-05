@@ -102,13 +102,12 @@
                                         <div class="col-md-8">
                                             <select class="form-control goods_category" name="category_id[]" style="width:15%;display: inline-block;">
                                                 <option  value="0">--系列--</option>
-                                                @foreach($agents_total as $key=>$value)
-                                                <option value="{{$value->id}}" >{{$value->nick_name}}</option>
+                                                @foreach($all_series as $key=>$series)
+                                                <option value="{{$series->id}}" >{{$series->name}}</option>
                                                 @endforeach                                  
                                             </select>
                                             <select class="form-control goods" name="goods_id[]" style="width:15%;display: inline-block;">
-                                                <option  value="0">--一级代理--</option>
-                                                <option  value="1">枕头</option>
+                                                <option  value="0">--商品--</option>
                                             </select>
                                             <input style="margin-top: 5px;width:10%;display: inline-block;" type="order_code" name="goods_num[]" placeholder="商品数" class="input-dark form-control" />
                                             <button style="display: inline-block;" type="button" class="btn btn-warning goods_delete">删除</button>
@@ -118,7 +117,7 @@
                                     <div class="form-group">
 
                                         <div class="col-md-12" style="text-align:center;">
-                                            <input type="hidden" name="agents_ajax_request_url" value="{{route('user.getChildUser')}}">
+                                            <input type="hidden" name="goods_ajax_request_url" value="{{route('goods.getChildGoods')}}">
                                             <button type="submit" class="btn btn-sm btn-success">添加</button>
                                             <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
                                         </div>
@@ -184,7 +183,7 @@
             }
 
             var obj = $(this);
-            
+
             $.confirm({
                 title: '注意!',
                 content: '确实要删除吗?',
@@ -203,8 +202,55 @@
             // $(this).parents('.goods_list').remove();
 
             // console.log($(this).parents('.goods_list'));
-
         });
+
+        //商品ajax
+        $('.goods_category').change(function(){
+
+            var category_id = $(this).val();
+            var token        = $("input[name='_token']").val();
+            var request_url  = $("input[name='goods_ajax_request_url']").val();
+            // alert(agents_total);return false;
+            //获得该总代理的子代理
+            $.ajax({
+                type: 'POST',       
+                url: request_url,       
+                data: { category_id : category_id},        
+                dataType: 'json',       
+                headers: {      
+                    'X-CSRF-TOKEN': token       
+                },      
+                success: function(data){        
+                    if(data.status == 1){
+                        var content = '<option  value="0">一级代理</option>';
+                        $.each(data.data, function(index, value){
+                            content += '<option value="';
+                            content += value.id;
+                            content += '">';
+                            content += value.nick_name;
+                            content += '</option>';
+                        });
+                        // $('#agents_total').append(content);
+                        // console.log($('#agents_frist'));
+                        $('#agents_frist').empty();
+                        $('#agents_frist').append(content);
+                        // console.log(content);
+                        $('#agents_frist').css('display', 'inline-block');
+                    }else{
+                        alert(data.message);
+                        $('#agents_frist').empty();
+                        $('#agents_frist').append('<option  value="0">一级代理</option>');
+                        $('#agents_frist').hide();
+                        $('#agents_secend').hide();
+                        return false;
+                    }
+                },      
+                error: function(xhr, type){
+    
+                    alert('Ajax error!');
+                }
+            });
+    });
 	});
 </script>
 @endsection

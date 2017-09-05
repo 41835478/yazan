@@ -24,7 +24,7 @@ class Category extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['name', 'car_img', 'sort', 'status', 'recommend', 'user_id', 'brand_id', 'year_type'];
+    protected $fillable = ['id', 'pid', 'name', 'level', 'sort', 'status', 'recommend', 'creater_id', 'created_at'];
 
     /**
      * The attributes excluded from the model's JSON form.

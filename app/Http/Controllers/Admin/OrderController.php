@@ -106,19 +106,13 @@ class OrderController extends Controller
         //所有总代理
         $all_series = $this->category->getAllSeries();
 
-        dd($all_series);
-        
+        // dd($all_series);
+        //总代理列表
         $agents_total = $this->user->getAllUsersByRole('3');
 
         return view('admin.order.create',compact(
-            'agents_total'
-        ));
-
-        return view('admin.order.create',compact(
-            'all_top_brands',           
-            'city_id',
-            'provence_id',
-            'area'
+            'agents_total',
+            'all_series'
         ));
     }
 

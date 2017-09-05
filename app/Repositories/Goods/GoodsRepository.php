@@ -17,7 +17,7 @@ use Debugbar;
 class GoodsRepository implements GoodsRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['id','order_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'remark'];
+    protected $select_columns = ['id', 'name', 'goods_specs', 'description', 'category_id', 'goods_status', 'creater_id'];
 
     // 根据ID获得车源信息
     public function find($id)
@@ -53,6 +53,15 @@ class GoodsRepository implements GoodsRepositoryContract
         return $query->select($this->select_columns)
                      ->orderBy('created_at', 'desc')
                      ->paginate(10);
+    }
+
+    public function getChildGoods($category_id){
+
+        $query = new Goods();       // 返回的是一个Goods实例,两种方法均可
+
+        return $query->select($this->select_columns)
+                     ->where('category_id', $category_id)
+                     ->get();
     }
 
     // 前端显示车源列表
