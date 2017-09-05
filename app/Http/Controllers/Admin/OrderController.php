@@ -103,15 +103,15 @@ class OrderController extends Controller
     public function create()
     {
         // dd(Auth::user());
-        //所有总代理
+        //所有系列
         $all_series = $this->category->getAllSeries();
 
         // dd($all_series);
-        //总代理列表
-        $agents_total = $this->user->getAllUsersByRole('3');
+        //商户列表
+        $all_merchant  = $this->user->getAllMerchant();
 
         return view('admin.order.create',compact(
-            'agents_total',
+            'all_merchant',
             'all_series'
         ));
     }

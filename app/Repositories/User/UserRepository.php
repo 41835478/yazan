@@ -54,15 +54,6 @@ class UserRepository implements UserRepositoryContract {
         return $users;
     }
 
-    //获得用户子代理(非递归)
-    public function getChildUser($user_id) {
-
-        return User::select(['id', 'pid', 'nick_name'])
-            ->where('pid', $user_id)
-            ->where('status', '1')
-            ->get();
-    }
-
 	public function getAllUsersWithDepartments() {
 		return User::select(array
 			('users.name', 'users.id',
@@ -71,6 +62,15 @@ class UserRepository implements UserRepositoryContract {
 			->join('departments', 'department_user.department_id', '=', 'departments.id')
 			->lists('full_name', 'id');
 	}
+
+    // 所有商户
+    public function getAllMerchant(){
+
+        return User::select($this->select_columns)
+                   ->where('status', '1')
+                   ->where('pid', '>', '0')
+                   ->get();
+    }
 
 	public function create($requestData) {
 
@@ -189,4 +189,116 @@ class UserRepository implements UserRepositoryContract {
 		// dd($role_info);
 		return $role_info;
 	}
+
+    //获得子代理
+    public function getChildUser($user_id) {
+
+        return User::select(['yz_users.id', 'yz_users.pid', 'yz_users.name', 'yz_users.nick_name', 'yz_users.level', 'roles.name as role_name'])
+                   ->join('roles', 'yz_users.level', '=', 'roles.level')
+                   ->where('pid', $user_id)
+                   ->where('status', '1')
+                   ->get();
+    }
+
+    //获得指定品牌的父品牌
+    protected function getParentUser($user_id) {
+
+        $pid = User::select('id', 'pid')
+            ->where('id', $user_id)
+            ->first();
+        // dd($pid->pid);
+        return User::select(['yz_users.id', 'yz_users.pid', 'yz_users.name', 'yz_users.nick_name', 'yz_users.level', 'roles.name as role_name'])
+            ->join('roles', 'yz_users.level', '=', 'roles.level')
+            ->where('yz_users.id', $pid->pid)
+            ->where('status', '1')
+            ->first();
+    }
+
+    //获得指定品牌的品牌树(递归获取该品牌所有子品牌及父品牌)
+    public function getUserTree($user_id) {
+
+        // p($user_id);
+        $userTree['child']  = $this->getAllChild($user_id);
+        $userTree['parent'] = $this->getAllParent($user_id);
+        // dd($UserTree);
+        return $userTree;
+    }
+
+    //获得指定品牌下所有子品牌
+    protected function getAllChild($user_id, $lev = 1) {
+
+        $child = array();
+
+        if ($this->haveChildUser($user_id)) {
+
+            $user_info = $this->getChildUser($user_id)->toArray();
+
+            foreach ($user_info as $key => $value) {
+
+                $child[$key] = $value;
+                $child[$key]['lev'] = $lev;
+            }
+
+            foreach ($user_info as $key => $value) {
+
+                $child = array_merge($child, $this->getAllChild($value['id'], $lev + 1));
+            }
+        }
+
+        return $child;
+    }
+
+    //获得指定品牌的所有父品牌
+    protected function getAllParent($user_id, $lev = 1) {
+
+        $parent = array();
+        // dd($User_id);
+        // dd(!$this->isTopUser($User_id));
+        // $user_info = $this->getParentUser('98');
+        // dd(lastSql());
+        // dd($User_info);
+        if (!$this->isTopUser($user_id)) {
+            // dd('hehe');
+            $user_info = $this->getParentUser($user_id)->toArray();
+            // $user_info = $this->getParentUser($user_id);
+            /*p($user_id);
+                p($user_info);
+*/
+            $user_info['lev'] = $lev;
+            $parent[] = $user_info;
+
+            $parent = array_merge($parent, $this->getAllParent($user_info['id'], $lev + 1));
+
+        }
+        // dd($parent);
+        return $parent;
+    }
+
+    //判断该品牌是否有下级品牌
+    protected function haveChildUser($user_id) {
+
+        $child = $this->getChildUser($user_id);
+        /*p(lastSql());
+        dd($child);*/
+        if ($child->count() != 0) {
+
+            return true;
+        } else {
+
+            return false;
+        }
+    }
+
+    //判断该品牌是否为顶级品牌
+    protected function isTopUser($user_id) {
+
+        $pid = User::select('pid')->find($user_id);
+        /*p(lastSql());
+        dd($pid->pid);*/
+        if ($pid->pid == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

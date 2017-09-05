@@ -113,6 +113,35 @@ class UserController extends Controller {
         }        
     }
 
+    /**
+     * 获得代理链
+     */
+    public function getUserChain(Request $request){
+
+    	// p($request->all());exit;
+
+    	$user_chains = $this->users->getUserTree($request->user_id);
+
+    	// p($user_chains);exit;
+    	/*p($user_chains);
+        p(collect($user_chains)->toJson());exit;*/
+
+        if(collect($user_chains)->count() > 0){
+        	
+            return response()->json(array(
+                'status' => 1,
+                'data'   => $user_chains,
+                'message'   => '获取代理列表成功'
+            ));
+        }else{
+        	
+            return response()->json(array(
+                'status' => 0,
+                'message'   => '该代理商无代理用户'
+            ));
+        }
+    }
+
     public function address(Request $request){
 
     	dd($request->all());

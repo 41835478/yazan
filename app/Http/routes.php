@@ -38,6 +38,8 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::match(['get', 'post'], 'user/index', 'UserController@index')->name('user.index');
 	//获得用户下级代理
 	Route::post('user/getChildUser', 'UserController@getChildUser')->name('user.getChildUser');
+	//获得用户代理树
+	Route::post('user/getUserChain', 'UserController@getUserChain')->name('user.getUserChain');
 	//获得商品
 	Route::post('goods/getChildGoods', 'GoodsController@getChildGoods')->name('goods.getChildGoods');
 	//用户地址/收货地址

@@ -86,7 +86,6 @@ $(function () {
             this.qs2.cache();
         }
     });
-
     /* End jQuery Multi Select */
 
 });
