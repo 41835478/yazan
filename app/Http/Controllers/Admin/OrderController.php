@@ -125,7 +125,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request->all());
+        dd($request->all());
         $order_goods = [];
         foreach ($request->category_id as $key => $value) {
             $order_goods[$key]['category_id'] = $value;

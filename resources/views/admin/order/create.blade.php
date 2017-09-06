@@ -39,18 +39,27 @@
                         {!! csrf_field() !!}
                         <div class="form-body">
                             <div class="form-group">
-                                <label class="control-label col-md-3">商户选择: <span class="required">*</span></label>
-                                <div class="col-md-8">
-                                    <select class="form-control select2" name="user_id" id="user_id" style="width:25%;display: inline-block;">
+                                <label class="control-label col-md-1">商户选择: <span class="required">*</span></label>
+                                <div class="col-md-2">
+                                    <select class="form-control select2" name="user_id" id="user_id" style="width:100%;display: inline-block;">
                                         <option  value="0">--请选择商户--</option>
                                         @foreach($all_merchant as $key=>$value)
                                         <option value="{{$value->id}}" >{{$value->nick_name}}</option>
                                         @endforeach 
                                     </select>
                                 </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" name="exp_company" style="width:60%;display: inline-block;">
+                                        <option  value="0">==快递公司==</option>
+                                        @foreach($exp_company as $key=>$company)
+                                        <option value="{{$key}}" >{{$company}}</option>
+                                        @endforeach                                  
+                                    </select>
+                                    <input style="width:25%;display: inline-block;" placeholder="快递费" type="text" name="exp_price" value="" class="form-control" />
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-3">商户信息:</label>
+                                <label class="control-label col-md-1">商户信息:</label>
                                 <div class="col-md-4">
                                     <textarea id="merchant_info" disabled name="merchant_info" required style="width:400px;">
                                     </textarea>
@@ -61,26 +70,20 @@
                                 </div>
                             </div>
                             <div class="form-group last">
-                                <label class="control-label col-md-3">快递公司: </label>
+                                <label class="control-label col-md-1">收货地址: </label>
                                 <div class="col-md-4">
-                                    <select class="form-control" name="exp_company" style="width:45%;display: inline-block;">
-                                        <option  value="0">==快递公司==</option>
-                                        @foreach($exp_company as $key=>$company)
-                                        <option value="{{$key}}" >{{$company}}</option>
-                                        @endforeach                                  
-                                    </select>
-                                    <input style="width:25%;display: inline-block;" placeholder="快递费" type="text" name="exp_price" value="20" class="form-control" />
+                                    <input style="display: inline-block;" placeholder="收货地址" type="text" name="address_sh" value="" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group last">
-                                <label class="control-label col-md-3">快递单号: </label>
+                                <label class="control-label col-md-1">快递单号: </label>
                                 <div class="col-md-4">
-                                    <input type="text" name="order_code" class="form-control" /><span class="help-block">添加快递单号</span>
+                                    <input type="text" name="order_code" placeholder="快递单号" class="form-control" />
                                 </div>
                             </div>
                             
                             <div class="form-group goods_list">
-                                <label class="control-label col-md-3">商品: <span class="required">*</span></label>
+                                <label class="control-label col-md-1">商品: <span class="required">*</span></label>
                                 <div class="col-md-8">
                                     <select class="form-control goods_category" name="category_id[]" style="width:15%;display: inline-block;">
                                         <option  value="0">==系列==</option>
@@ -92,7 +95,7 @@
                                         <option  value="0">==选择商品==</option>
                                     </select>
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="goods_num[]" value="1" placeholder="商品数" class="form-control goods_num" />
-                                    <input style="margin-top: 5px;width:10%;display:none;" value="" type="text" placeholder="单价" name="goods_price[]" class="form-control goods_price" />
+                                    <input style="margin-top: 5px;width:10%;display:inline-block;" value="" type="text" disabled placeholder="单价" name="goods_price[]" class="form-control goods_price" />
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="total_price[]" disabled placeholder="总价" value="" class="form-control total_price" />
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="goods_name[]" placeholder="商品名称" value="" class="form-control goods_name" />
                                     <button style="display: inline-block;" type="button" class="btn btn-warning goods_delete">删除</button>
