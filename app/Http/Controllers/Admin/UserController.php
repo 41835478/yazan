@@ -121,9 +121,20 @@ class UserController extends Controller {
     	// p($request->all());exit;
 
     	$user_chains = $this->users->getUserTree($request->user_id);
+    	$self = $this->users->find($request->user_id);
+    	// p($self->hasManyRoles);exit;
 
-    	// p($user_chains);exit;
-    	/*p($user_chains);
+    	$self_user['role_name'] = $self->hasManyRoles[0]->name;
+    	$self_user['nick_name'] = $self->nick_name;
+    	$self_user['level']     = $self->level;
+    	$self_user['telephone'] = $self->telephone;
+
+    	foreach ($user_chains['parent'] as $key => $value) {
+    		if($value['level'] == '0'){
+    			$self_user['user_top_id'] = $value['id'];
+    		}
+    	}
+    	/*p($user_chains);exit;
         p(collect($user_chains)->toJson());exit;*/
 
         if(collect($user_chains)->count() > 0){
@@ -131,6 +142,7 @@ class UserController extends Controller {
             return response()->json(array(
                 'status' => 1,
                 'data'   => $user_chains,
+                'self'   => $self_user,
                 'message'   => '获取代理列表成功'
             ));
         }else{

@@ -42,6 +42,7 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::post('user/getUserChain', 'UserController@getUserChain')->name('user.getUserChain');
 	//获得商品
 	Route::post('goods/getChildGoods', 'GoodsController@getChildGoods')->name('goods.getChildGoods');
+	Route::post('goods/getGoodsPrice', 'GoodsController@getGoodsPrice')->name('goods.getGoodsPrice');
 	//用户地址/收货地址
 	Route::post('user/address', 'UserController@address')->name('user.address');
 

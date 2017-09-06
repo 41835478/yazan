@@ -2,6 +2,7 @@
 namespace App\Repositories\Order;
 
 use App\Order;
+use App\OrderGoods;
 use App\Area;
 use Session;
 use Illuminate\Http\Request;
@@ -134,73 +135,43 @@ class OrderRepository implements OrderRepositoryContract
                      ->paginate(20);
     }
 
-    //获得推荐车源
-    public function getRecommendOrder($price){
-
-        // dd($price);
-        $query = new Order();
-        $query = $query->where('name', '!=', '');
-        $query = $query->where('car_status', '1');
-        $query = $query->where('top_price', '<=', ($price*1.2));
-        $query = $query->where('top_price', '>=', ($price*0.8));
-
-        return $query->select($this->select_columns)
-                     ->orderBy('updated_at', 'desc')
-                     ->limit(4)
-                     ->get();
-    }
-
-    // 创建车源
+    // 创建订单
     public function create($requestData)
     {   
-        if(!empty($requestData->vin_code) && $this->isRepeat($requestData->vin_code)){
-            //存在车架号并且存在该车架号记录
+        p('hehe');
+        dd($requestData->all());      
 
-            $car = $this->isRepeat($requestData->vin_code);
-            // dd(lastSql());
-            $car->isRepeat = true;
-            return $car;
-        }else{
-            $car_obj = (object) '';
-            DB::transaction(function() use ($requestData, $car_obj){
-                // 添加车源并返回实例,处理跟进(添加车源)
-                $requestData['creater_id']      = Auth::id();
-                $requestData['car_code']        = getCarCode('car');
-                $requestData['age']             = getCarAge($requestData->plate_date);
-                $requestData['categorey_type']  = $requestData['category_type'];
+        DB::transaction(function() use ($requestData){
+            // 添加订单及订单商品并返回实例
+            $requestData['creater_id']      = Auth::id();
+            $requestData['car_code']        = getCarCode('car');
+            $requestData['age']             = getCarAge($requestData->plate_date);
+            $requestData['categorey_type']  = $requestData['category_type'];
+            //dd($requestData->all());
+            /*dd(Carbon::parse($requestData->plate_date));
+            dd(Carbon::now());*/
+            //unset($requestData['_token']);
+            //unset($requestData['ajax_request_url']);
 
-                //dd($requestData->all());
-                /*dd(Carbon::parse($requestData->plate_date));
-                dd(Carbon::now());*/
-
-                //unset($requestData['_token']);
-                //unset($requestData['ajax_request_url']);
-
-                $car = new Order();
-                $input =  array_replace($requestData->all());
-                $car->fill($input);
-                $car = $car->create($input);
-
-                $follow_info = new CarFollow(); //车源跟进对象
-
-                $create_content = collect(['创建车源'])->toJson();  //定义车源跟进时信息变化情况,即跟进描述
-
-                // 车源跟进信息
-                $follow_info->car_id       = $car->id;
-                $follow_info->user_id      = Auth::id();
-                $follow_info->follow_type  = '1';
-                $follow_info->operate_type = '1';
-                $follow_info->description  = $create_content;
-                $follow_info->prev_update  = $car->updated_at;
-            
-                $follow_info->save();
-
-                $car_obj->scalar = $car;
-                // dd($car_obj);
-                // return $car_obj;
-            });
-            return $car_obj;
-        }         
+            $order = new Order();
+            $input =  array_replace($requestData->all());
+            $order->fill($input);
+            $order = $order->create($input);
+            $order_goods = new orderGoods(); //车源跟进对象
+            $create_content = collect(['创建车源'])->toJson();  //定义车源跟进时信息变化情况,即跟进描述
+            // 车源跟进信息
+            $order_goods->order_id       = $order->id;
+            $order_goods->user_id      = Auth::id();
+            $order_goods->follow_type  = '1';
+            $order_goods->operate_type = '1';
+            $order_goods->description  = $create_content;
+            $order_goods->prev_update  = $order->updated_at;
+        
+            $order_goods->save();
+            $order_obj->scalar = $order;
+            // dd($order_obj);
+            return $order_obj;
+        });       
     }
 
     // 修改车源
@@ -209,10 +180,10 @@ class OrderRepository implements OrderRepositoryContract
         // dd($requestData->all());
         DB::transaction(function() use ($requestData, $id){
 
-            $car         = Order::select($this->select_columns)->findorFail($id); //车源对象
-            $follow_info = new CarFollow(); //车源跟进对象
+            $order         = Order::select($this->select_columns)->findorFail($id); //车源对象
+            $follow_info = new orderFollow(); //车源跟进对象
 
-            $original_content = $car->toArray(); //原有车源信息
+            $original_content = $order->toArray(); //原有车源信息
             $request_content  = $requestData->all(); //提交的车源信息
             
             /*$collection1 = collect(['type'=>2, 'type1'=>7, 'type2'=>3]);

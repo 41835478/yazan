@@ -22,7 +22,7 @@ class GoodsRepository implements GoodsRepositoryContract
     // 根据ID获得车源信息
     public function find($id)
     {
-        return Order::select($this->select_columns)
+        return Goods::select($this->select_columns)
                    ->findOrFail($id);
     }
 
@@ -55,6 +55,11 @@ class GoodsRepository implements GoodsRepositoryContract
                      ->paginate(10);
     }
 
+    /**
+     * 获得系列所属商品
+     * @param  [type] $category_id [description]
+     * @return [type]              [description]
+     */
     public function getChildGoods($category_id){
 
         $query = new Goods();       // 返回的是一个Goods实例,两种方法均可
@@ -62,6 +67,21 @@ class GoodsRepository implements GoodsRepositoryContract
         return $query->select($this->select_columns)
                      ->where('category_id', $category_id)
                      ->get();
+    }
+
+    /**
+     * 获取商品价格
+     * @param  [type] $category_id [description]
+     * @return [type]              [description]
+     */
+    public function getGoodsPrice($goods_id){
+
+        $query = new Goods();       // 返回的是一个Goods实例,两种方法均可
+
+        $goods =  $query->select($this->select_columns)->find($goods_id);
+
+        return $goods->hasManyGoodsPrice;
+        // p($goods->hasManyGoodsPrice->toArray());exit;
     }
 
     // 前端显示车源列表

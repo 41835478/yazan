@@ -15,8 +15,10 @@ class ConfigComposer {
 	 * @return [type]           [description]
 	 */
 	public function compose(View $view) {
-		$agents_level = config('yazan.agents_level'); //获取配置文件代理商配置
+        $agents_level = config('yazan.agents_level'); //获取配置文件代理商配置
+		$exp_company = config('yazan.exp_company'); //获取配置文件代快递公司配置
 
-		$view->with('agents_level', $agents_level);
+        $view->with('agents_level', $agents_level);
+		$view->with('exp_company', $exp_company);
 	}
 }

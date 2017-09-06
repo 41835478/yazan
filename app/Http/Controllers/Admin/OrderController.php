@@ -117,14 +117,25 @@ class OrderController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * 订单存储
+     * 基本信息--商品信息
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
+        // dd($request->all());
+
+        $user_info = $this->user->find($request->user_id);
+
+        // dd($user_info);
+        $request['user_level']     = $user_info->level;
+        $request['user_telephone'] = $user_info->nick_name;
+        $request['user_name']      = $user_info->telephone;
+
+
         dd($request->all());
+        $orders = $this->order->create($request);
     }
 
     /**

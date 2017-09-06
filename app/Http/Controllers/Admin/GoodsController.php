@@ -14,8 +14,8 @@ use App\Http\Controllers\Controller;
 // use App\Repositories\Brand\BrandRepositoryContract;
 use App\Repositories\Category\CategoryRepositoryContract;
 use App\Repositories\Goods\GoodsRepositoryContract;
-/*use App\Repositories\Brand\BrandRepositoryContract;
-use App\Repositories\Car\CarRepositoryContract;
+use App\Repositories\User\UserRepositoryContract;
+/*use App\Repositories\Car\CarRepositoryContract;
 use App\Repositories\Shop\ShopRepositoryContract;
 use App\Http\Requests\Cars\UpdateCarsRequest;
 use App\Http\Requests\Cars\StoreCarsRequest;*/
@@ -24,16 +24,19 @@ class GoodsController extends Controller
 {   
     protected $category;
     protected $goods;
+    protected $user;
 
 
     public function __construct(
 
         CategoryRepositoryContract $category,
-        GoodsRepositoryContract $goods
+        GoodsRepositoryContract $goods,
+        UserRepositoryContract $user
     ) {
     
         $this->category = $category;
         $this->goods = $goods;
+        $this->user = $user;
         // $this->middleware('brand.create', ['only' => ['create']]);
     }
 
@@ -73,9 +76,9 @@ class GoodsController extends Controller
         $category_id = $request->input('category_id');
         
         $goods = $this->goods->getChildGoods($category_id);
-        
-        p($goods->toArray());
-        p($goods->toJson());exit;
+
+        /*p($goods->toArray());
+        p($goods->toJson());exit;*/
 
         if($goods->count() > 0){
 
@@ -89,6 +92,47 @@ class GoodsController extends Controller
             return response()->json(array(
                 'status' => 0,
                 'message'   => '该系列无商品'
+            ));
+        }        
+    }
+
+    //获商品价格(根据代理等级)
+    public function getGoodsPrice(Request $request){
+
+        // p($request->all());exit;
+        $goods_id = $request->input('goods_id');
+        $user_id  = $request->input('user_id');
+        
+        $goods_price = $this->goods->getGoodsPrice($goods_id);
+        $user        = $this->user->find($user_id);
+        $goods_name  = $this->goods->find($goods_id)->name;
+        
+        /*p($goods->toArray());
+        p($goods->toJson());exit;*/
+        $price = '';
+
+        foreach ($goods_price as $key => $value) {
+            // p($value->price_level);
+            if($value->price_level == $user->level){
+                $price = $value->goods_price;
+            }
+        }
+
+        // p($price);exit;
+
+        if(!empty($price)){
+
+            return response()->json(array(
+                'status'  => 1,
+                'price'   => $price,
+                'goods_name' => $goods_name,
+                'message' => '获商品价格成功'
+            ));
+        }else{
+
+            return response()->json(array(
+                'status' => 0,
+                'message'   => '获取价格失败'
             ));
         }        
     }

@@ -212,52 +212,10 @@ class Goods extends Model
       return $this->belongsTo('App\Category', 'cate_id', 'id')->select('id', 'name AS category_name');
     }
 
-    // 定义Shop表与Cars表一对多关系
-    public function belongsToShop(){
-
-      return $this->belongsTo('App\Shop', 'shop_id', 'id')->select('id', 'city_id', 'name AS shop_name', 'address as shop_address', 'telephone as shop_tele');
-    }
-
-    // 定义User表与Cars表一对多关系
-    public function belongsToUser(){
-
-      return $this->belongsTo('App\User', 'creater_id', 'id')->select('id as user_id', 'nick_name', 'telephone as creater_telephone');
-    }
-
-    // 定义customer表与Cars表一对多关系
-    public function belongsToCustomer(){
-
-      return $this->belongsTo('App\Customer', 'customer_id', 'id')->select('id', 'name as customer_name', 'telephone as customer_telephone');
-    }
-
-    // 定义customer表与Area表一对多关系
-    public function belongsToCity(){
-
-      return $this->belongsTo('App\Area', 'plate_city', 'id')->select('id', 'name as city_name');
-    }
-
-    // 定义Car表与car_follow表一对多关系
-    public function hasManyFollow()
+    // 定义goods表与goods_price表一对多关系
+    public function hasManyGoodsPrice()
     {
-        return $this->hasMany('App\CarFollow', 'car_id', 'id')->orderBy('created_at', 'DESC');
+        return $this->hasMany('App\GoodsPrice', 'goods_id', 'id')->select('id', 'goods_id', 'price_level', 'price_status', 'goods_price')->orderBy('price_level', 'DESC');
     }
 
-    // 定义Car表与images表一对多关系
-    public function hasManyImages()
-    {
-        return $this->hasMany('App\Image', 'car_id', 'id');
-    }
-
-    // 定义Car表与images表一对多关系
-    public function hasOneImagesOnFirst()
-    {
-        // return $this->hasOne('App\Image', 'car_id', 'id')->where('is_top', '1');
-        return $this->hasOne('App\Image', 'car_id', 'id')->orderBy('is_top', 'desc');
-    }
-
-    // 定义Car表与chance表一对多关系
-    public function hasManyChances()
-    {
-        return $this->hasMany('App\Chance', 'car_id', 'id');
-    }
 }

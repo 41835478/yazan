@@ -197,6 +197,7 @@ class UserRepository implements UserRepositoryContract {
                    ->join('roles', 'yz_users.level', '=', 'roles.level')
                    ->where('pid', $user_id)
                    ->where('status', '1')
+                   ->orderBy('yz_users.level', 'asc')
                    ->get();
     }
 
@@ -211,6 +212,7 @@ class UserRepository implements UserRepositoryContract {
             ->join('roles', 'yz_users.level', '=', 'roles.level')
             ->where('yz_users.id', $pid->pid)
             ->where('status', '1')
+            ->orderBy('yz_users.level', 'asc')
             ->first();
     }
 
