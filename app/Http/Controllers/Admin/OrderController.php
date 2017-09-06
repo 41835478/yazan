@@ -124,17 +124,18 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+
         // dd($request->all());
+        $order_goods = [];
+        foreach ($request->category_id as $key => $value) {
+            $order_goods[$key]['category_id'] = $value;
+            $order_goods[$key]['goods_id'] = $request->goods_id[$key];
+            $order_goods[$key]['goods_num'] = $request->goods_num[$key];
+            $order_goods[$key]['goods_price'] = $request->goods_price[$key];
+            $order_goods[$key]['goods_name'] = $request->goods_name[$key];
+        }
 
-        $user_info = $this->user->find($request->user_id);
-
-        // dd($user_info);
-        $request['user_level']     = $user_info->level;
-        $request['user_telephone'] = $user_info->nick_name;
-        $request['user_name']      = $user_info->telephone;
-
-
-        dd($request->all());
+        dd($order_goods);
         $orders = $this->order->create($request);
     }
 
