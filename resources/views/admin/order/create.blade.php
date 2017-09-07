@@ -95,8 +95,8 @@
                                         <option  value="0">==选择商品==</option>
                                     </select>
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="goods_num[]" value="1" placeholder="商品数" class="form-control goods_num" />
-                                    <input style="margin-top: 5px;width:10%;display:inline-block;" value="" type="text" disabled placeholder="单价" name="goods_price[]" class="form-control goods_price" />
-                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="total_price[]" disabled placeholder="总价" value="" class="form-control total_price" />
+                                    <input style="margin-top: 5px;width:10%;display:inline-block;" value="" type="text" readonly = "readonly" placeholder="单价" name="goods_price[]" class="form-control goods_price" />
+                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="total_price[]" readonly = "readonly" placeholder="总价" value="" class="form-control total_price" />
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="goods_name[]" placeholder="商品名称" value="" class="form-control goods_name" />
                                     <button style="display: inline-block;" type="button" class="btn btn-warning goods_delete">删除</button>
                                 </div>

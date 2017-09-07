@@ -125,17 +125,35 @@ class OrderController extends Controller
     public function store(Request $request)
     {
 
-        dd($request->all());
+        // dd($request->all());
         $order_goods = [];
         foreach ($request->category_id as $key => $value) {
-            $order_goods[$key]['category_id'] = $value;
-            $order_goods[$key]['goods_id'] = $request->goods_id[$key];
-            $order_goods[$key]['goods_num'] = $request->goods_num[$key];
-            $order_goods[$key]['goods_price'] = $request->goods_price[$key];
-            $order_goods[$key]['goods_name'] = $request->goods_name[$key];
+            // $order_goods[$key]['category_id']  = $value;
+            $order_goods[$key]['goods_id']     = $request->goods_id[$key];
+            $order_goods[$key]['goods_num']    = $request->goods_num[$key];
+            $order_goods[$key]['goods_price']  = $request->goods_price[$key];
+            $order_goods[$key]['goods_name']   = $request->goods_name[$key];
+            $order_goods[$key]['price_level']  = $request->level;
+            $order_goods[$key]['total_price']  = ($request->goods_num[$key] * $request->goods_price[$key]);
         }
 
-        dd($order_goods);
+        $goods_num   = 0;
+        $total_price = 0;
+        
+        foreach ($order_goods as $key => $value) {
+            $goods_num   = $goods_num + $value['goods_num'];
+            $total_price = $total_price + ($value['goods_price'] * $value['goods_num']);
+        }
+
+        $request['type_num']    = count($order_goods);
+        $request['goods_num']   = $goods_num;
+        $request['total_price'] = $total_price;
+        $request['order_goods'] = $order_goods;
+
+        /*p($goods_num);
+        p($total_price);
+        p($order_goods);
+        dd($request->all());*/
         $orders = $this->order->create($request);
     }
 

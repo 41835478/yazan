@@ -138,15 +138,15 @@ class OrderRepository implements OrderRepositoryContract
     // 创建订单
     public function create($requestData)
     {   
-        p('hehe');
-        dd($requestData->all());      
+        /*p('hehe');
+        dd($requestData->all());*/      
 
         DB::transaction(function() use ($requestData){
             // 添加订单及订单商品并返回实例
-            $requestData['creater_id']      = Auth::id();
-            $requestData['car_code']        = getCarCode('car');
-            $requestData['age']             = getCarAge($requestData->plate_date);
-            $requestData['categorey_type']  = $requestData['category_type'];
+            $requestData['creater_id']  = Auth::id();
+            $requestData['user_level']  = $requestData->level;
+            $requestData['user_name']   = $requestData->nick_name;
+
             //dd($requestData->all());
             /*dd(Carbon::parse($requestData->plate_date));
             dd(Carbon::now());*/
@@ -156,21 +156,29 @@ class OrderRepository implements OrderRepositoryContract
             $order = new Order();
             $input =  array_replace($requestData->all());
             $order->fill($input);
+            // dd($order);
             $order = $order->create($input);
-            $order_goods = new orderGoods(); //车源跟进对象
-            $create_content = collect(['创建车源'])->toJson();  //定义车源跟进时信息变化情况,即跟进描述
-            // 车源跟进信息
-            $order_goods->order_id       = $order->id;
-            $order_goods->user_id      = Auth::id();
-            $order_goods->follow_type  = '1';
-            $order_goods->operate_type = '1';
-            $order_goods->description  = $create_content;
-            $order_goods->prev_update  = $order->updated_at;
-        
-            $order_goods->save();
-            $order_obj->scalar = $order;
-            // dd($order_obj);
-            return $order_obj;
+
+            // dd($order);
+            $order_goods = new orderGoods(); //订单商品信息
+            /*foreach ($requestData['order_goods'] as $key => $value) {
+                // $value['order_id'] = $order->id;
+                $requestData['order_goods'][$key]['order_id']   = $order->id;
+                $requestData['order_goods'][$key]['created_at'] = Carbon::now();
+                $requestData['order_goods'][$key]['updated_at'] = Carbon::now();
+            }*/
+            $order_goods_input = $requestData['order_goods'];
+            
+            foreach ($order_goods_input as $key => $value) {
+                $order_goods_input[$key]['order_id'] = $order->id;
+                $order_goods_input[$key]['created_at'] = Carbon::now()->toDateTimeString();
+                $order_goods_input[$key]['updated_at'] = Carbon::now()->toDateTimeString();
+            }
+
+            // dd($order_goods_input);
+            $order_goods->insert($order_goods_input);
+
+            return $order;
         });       
     }
 
