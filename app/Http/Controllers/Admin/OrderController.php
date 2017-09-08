@@ -165,36 +165,16 @@ class OrderController extends Controller
         $order = $this->order->find($id);
         $order_goods = $order->hasManyOrderGoods;
         // dd($order);
-        dd($order_goods);
-        $area = Area::withTrashed()
-                    ->where('pid', '1')
-                    ->where('status', '1')
-                    ->get();
-        $citys = Area::withTrashed()
-                     ->where('pid', $order->plate_provence)
-                     ->where('status', '1')
-                    ->get();
-        /*if (Gate::denies('update', $order)) {
-            //不允许编辑,基于Policy
-            dd('no no');
-        }*/
+        // dd($order_goods);
 
-        foreach ($area as $key => $value) {
-            if($order->plate_provence == $value->id){
-                $provence =  $value;
-            }
-        }
-
-        foreach ($citys as $key => $value) {
-            if($order->plate_city == $value->id){
-                $city =  $value;
-            }
-        }
-        // dd($order);
-        // dd($area);
-        // dd($city);
+        //所有系列
+        $all_series = $this->category->getAllSeries();
+        // dd($all_series);
+        //商户列表
+        $all_merchant  = $this->user->getAllMerchant();
+        dd([$all_series,$all_merchant]);
         return view('admin.order.edit', compact(
-            'order','provence','city','area'
+            'order', 'order_goods', 'all_series','all_merchant'
         ));
     }
 
