@@ -15,8 +15,8 @@
     <div class="pull-left">
         <ol class="breadcrumb">
             <li><a href="{{route('admin.index')}}">首页</a></li>
-            <li><a href="{{route('user.index')}}">用户列表</a></li>
-            <li class="active">修改用户</li>
+            <li><a href="{{route('order.index')}}">用户列表</a></li>
+            <li class="active">修改订单</li>
         </ol>
     </div>
 </section>
@@ -31,21 +31,21 @@
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-body">
-                    <form action="{{route('user.update', ['user'=>$user->id])}}" class="form-horizontal" method="post">
+                    <form action="{{route('order.update', ['order'=>$order->id])}}" class="form-horizontal" method="post">
                     {!! csrf_field() !!}
                     {{ method_field('PUT') }}
                         <!-- 用户名 -->
                         <!-- <div class="form-group">
                             <label class="col-md-1 control-label"><font style="color:red;">*</font>用户名</label>
                             <div class="col-md-4">
-                                <input type="text" name="name" required placeholder="用户名" class="form-control" value="{{$user->name}}"/>
+                                <input type="text" name="name" required placeholder="用户名" class="form-control" value="{{$order->name}}"/>
                             </div>
                         </div> -->
                         <!-- 昵称 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label"><font style="color:red;">*</font>昵称</label>
                             <div class="col-md-4">
-                                <input type="text" required name="nick_name" placeholder="用户昵称" class="form-control" value="{{$user->nick_name}}"/>
+                                <input type="text" required name="nick_name" placeholder="用户昵称" class="form-control" value="{{$order->nick_name}}"/>
                             </div>
                         </div>
                         
@@ -53,28 +53,28 @@
                         <div class="form-group">
                             <label class="col-md-1 control-label"><font style="color:red;">*</font>联系电话</label>
                             <div class="col-md-4">
-                                <input type="text" required name="telephone" placeholder="手机号" class="form-control" value="{{$user->telephone}}" />
+                                <input type="text" required name="telephone" placeholder="手机号" class="form-control" value="{{$order->telephone}}" />
                             </div>
                         </div>
                         <!-- 微信号 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label"><font style="color:red;">*</font>微信号</label>
                             <div class="col-md-4">
-                                <input type="text" required name="wx_number" placeholder="微信号" class="form-control" value="{{$user->wx_number}}" />
+                                <input type="text" required name="wx_number" placeholder="微信号" class="form-control" value="{{$order->wx_number}}" />
                             </div>
                         </div>
                         <!-- 邮箱 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label"><font style="color:red;">*</font>常用邮箱</label>
                             <div class="col-md-4">
-                                <input type="email" required name="email" placeholder="常用邮箱" class="form-control" value="{{$user->email}}" />
+                                <input type="email" required name="email" placeholder="常用邮箱" class="form-control" value="{{$order->email}}" />
                             </div>
                         </div>
                         <!-- 备注 -->
                         <div class="form-group">
                             <label class="col-md-1 control-label">备注</label>
                             <div class="col-md-4">
-                            <textarea id="remark" name="remark" required style="width:400px;">{{$user->remark}}</textarea>
+                            <textarea id="remark" name="remark" required style="width:400px;">{{$order->remark}}</textarea>
                             </div>
                         </div>
 
@@ -97,8 +97,8 @@
 <script src="{{URL::asset('yazan/assets/plugins/bootstrap-validator/js/bootstrapValidator.min.js')}}"></script>
 <script src="{{URL::asset('yazan/global/plugins/select2/select2.min.js')}}"></script>
 <script src="{{URL::asset('yazan/assets/js/form-validation.js')}}"></script>
-<!-- 引入user模块js -->
-<!-- <script src="{{URL::asset('yazan/js/user.js')}}"></script> -->
+<!-- 引入order模块js -->
+<script src="{{URL::asset('yazan/js/order.js')}}"></script>
 <script>
     $(document).ready(function(){
         

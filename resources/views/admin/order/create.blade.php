@@ -78,7 +78,7 @@
                             <div class="form-group last">
                                 <label class="control-label col-md-1">快递单号: </label>
                                 <div class="col-md-4">
-                                    <input type="text" name="order_code" placeholder="快递单号" class="form-control" />
+                                    <input type="text" name="exp_code" placeholder="快递单号" class="form-control" />
                                 </div>
                             </div>
                             

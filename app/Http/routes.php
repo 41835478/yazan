@@ -36,6 +36,8 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::get('/', 'HomeController@index')->name('admin.index');
 	//商户管理index
 	Route::match(['get', 'post'], 'user/index', 'UserController@index')->name('user.index');
+	//订单管理index
+	Route::match(['get', 'post'], 'order/index', 'OrderController@index')->name('order.index');
 	//获得用户下级代理
 	Route::post('user/getChildUser', 'UserController@getChildUser')->name('user.getChildUser');
 	//获得用户代理树

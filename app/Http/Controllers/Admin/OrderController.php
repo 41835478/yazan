@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use Gate;
 use DB;
+use Session;
 use App\Area;
 use App\Image;
 use App\Http\Requests;
@@ -53,6 +54,7 @@ class OrderController extends Controller
         // dd($select_conditions);
         $orders = $this->order->getAllorders($request);
         // dd(lastSql());
+        // dd($orders[0]->belongsToCreater->nick_name);
         //$shops = $this->shop->getShopsInProvence('10');
 
         // dd($shops);
@@ -67,32 +69,6 @@ class OrderController extends Controller
         
         /*return view('admin.order.index', compact('orders','order_status_current', 'all_top_brands', 'select_conditions','shops'));*/
         return view('admin.order.index', compact('orders'));
-    }
-
-    /**
-     * Display a listing of the resource.
-     * 我的车源列表
-     * @return \Illuminate\Http\Response
-     */
-    public function orderself(Request $request)
-    {
-        
-        // dd($request->method());
-
-        if($request->method() == 'POST'){
-            //初始搜索条件
-            $select_conditions  = $request->all();
-        }else{
-            $select_conditions['order_status'] = '1';
-            $request['order_status'] = '1';
-        }
-
-        $all_top_brands = $this->brands->getChildBrand(0);
-        $orders = $this->order->getAllorders($request, true);
-        
-        // dd($select_conditions['order_status']);
-
-        return view('admin.order.self', compact('orders', 'select_conditions','all_top_brands'));
     }
 
     /**
@@ -128,7 +104,7 @@ class OrderController extends Controller
         // dd($request->all());
         $order_goods = [];
         foreach ($request->category_id as $key => $value) {
-            // $order_goods[$key]['category_id']  = $value;
+            $order_goods[$key]['category_id']  = $value;
             $order_goods[$key]['goods_id']     = $request->goods_id[$key];
             $order_goods[$key]['goods_num']    = $request->goods_num[$key];
             $order_goods[$key]['goods_price']  = $request->goods_price[$key];
@@ -155,21 +131,10 @@ class OrderController extends Controller
         p($order_goods);
         dd($request->all());*/
         $orders = $this->order->create($request);
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     * ajax存储车源
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function ajaxAdd(StoreordersRequest $orderRequest)
-    {
-        // dd($orderRequest->all());
-        $orders = $this->order->create($orderRequest);
-        /*p('hehe');
-        dd($order);*/
-        return response()->json($orders); 
+        Session::flash('sucess', '添加订单成功');
+
+        return redirect()->route('order.index')->withInput();
     }
 
     /**
@@ -180,15 +145,13 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $orders = $this->order->find($id);
+        $orders      = $this->order->find($id);
+        $order_goods = $orders->hasManyOrderGoods;
 
-        $gearbox        = config('tcl.gearbox'); //获取配置文件中变速箱类别
-        $out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
-        $capacity       = config('tcl.capacity'); //获取配置文件排量
-        $category_type  = config('tcl.category_type'); //获取配置文件中车型类别
+        // dd($orders);
+        // dd($orders->hasManyOrderGoods[0]->belongsToCategory->name);
 
-        // dd($orders->hasManyImages()->get());
-        return view('admin.order.show', compact('orders', 'gearbox', 'out_color', 'capacity', 'category_type'));
+        return view('admin.order.show', compact('orders', 'order_goods'));
     }
 
     /**
@@ -199,37 +162,39 @@ class OrderController extends Controller
      */
     public function edit($id)
     {
-        $orders = $this->order->find($id);
-
+        $order = $this->order->find($id);
+        $order_goods = $order->hasManyOrderGoods;
+        // dd($order);
+        dd($order_goods);
         $area = Area::withTrashed()
                     ->where('pid', '1')
                     ->where('status', '1')
                     ->get();
         $citys = Area::withTrashed()
-                     ->where('pid', $orders->plate_provence)
+                     ->where('pid', $order->plate_provence)
                      ->where('status', '1')
                     ->get();
-        /*if (Gate::denies('update', $orders)) {
+        /*if (Gate::denies('update', $order)) {
             //不允许编辑,基于Policy
             dd('no no');
         }*/
 
         foreach ($area as $key => $value) {
-            if($orders->plate_provence == $value->id){
+            if($order->plate_provence == $value->id){
                 $provence =  $value;
             }
         }
 
         foreach ($citys as $key => $value) {
-            if($orders->plate_city == $value->id){
+            if($order->plate_city == $value->id){
                 $city =  $value;
             }
         }
-        // dd($orders);
+        // dd($order);
         // dd($area);
         // dd($city);
         return view('admin.order.edit', compact(
-            'orders','provence','city','area'
+            'order','provence','city','area'
         ));
     }
 
@@ -248,13 +213,16 @@ class OrderController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
+     * 删除订单
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        // dd($id);
+        $this->order->destroy($id);
+
+        return redirect()->route('order.index');
     }
 
     /**

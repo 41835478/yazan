@@ -10,6 +10,7 @@ use App\Repositories\Role\RoleRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use App\User;
 use Auth;
+use Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Validator;

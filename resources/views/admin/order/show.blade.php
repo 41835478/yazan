@@ -56,8 +56,8 @@
         <div class="pull-left">
             <ol class="breadcrumb">
                 <li><a href="{{route('admin.index')}}">首页</a></li>
-                <li><a href="{{route('user.index')}}">用户列表</a></li>
-                <li class="active">用户详情</li>
+                <li><a href="{{route('order.index')}}">订单列表</a></li>
+                <li class="active">订单详情</li>
             </ol>
         </div>
     </section>
@@ -70,42 +70,72 @@
 <div class="row-fluid">
 	<div class="box span12" style="padding:10px;">
 
-		<p class="title">[用户]:{{$user->nick_name}}</p>
+		<p class="title">[订单客户]:{{$orders->user_name}}({{$agents_level[$orders->user_level]}})</p>
 
 		<div class="col-xs-12">
 			<p class="detial">
 				
 				<span>
-					<i>电话:</i>
-					{{$user->telephone}}
+					<i>订单编号:</i>
+					{{$orders->order_code}}
 				</span>
 				<span>
-					<i>地址:</i>
-					{{$user->address}}
+					<i>快递单号:</i>
+					{{$orders->exp_code}}
 				</span>
 				<span>
-					<i>角色:</i>
-					{{$user->hasManyRoles[0]->name or ''}}
+					<i>订单总价:</i>
+					{{$orders->total_price}}元
 				</span>
 			</p>
 		</div>
 		<div class="col-xs-12">
 			<p class="detial">
 				<span>
-					<i>邮箱:</i>
-					{{$user->email}}
+					<i>用户电话:</i>
+					{{$orders->user_telephone}}
 				</span>
 				<span>
-					<i>微信:</i>
-					{{$user->wx_number}}
+					<i>创建者:</i>
+					{{$orders->belongsToCreater->nick_name}}
 				</span>
 				<span>
 					<i>备注:</i>		
-					{{$user->remark}}			
+					{{$orders->remark}}			
 				</span>
 			</p>
 		</div>
 	</div>	
-</div>   
+</div> 
+<div class="row-fluid">
+	<div class="box span12" style="padding:10px;">
+
+		<p class="title">[商品信息]</p>
+		<div class="box-content">
+			<table  class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>系列</th>
+						<th>商品</th>
+						<th>商品单价</th>
+						<th>商品数</th>
+						<th>商品总价</th>
+					</tr>
+				</thead> 
+				<tbody>
+					@foreach ($order_goods as $goods)
+    				<tr>
+						<td>{{$goods->belongsToCategory->name}}</td>
+						<td>{{$goods->goods_name}}</td>
+						<td>{{$goods->goods_price}}元</td>
+						<td>{{$goods->goods_num}}</td>							
+						<td>{{$goods->total_price}}元</td>
+					</tr>
+					@endforeach							
+				</tbody>
+			</table> 		
+		</div>		
+	</div>	
+</div>  
 </section>
 @endsection

@@ -60,27 +60,9 @@ class Category extends Model
       return $this->belongsTo('App\Brand', 'brand_id', 'id')->select('id','pid', 'name AS brand_name');
     }
 
-    // 定义Category表与Cars表一对多关系
-    public function hasManyCars(){
+    // 定义Category表与Order_goods表一对多关系
+    public function hasManyOrderGoods(){
 
-      return $this->hasMany('App\Cars', 'cate_id', 'id');
-    }
-
-    // 定义Category表与Want表一对多关系
-    public function hasManyWants(){
-
-      return $this->hasMany('App\Want', 'cate_id', 'id');
-    }
-
-    // 定义Category表与customer_car表一对多关系
-    public function hasManyCustomerCars(){
-
-      return $this->hasMany('App\CustomerCar', 'category_id', 'id');
-    }
-
-    // 定义Category表与insurance表一对多关系
-    public function hasManyLoans(){
-
-      return $this->hasMany('App\Loan', 'category_id', 'id');
+      return $this->hasMany('App\OrderGoods', 'category_id', 'id');
     }
 }

@@ -148,19 +148,13 @@
 	/**
 	 * 获得车源、销售机会、求购,贷款编号
 	 */
-	function getCarCode($type = 'car')
+	function getOrderCode($type = 'order')
 	{
 		// 车源编号为Unix时间戳后9位
-		if($type == 'car'){
-			$code = 'C-';
-		}else if($type == 'want'){
-			$code = 'Q-';
-		}else if($type == 'chance'){
-			$code = 'J-';
-		}elseif($type == 'loan'){
+		if($type == 'order'){
 			$code = 'D-';
 		}elseif($type == 'insurance'){
-			$code = 'B-';
+			$code = 'O-';
 		}
 		
 

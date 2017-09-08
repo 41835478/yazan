@@ -229,86 +229,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->belongsToMany('App\Role', 'role_user', 'user_id', 'role_id');
 	}
 
-	// 定义User表与Shop表一对一关系
-	public function belongsToShop() {
+	// 定义User表与order表一对多关系
+	public function hasManyUser() {
 
-		// return $this->hasOne('App\Shop', 'user_id', 'id')->select('user_id','name', 'address');
-		return $this->belongsTo('App\Shop', 'shop_id', 'id');
+		return $this->hasMany('App\Order', 'user_id', 'id');
 	}
 
-	// 定义User表与Notice表一对多关系
-	public function hasManyNotice() {
+	// 定义User表与order表一对多关系
+	public function hasManyCreater() {
 
-		return $this->hasMany('App\Notice', 'user_id', 'id');
-	}
-
-	// 定义User表与Brand表一对多关系
-	public function hasManyBrand() {
-
-		return $this->hasMany('App\Brand', 'creater_id', 'id');
-	}
-
-	// 定义User表与Customer表一对多关系
-	public function hasManyCustomer() {
-
-		return $this->hasMany('App\Customer', 'creater_id', 'id');
-	}
-
-	// 定义User表与Cars表一对多关系
-	public function hasManyCars() {
-
-		return $this->hasMany('App\Cars', 'creater_id', 'id');
-	}
-
-	// 定义User表与Car_follow表一对多关系
-	public function hasManyCarFollow() {
-
-		return $this->hasMany('App\CarFollow', 'user_id', 'id');
-	}
-
-	// 定义User表与Want表一对多关系
-	public function hasManyWants() {
-
-		return $this->hasMany('App\Want', 'creater_id', 'id');
-	}
-
-	// 定义User表与want_follow表一对多关系
-	public function hasManyWantFollow() {
-
-		return $this->hasMany('App\WantFollow', 'user_id', 'id');
-	}
-
-	// 定义User表与Chance表一对多关系
-	public function hasManyChances() {
-
-		return $this->hasMany('App\Chance', 'creater', 'id');
-	}
-
-	// 定义User表与Chance表一对多关系(求购信息)
-	public function hasManyChancesOnWant() {
-
-		return $this->hasMany('App\Chance', 'want_customer_id', 'id');
-	}
-
-	// 定义User表与Chance表一对多关系(车源信息)
-	public function hasManyChancesOnCar() {
-
-		return $this->hasMany('App\Chance', 'car_customer_id', 'id');
-	}
-
-	// 定义User表与plan表一对多关系
-	public function hasManyPlans() {
-
-		return $this->hasMany('App\Plan', 'user_id', 'id');
-	}
-
-	// 定义User表与book表一对多关系
-	public function hasManyTranscations() {
-		return $this->hasMany('App\Transcation', 'user_id', 'id');
-	}
-
-	// 定义User表与Insurance表一对多关系
-	public function hasManyLoans() {
-		return $this->hasMany('App\Loan', 'user_id', 'id');
+		return $this->hasMany('App\Order', 'creater_id', 'id');
 	}
 }

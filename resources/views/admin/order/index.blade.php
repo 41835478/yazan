@@ -37,10 +37,14 @@
                     <table id="datatables" class="table table-striped table-no-border">
                         <thead class="bg-default">
                             <tr>
-                                <th>姓名</th>
-                                <th>角色</th>
+                                <th>编号</th>
+                                <th>用户</th>
+                                <th>级别</th>
                                 <th>电话</th>
-                                <th>创建日期</th>
+                                <th>商品数</th>
+                                <th>总价</th>
+                                <th>创建者</th>
+                                <th>下单日期</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -49,20 +53,24 @@
                         <tr>
                             <td>
                                 <a target="_blank" href="{{route('order.show', ['order'=>$order->id])}}">
-                                    
+                                    {{$order->order_code}}
                                 </a>
                             </td>
-                            <td></td>                           
-                            <td></td>                           
+                            <td>{{$order->belongsToUser->nick_name}}</td>                           
+                            <td>{{$agents_level[$order->user_level]}}</td>                           
+                            <td>{{$order->user_telephone}}</td>                           
+                            <td>{{$order->goods_num}}</td>                           
+                            <td>{{$order->total_price}}</td> 
+                            <td>{{$order->belongsToCreater->nick_name}}</td>                          
                             <td>{{substr($order->created_at, 0 ,10)}}</td>      
                             <td class="center">
+                                <a class="btn btn-success" href="{{route('order.show', ['order'=>$order->id])}}">
+                                    <i class="icon-edit icon-white"></i> 查看
+                                </a>
                                 <a class="btn btn-warning" href="{{route('order.edit', ['order'=>$order->id])}}">
                                     <i class="icon-edit icon-white"></i> 编辑
                                 </a>
                                 <input type="hidden" name="order_id" value="{{$order->id}}">
-                                <!-- <a class="btn btn-success" href="{{route('order.address', ['order'=>$order->id])}}">
-                                    <i class="icon-edit icon-white"></i> 地址管理
-                                </a> -->
                                 <span>
                                 <form action="{{route('order.destroy', ['order'=>$order->id])}}" method="post" style="display: inherit;margin:0px;">
                                     {{ csrf_field() }}

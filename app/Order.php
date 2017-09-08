@@ -22,7 +22,7 @@ class Order extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['order_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'remark'];
+    protected $fillable = ['order_code', 'exp_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'remark', 'status'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -72,105 +72,19 @@ class Order extends Model
             }           
         }*/
 
-        if(!empty($requestData['car_code'])){  //有车源编码选择
+        if(!empty($requestData['order_code'])){  //有订单号
 
-            $query = $query->where('car_code', $requestData['car_code']);
+            $query = $query->where('order_code', $requestData['order_code']);
 
             return $query;
         }
 
-        //if(isset($requestData['car_status']) && $requestData['car_status'] != ''){
-        if(!empty($requestData['car_status'])){
+        if(!empty($requestData['status'])){
             //有车源状态选项
-            if($requestData['car_status'] == '1'){
-
-                $query = $query->where(function($query) use ($requestData){
-
-                    $query = $query->where('car_status', $requestData['car_status']);
-                    $query = $query->orWhere('car_status', '6');
-                });
-            }else{
-
-                $query = $query->where('car_status', $requestData['car_status']);
-            }
-        }/*else{
-
-            // $query = $query->whereIn('car_status', ['1', '2', '3', '4', '5', '6']);
-            if(!$is_self){
-                //非自身车源
-               $query = $query->where('car_status', '1');
-            }        
-        } */ 
-
-        if(!empty($requestData['gearbox'])){
-            // dd($requestData['gearbox']);
-            $query = $query->where(function($query) use ($requestData){
-                foreach ($requestData['gearbox'] as $key => $gear) {
-                    $query = $query->orWhere('gearbox', $gear);
-                }                       
-            });
-        }
-
-        if(!empty($requestData['shop_id'])){
-
-            $query = $query->where('shop_id', $requestData['shop_id']);
-        }
-
-        if(!empty($requestData['is_appraiser'])){
-
-            $query = $query->where('is_appraiser', $requestData['is_appraiser']);
-        }
-
-        if(!empty($requestData['sale_number'])){
-
-            $query = $query->where('sale_number', $requestData['sale_number']);
-        }
-
-        if(!empty($requestData['out_color'])){
-
-            $query = $query->where('out_color', $requestData['out_color']);
-        }
-
-        if(!empty($requestData['capacity'])){
-
-            $query = $query->where('capacity', $requestData['capacity']);
-        }
-
-        if(!empty($requestData['category_type'])){
-
-            $query = $query->where('categorey_type', $requestData['category_type']);
-        } 
-
-        if(!empty($requestData['category_id'])){
-
-            $query = $query->where('category_id', $requestData['category_id']);
+            $query = $query->where('status', $requestData['status']);
         }else{
-
-            if(!empty($requestData['car_factory'])){
-               $query = $query->where('car_factory', $requestData['car_factory']); 
-            }else{
-
-                if(!empty($requestData['brand_id'])){
-                    $query = $query->where('brand_id', $requestData['brand_id']);
-                }
-           }
-        } 
-
-        if(!empty($requestData['begin_mileage'])){
-            $query = $query->where('mileage', '>=', $requestData['begin_mileage']);
-        }
-        
-        if(!empty($requestData['end_mileage'])){
-            $query = $query->where('mileage', '<=', $requestData['end_mileage']);
-        }
-
-        if(!empty($requestData['top_price'])){
-            $query = $query->where('top_price', '<=', $requestData['top_price']);
-        }
-        
-        if(!empty($requestData['bottom_price'])){
-            $query = $query->where('top_price', '>=', $requestData['bottom_price']);
-        }
+            $query = $query->where('status', '1');
+        }    
 
         if(!empty($requestData['end_date'])){
             $query = $query->where('created_at', '<=', $requestData['end_date']);
@@ -179,11 +93,7 @@ class Order extends Model
         if(!empty($requestData['begin_date'])){
             $query = $query->where('created_at', '>=', $requestData['begin_date']);
         } 
-
-        if(!empty($requestData['need_follow'])){
-            $query = $query->where('updated_at', '<=', $requestData['need_follow']);
-        }   
-
+ 
         return $query;
     }
 
@@ -206,58 +116,21 @@ class Order extends Model
         return $query;
     }
 
-    // 定义Category表与Cars表一对多关系
-    public function belongsToCategory(){
-
-      return $this->belongsTo('App\Category', 'cate_id', 'id')->select('id', 'name AS category_name');
-    }
-
-    // 定义Shop表与Cars表一对多关系
-    public function belongsToShop(){
-
-      return $this->belongsTo('App\Shop', 'shop_id', 'id')->select('id', 'city_id', 'name AS shop_name', 'address as shop_address', 'telephone as shop_tele');
-    }
-
-    // 定义User表与Cars表一对多关系
-    public function belongsToUser(){
+    // 定义User表与order表一对多关系
+    public function belongsToCreater(){
 
       return $this->belongsTo('App\User', 'creater_id', 'id')->select('id as user_id', 'nick_name', 'telephone as creater_telephone');
     }
 
-    // 定义customer表与Cars表一对多关系
-    public function belongsToCustomer(){
+    // 定义User表与order表一对多关系
+    public function belongsToUser(){
 
-      return $this->belongsTo('App\Customer', 'customer_id', 'id')->select('id', 'name as customer_name', 'telephone as customer_telephone');
+      return $this->belongsTo('App\User', 'user_id', 'id')->select('id as user_id', 'nick_name', 'telephone as user_telephone');
     }
-
-    // 定义customer表与Area表一对多关系
-    public function belongsToCity(){
-
-      return $this->belongsTo('App\Area', 'plate_city', 'id')->select('id', 'name as city_name');
-    }
-
-    // 定义Car表与car_follow表一对多关系
-    public function hasManyFollow()
+ 
+    // 定义order表与order_goods表一对多关系
+    public function hasManyOrderGoods()
     {
-        return $this->hasMany('App\CarFollow', 'car_id', 'id')->orderBy('created_at', 'DESC');
-    }
-
-    // 定义Car表与images表一对多关系
-    public function hasManyImages()
-    {
-        return $this->hasMany('App\Image', 'car_id', 'id');
-    }
-
-    // 定义Car表与images表一对多关系
-    public function hasOneImagesOnFirst()
-    {
-        // return $this->hasOne('App\Image', 'car_id', 'id')->where('is_top', '1');
-        return $this->hasOne('App\Image', 'car_id', 'id')->orderBy('is_top', 'desc');
-    }
-
-    // 定义Car表与chance表一对多关系
-    public function hasManyChances()
-    {
-        return $this->hasMany('App\Chance', 'car_id', 'id');
+        return $this->hasMany('App\OrderGoods', 'order_id', 'id');
     }
 }
