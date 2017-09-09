@@ -40,10 +40,11 @@
                             <div class="form-group">
                                 <label class="control-label col-md-1">商户选择: <span class="required">*</span></label>
                                 <div class="col-md-2">
-                                    <select class="form-control select2" name="user_id" id="user_id" style="width:100%;display: inline-block;">
-                                        <option  value="0">--请选择商户--</option>
+                                    <select class="form-control" name="user_id" id="user_id" style="width:100%;display: inline-block;">
                                         @foreach($all_merchant as $key=>$value)
-                                        <option @if(($order->user_id) == $value->id) selected @endif value="{{$value->id}}" >{{$value->nick_name}}</option>
+                                            @if(($order->user_id) == $value->id)
+                                                <option selected value="{{$value->id}}" >{{$value->nick_name}}</option>
+                                            @endif
                                         @endforeach 
                                     </select>
                                 </div>
