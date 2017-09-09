@@ -187,8 +187,9 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateordersRequest $orderRequest, $id)
-    {
+    public function update(Request $orderRequest, $id)
+    {   
+        dd($orderRequest->all());
         $this->order->update($orderRequest, $id);
         return redirect()->route('admin.order.self')->withInput();
     }
