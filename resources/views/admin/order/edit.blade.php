@@ -101,6 +101,7 @@
                                     <input style="margin-top: 5px;width:10%;display:inline-block;" value="{{$goods->goods_price}}" type="text" readonly = "readonly" placeholder="单价" name="goods_price[]" class="form-control goods_price" />
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="total_price[]" readonly = "readonly" placeholder="总价" value="{{$goods->total_price}}" class="form-control total_price" />
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="goods_name[]" placeholder="商品名称" value="{{$goods->goods_name}}" class="form-control goods_name" />
+                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="order_goods_id[]" placeholder="订单商品id" value="{{$goods->id}}" class="form-control goods_name" />
                                     <button style="display: inline-block;" type="button" class="btn btn-warning goods_delete">删除</button>
                                 </div>                               
                             </div>
