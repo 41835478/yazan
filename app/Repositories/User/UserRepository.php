@@ -294,9 +294,9 @@ class UserRepository implements UserRepositoryContract {
     //判断该品牌是否为顶级品牌
     protected function isTopUser($user_id) {
 
-        $pid = User::select('pid')->find($user_id);
+        $pid = User::select('id','pid')->find($user_id);
         /*p(lastSql());
-        dd($pid->pid);*/
+        dd($pid);*/
         if ($pid->pid == 0) {
             return true;
         } else {

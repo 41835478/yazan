@@ -60,9 +60,15 @@ class Category extends Model
       return $this->belongsTo('App\Brand', 'brand_id', 'id')->select('id','pid', 'name AS brand_name');
     }
 
-    // 定义Category表与Order_goods表一对多关系
+    // 定义Category表与OrderGoods表一对多关系
     public function hasManyOrderGoods(){
 
       return $this->hasMany('App\OrderGoods', 'category_id', 'id');
+    }
+
+    // 定义Order_goods表与Category表一对多关系
+    public function belongsToOrderGoods(){
+
+      return $this->belongsTo('App\OrderGoods', 'category_id', 'id');
     }
 }

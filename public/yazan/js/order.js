@@ -1,11 +1,16 @@
-// 添加车型级联菜单js
+// 添加用户级联菜单js
 $(document).ready(function(){
-
+	// alert('xixi');
 	//用户代理等级ajax
-	$('.goods_category')[0].selectedIndex = 0; 
-	$('.goods_list').first().children('div').children('input.goods_num').val('1');
-	$('.goods_list').first().children('div').children('input.goods_price').val('0');
-	$('.goods_list').first().children('div').children('input.total_price').val('0');
+	var is_update = $('#is_update').val();
+
+	if(is_update != '1'){
+		$('.goods_category')[0].selectedIndex = 0; 
+		$('.goods_list').first().children('div').children('input.goods_num').val('1');
+		$('.goods_list').first().children('div').children('input.goods_price').val('0');
+		$('.goods_list').first().children('div').children('input.total_price').val('0');
+	}
+	
 	//获得一级代理列表
 	$('#user_id').change(function(){
 

@@ -165,14 +165,16 @@ class OrderController extends Controller
         $order = $this->order->find($id);
         $order_goods = $order->hasManyOrderGoods;
         // dd($order);
-        // dd($order_goods);
+        $hsd = $order_goods[0]->hasManyGoods;
+        // dd(lastSql());
+        // dd($order_goods[0]->hasManyGoods);
 
         //所有系列
         $all_series = $this->category->getAllSeries();
         // dd($all_series);
         //商户列表
         $all_merchant  = $this->user->getAllMerchant();
-        dd([$all_series,$all_merchant]);
+        // dd([$all_series,$all_merchant]);
         return view('admin.order.edit', compact(
             'order', 'order_goods', 'all_series','all_merchant'
         ));

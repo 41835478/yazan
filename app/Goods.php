@@ -218,4 +218,10 @@ class Goods extends Model
         return $this->hasMany('App\GoodsPrice', 'goods_id', 'id')->select('id', 'goods_id', 'price_level', 'price_status', 'goods_price')->orderBy('price_level', 'DESC');
     }
 
+    // 定义OrderGoods表与Cars表一对多关系
+    public function belongsToOrderGoods(){
+
+      return $this->belongsTo('App\OrderGoods', 'category_id', 'id');
+    }
+
 }

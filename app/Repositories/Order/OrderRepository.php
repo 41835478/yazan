@@ -18,7 +18,7 @@ use Debugbar;
 class OrderRepository implements OrderRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['id','order_code', 'exp_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'created_at', 'remark', 'status'];
+    protected $select_columns = ['id','order_code', 'exp_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'created_at', 'remark', 'status','address'];
 
     // 根据ID获得车源信息
     public function find($id)

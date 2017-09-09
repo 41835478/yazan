@@ -9,6 +9,7 @@
         input.shaddress{
             margin-bottom:5px;
         }
+
     </style>
 @endsection
 
@@ -69,13 +70,13 @@
                                     <input type="hidden" id="user_top_id" name="user_top_id" value="">
                                 </div>
                             </div>
-                            <div class="form-group last">
+                            <div class="form-group">
                                 <label class="control-label col-md-1">收货地址: </label>
                                 <div class="col-md-4">
-                                    <input style="display: inline-block;" placeholder="收货地址" type="text" name="address_sh" value="" class="form-control" />
+                                    <input style="display: inline-block;" placeholder="收货地址" type="text" name="address" value="" class="form-control" />
                                 </div>
                             </div>
-                            <div class="form-group last">
+                            <div class="form-group">
                                 <label class="control-label col-md-1">快递单号: </label>
                                 <div class="col-md-4">
                                     <input type="text" name="exp_code" placeholder="快递单号" class="form-control" />

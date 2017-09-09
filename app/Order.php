@@ -22,7 +22,7 @@ class Order extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['order_code', 'exp_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'remark', 'status'];
+    protected $fillable = ['order_code', 'exp_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'remark', 'status', 'address'];
 
     /**
      * The attributes excluded from the model's JSON form.

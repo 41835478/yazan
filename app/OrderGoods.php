@@ -217,4 +217,11 @@ class OrderGoods extends Model
 
       return $this->belongsTo('App\Category', 'category_id', 'id');
     }
+
+    // 定义goods表与order_goods表远程一对多关系
+    public function hasManyGoods()
+    {
+        return $this->hasManyThrough('App\Goods', 'App\Category', 'id', 'category_id', 'category_id')
+                    ->select('yz_goods.id as goods_id', 'yz_goods.name as goods_name');
+    }
 }
