@@ -189,7 +189,61 @@ class OrderController extends Controller
      */
     public function update(Request $orderRequest, $id)
     {   
-        dd($orderRequest->all());
+        // dd($orderRequest->all());
+
+        $order_goods = []; //需更新订单商品
+        foreach ($orderRequest->category_id as $key => $value) {
+            $order_goods[$key]['category_id']    = $value;
+            $order_goods[$key]['order_goods_id'] = $orderRequest->order_goods_id[$key];
+            $order_goods[$key]['goods_id']       = $orderRequest->goods_id[$key];
+            $order_goods[$key]['goods_num']      = $orderRequest->goods_num[$key];
+            $order_goods[$key]['goods_price']    = $orderRequest->goods_price[$key];
+            $order_goods[$key]['goods_name']     = $orderRequest->goods_name[$key];
+            $order_goods[$key]['price_level']    = $orderRequest->level;
+            $order_goods[$key]['total_price']    = ($orderRequest->goods_num[$key] * $orderRequest->goods_price[$key]);
+        }
+
+        $goods_num   = 0;
+        $total_price = 0;
+        
+        foreach ($order_goods as $key => $value) {
+            $goods_num   = $goods_num + $value['goods_num'];
+            $total_price = $total_price + ($value['goods_price'] * $value['goods_num']);
+        }
+
+        // p($order_goods);
+
+        $order_goods_insert = []; //需增加订单商品
+        $goods_num_i   = 0;
+        $total_price_i = 0; 
+
+        if(!empty($orderRequest->goods_category_i)){
+            foreach ($orderRequest->goods_category_i as $key => $value) {
+                $order_goods_insert[$key]['category_id']    = $value;
+                $order_goods_insert[$key]['goods_id']       = $orderRequest->goods_id_i[$key];
+                $order_goods_insert[$key]['goods_num']      = $orderRequest->goods_num_i[$key];
+                $order_goods_insert[$key]['goods_price']    = $orderRequest->goods_price_i[$key];
+                $order_goods_insert[$key]['goods_name']     = $orderRequest->goods_name_i[$key];
+                $order_goods_insert[$key]['price_level']    = $orderRequest->level;
+                $order_goods_insert[$key]['total_price']    = ($orderRequest->goods_num_i[$key] * $orderRequest->goods_price_i[$key]);
+            }  
+            // dd('hahah');
+            foreach ($order_goods_insert as $key => $value) {
+                $goods_num_i   = $goods_num_i + $value['goods_num'];
+                $total_price_i = $total_price_i + ($value['goods_price'] * $value['goods_num']);
+            }        
+        }
+        // dd($goods_num_i);
+        // p($order_goods_insert);
+        // p(count($order_goods));
+        // dd($total_price_i);
+
+        $orderRequest['type_num']           = count($order_goods) + count($order_goods_insert); //订单商品种类数
+        $orderRequest['goods_num']          = $goods_num + $goods_num_i;          //订单商品总数
+        $orderRequest['total_price']        = $total_price + $total_price_i;        //订单总价
+        $orderRequest['order_goods_update'] = $order_goods;               //需更新订单商品
+        $orderRequest['order_goods_insert'] = $order_goods_insert;        //需插入订单商品
+
         $this->order->update($orderRequest, $id);
         return redirect()->route('admin.order.self')->withInput();
     }

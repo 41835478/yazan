@@ -89,114 +89,66 @@ class OrderRepository implements OrderRepositoryContract
         });       
     }
 
-    // 修改车源
+    /**
+     * 修改订单
+     * 修改基本信息,修改订单商品信息,更新/新增
+     * @param  [type] $requestData [description]
+     * @param  [type] $id          [description]
+     * @return [type]              [description]
+     */
     public function update($requestData, $id)
     {
-        // dd($requestData->all());
+        dd($requestData->all());
         DB::transaction(function() use ($requestData, $id){
 
-            $order         = Order::select($this->select_columns)->findorFail($id); //车源对象
-            $follow_info = new orderFollow(); //车源跟进对象
-
-            $original_content = $order->toArray(); //原有车源信息
-            $request_content  = $requestData->all(); //提交的车源信息
-            
-            /*$collection1 = collect(['type'=>2, 'type1'=>7, 'type2'=>3]);
-            $collection2 = collect(['type'=>0, 'type5'=>2, 'type2'=>3]);
-
-            $diff = $collection2->diffKeys($collection1);
-            // $diff = array_udiff($collection1, $collection2);
-
-            dd($diff);
-            p($original_content);
-            p($request_content);*/
-
-            $changed_content = getDiffArray($request_content, $original_content);//比较提交的数据与原数据差别
-            $update_content = '例行跟进';  //定义车源跟进时信息变化情况,即跟进描述
-            // dd(json_decode($update_content));
-            // dd($changed_content);
-            if($changed_content->count() != 0){
-                $update_content = array();
-                $need_del_array = ['capacity', 'gearbox','out_color','inside_color','safe_type','sale_number','is_top','recommend', 'car_type'];
-                foreach ($changed_content as $key => $value) {
-                    /*p($this->columns_annotate[$key]);
-                    p($requestData->$key);
-                    p($original_content[$key]);*/
-                    if(in_array($key, $need_del_array)){
-                        /*p($original_content[$key]);
-                        p($key);
-                        p($value);
-                        p(config('tcl.'.$key)[$value]);exit;*/
-                        $current_content = config('tcl.'.$key)[$original_content[$key]];
-                        $updated_content = config('tcl.'.$key)[$value];
-                        $update_content[] = $this->columns_annotate[$key].'['.$current_content.']修改为['.$updated_content.']';
-                    }elseif($key == 'plate_provence'){
-                        
-                        $area_before = Area::withTrashed()->findorFail($car->plate_provence);
-                        $area_after = Area::withTrashed()->findorFail($requestData->plate_provence);
-
-                        $update_content[] = $this->columns_annotate[$key].'['.$area_before->name.']修改为['.$area_after->name.']';                      
-                     }elseif($key == 'plate_city'){
-                        
-                        $city_before = Area::withTrashed()->findorFail($car->plate_city);
-                        $city_after = Area::withTrashed()->findorFail($requestData->plate_city);
-
-                        $update_content[] = $this->columns_annotate[$key].'['.$city_before->name.']修改为['.$city_after->name.']';
-                    }else{
-                        $update_content[] = $this->columns_annotate[$key].'['.$original_content[$key].']修改为['.$requestData->$key.']';
-                    }
-                }
-            }
-
-        
-            // dd($follow_info);
-            // dd(collect($update_content)->toJson());
-            // dd(json_decode(collect($update_content)->toJson())); //json_decode将json再转回数组
-            // dd($changed_content);
+            $order = Order::select($this->select_columns)->findorFail($id); //车源对象
         
             // 车源编辑信息
-            $car->vin_code       = $requestData->vin_code;
-            $car->capacity       = $requestData->capacity;
-            $car->gearbox        = $requestData->gearbox;
-            $car->out_color      = $requestData->out_color;
-            $car->inside_color   = $requestData->inside_color;
-            $car->plate_date     = $requestData->plate_date;
-            $car->plate_end      = $requestData->plate_end;
-            $car->sale_number    = $requestData->sale_number;
-            $car->safe_type      = $requestData->safe_type;
-            $car->safe_end       = $requestData->safe_end;
-            $car->mileage        = $requestData->mileage;
-            $car->description    = $requestData->description;
-            $car->xs_description = $requestData->xs_description;
-            $car->top_price      = $requestData->top_price;
-            $car->bottom_price   = $requestData->bottom_price;
-            $car->pg_description = $requestData->pg_description;
-            $car->guide_price    = $requestData->guide_price;
-            $car->is_top         = $requestData->is_top;
-            $car->recommend      = $requestData->recommend;
-            // $car->creater_id     = Auth::id();
-    
-            // 车源跟进信息
-            $follow_info->car_id       = $id;
-            $follow_info->user_id      = Auth::id();
-            $follow_info->follow_type  = '1';
-            $follow_info->operate_type = '2';
-            $follow_info->description  = collect($update_content)->toJson();
-            $follow_info->prev_update  = $car->updated_at;
-         
-            $follow_info->save();
-            $car->save(); 
+            $order->vin_code       = $requestData->vin_code;
+            $order->capacity       = $requestData->capacity;
+            $order->gearbox        = $requestData->gearbox;
+            $order->out_color      = $requestData->out_color;
+            $order->inside_color   = $requestData->inside_color;
+            $order->plate_date     = $requestData->plate_date;
+            $order->plate_end      = $requestData->plate_end;
+            $order->sale_number    = $requestData->sale_number;
+            $order->safe_type      = $requestData->safe_type;
+            $order->safe_end       = $requestData->safe_end;
+            $order->mileage        = $requestData->mileage;
+            $order->description    = $requestData->description;
+            $order->xs_description = $requestData->xs_description;
+            $order->top_price      = $requestData->top_price;
+            $order->bottom_price   = $requestData->bottom_price;
+            $order->pg_description = $requestData->pg_description;
+            $order->guide_price    = $requestData->guide_price;
+            $order->is_top         = $requestData->is_top;
+            $order->recommend      = $requestData->recommend;
+            // $order->creater_id     = Auth::id();
+            $order->save();
 
-            Session::flash('sucess', '修改车源成功');
-            return $car;           
+            $this->orderGoodsUpdate($requestData->order_goods_update);
+
+            $order_goods = new orderGoods(); //订单商品信息添加
+            
+            $order_goods_input = $requestData['order_goods_insert'];
+            
+            foreach ($order_goods_input as $key => $value) {
+                $order_goods_input[$key]['order_id']    = $id;
+                $order_goods_input[$key]['created_at']  = Carbon::now()->toDateTimeString();
+                $order_goods_input[$key]['updated_at']  = Carbon::now()->toDateTimeString();
+            }
+
+            // dd($order_goods_input);
+            $order_goods->insert($order_goods_input);
+
+            Session::flash('sucess', '修改订单成功');
+            return $order;           
         });     
         // dd('sucess');
         // dd($Car->toJson());       
     }
 
-   
-
-    // 删除车源
+    // 删除订单
     public function destroy($id)
     {
         try {
@@ -210,9 +162,7 @@ class OrderRepository implements OrderRepositoryContract
         }      
     }
 
-    
-
-    //车源状态转换，暂时只有激活-废弃转换
+    //订单状态转换，暂时只有激活-废弃转换
     public function statusChange($requestData, $id){
 
         // dd($requestData->all());
@@ -245,5 +195,15 @@ class OrderRepository implements OrderRepositoryContract
 
             return $car;
         });
+    }
+
+    /**
+     * 更新订单商品
+     * @param  [type] $order_goods [description]
+     * @return [type]              [description]
+     */
+    protected function orderGoodsUpdate($order_goods){
+
+        dd($order_goods);
     }
 }

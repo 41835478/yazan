@@ -82,7 +82,21 @@ $(document).ready(function(){
 
         var form_goods = $('.goods_list').first().clone(true);
         var content    = $('.goods_list').last();
+        var is_update  = $('#is_update').val();
+
+		if(is_update == '1'){
+			$(form_goods).children('div').children('select.goods_category').attr('name', 'goods_category_i[]');
+			$(form_goods).children('div').children('select.goods').attr('name', 'goods_id_i[]');
+			$(form_goods).children('div').children('input.goods_num').attr('name', 'goods_num_i[]');
+			$(form_goods).children('div').children('input.goods_price').attr('name', 'goods_price_i[]');
+			$(form_goods).children('div').children('input.total_price').attr('name', 'total_price_i[]');
+			$(form_goods).children('div').children('input.goods_name').attr('name', 'goods_name_i[]');
+			$(form_goods).children('div').children('input.order_goods_id').remove();
+		}
+
+        // console.log(form_goods);return false;
         content.after(form_goods);
+
         $('.goods_list').last().children('div').children('select.goods').empty();
         $('.goods_list').last().children('div').children('input.goods_num').val('1');
         $('.goods_list').last().children('div').children('input.goods_price').val('0');
