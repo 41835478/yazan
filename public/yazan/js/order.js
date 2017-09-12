@@ -57,7 +57,11 @@ $(document).ready(function(){
 					$('#level').val(data.self.level);
 					$('#user_telephone').val(data.self.telephone);
 					$('#user_top_id').val(data.self.user_top_id);
-					// console.log(content.substring(0,content.length-3));
+					//改变下单商户是刷新商品价格
+					$('.goods').each(function(index, el) {
+						$(this).trigger('change');
+						// alert('hehe');
+					});
 					//$('#agents_frist').css('display', 'inline-block');
 				}else{
 					alert(data.message);

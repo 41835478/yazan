@@ -47,15 +47,17 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::post('goods/getGoodsPrice', 'GoodsController@getGoodsPrice')->name('goods.getGoodsPrice');
 	//用户地址/收货地址
 	Route::post('user/address', 'UserController@address')->name('user.address');
-
 	//商品分类管理index
 	Route::match(['get', 'post'], 'category/index', 'CategoryController@index')->name('category.index');
 	//订单管理index
 	Route::match(['get', 'post'], 'order/index', 'OrderController@index')->name('order.index');
+	//ajax删除订单商品
+	Route::post('orderGoods/ajaxDelete', 'OrderGoodsController@ajaxDelete')->name('orderGoods.ajaxDelete');
 
 	Route::resource('user', 'UserController'); //用户管理资源路由
 	Route::resource('category', 'CategoryController'); //商品分类管理资源路由
 	Route::resource('order', 'OrderController'); //商品分类管理资源路由
+	Route::resource('orderGoods', 'OrderGoodsController'); //商品分类管理资源路由
 
 	/*Route::match(['get', 'post'], 'car/index', 'CarController@index')->name('admin.car.index');
 			Route::match(['get', 'post'], 'appraiser/index', 'AppraiserController@index')->name('admin.appraiser.index');

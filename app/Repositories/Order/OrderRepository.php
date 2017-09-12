@@ -98,32 +98,22 @@ class OrderRepository implements OrderRepositoryContract
      */
     public function update($requestData, $id)
     {
-        dd($requestData->all());
+        // dd($requestData->all());
         DB::transaction(function() use ($requestData, $id){
 
             $order = Order::select($this->select_columns)->findorFail($id); //车源对象
-        
+            /*p($requestData->all());
+            dd($order);*/
             // 车源编辑信息
-            $order->vin_code       = $requestData->vin_code;
-            $order->capacity       = $requestData->capacity;
-            $order->gearbox        = $requestData->gearbox;
-            $order->out_color      = $requestData->out_color;
-            $order->inside_color   = $requestData->inside_color;
-            $order->plate_date     = $requestData->plate_date;
-            $order->plate_end      = $requestData->plate_end;
-            $order->sale_number    = $requestData->sale_number;
-            $order->safe_type      = $requestData->safe_type;
-            $order->safe_end       = $requestData->safe_end;
-            $order->mileage        = $requestData->mileage;
-            $order->description    = $requestData->description;
-            $order->xs_description = $requestData->xs_description;
-            $order->top_price      = $requestData->top_price;
-            $order->bottom_price   = $requestData->bottom_price;
-            $order->pg_description = $requestData->pg_description;
-            $order->guide_price    = $requestData->guide_price;
-            $order->is_top         = $requestData->is_top;
-            $order->recommend      = $requestData->recommend;
-            // $order->creater_id     = Auth::id();
+            $order->exp_code     = $requestData->exp_code;
+            $order->goods_num    = $requestData->goods_num;
+            $order->type_num     = $requestData->type_num;
+            $order->total_price  = $requestData->total_price;
+            $order->exp_company  = $requestData->exp_company;
+            $order->exp_price    = $requestData->exp_price;
+            $order->address      = $requestData->address;
+            
+            // dd($order);
             $order->save();
 
             $this->orderGoodsUpdate($requestData->order_goods_update);
@@ -198,12 +188,38 @@ class OrderRepository implements OrderRepositoryContract
     }
 
     /**
-     * 更新订单商品
+     * 更新订单商品,对比提交的数据与原有数据,需要更新则更新
      * @param  [type] $order_goods [description]
      * @return [type]              [description]
      */
     protected function orderGoodsUpdate($order_goods){
 
-        dd($order_goods);
+        // dd($order_goods);
+        $need_compare_data = ['category_id', 'goods_id', 'goods_num'];
+        foreach ($order_goods as $key => $value) {
+            // p($value['order_goods_id']);
+            $order_goods_obj = OrderGoods::find($value['order_goods_id']);
+            
+            $order_goods_new = collect($value)->only($need_compare_data);
+            $order_goods_old = collect($order_goods_obj->toArray())->only($need_compare_data);
+            /*dd(collect($order_goods_old->toArray()));
+            dd($order_goods_new);*/
+            $diff = $order_goods_old->diff($order_goods_new);
+
+            // dd($diff);
+            if(!$diff->count() == 0){
+                //订单商品信息变化,更新
+                /*p($value);
+                dd($order_goods_obj);*/
+                $order_goods_obj->category_id = $value['category_id'];
+                $order_goods_obj->goods_id    = $value['goods_id'];
+                $order_goods_obj->goods_num   = $value['goods_num'];
+                $order_goods_obj->goods_price = $value['goods_price'];
+                $order_goods_obj->goods_name  = $value['goods_name'];
+                $order_goods_obj->total_price = $value['total_price'];
+
+                $order_goods_obj->save();
+            }
+        }
     }
 }

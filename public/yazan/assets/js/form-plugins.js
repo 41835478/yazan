@@ -159,7 +159,7 @@ $(function () {
 
     // Locked
     $('#select-locked').selectize({create: true});
-    $('#select-locked')[0].selectize.lock();
+    // $('#select-locked')[0].selectize.lock();
     /* End jQuery Selectize */
 
     /* Begin jQuery DateTimePicker */
@@ -224,7 +224,7 @@ $(function () {
     /* Begin jQuery TimePicker */
 
     /* Begin jQuery DateRangePicker */
-    $('#daterangepicker_default').daterangepicker();
+    // $('#daterangepicker_default').daterangepicker();
     $('#daterangepicker_single').daterangepicker({
         singleDatePicker: true
     });

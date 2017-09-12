@@ -9462,7 +9462,8 @@ button.close {
   float: none !important;
 }
 .hide {
-  display: none !important;
+  /*display: none !important;*/
+  display: none;
 }
 .show {
   display: block !important;

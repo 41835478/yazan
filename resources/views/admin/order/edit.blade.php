@@ -101,8 +101,8 @@
                                     <input style="margin-top: 5px;width:10%;display:inline-block;" value="{{$goods->goods_price}}" type="text" readonly = "readonly" placeholder="单价" name="goods_price[]" class="form-control goods_price" />
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="total_price[]" readonly = "readonly" placeholder="总价" value="{{$goods->total_price}}" class="form-control total_price" />
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="goods_name[]" placeholder="商品名称" value="{{$goods->goods_name}}" class="form-control goods_name" />
-                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="order_goods_id[]" placeholder="订单商品id" value="{{$goods->id}}" class="form-control order_goods_id" />
-                                    <button style="display: inline-block;" type="button" class="btn btn-warning goods_delete">删除</button>
+                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="order_goods_id[]" placeholder="订单商品id" value="{{$goods->id}}" class="form-control order_goods_id" />                                  
+                                    <button style="display: inline-block;" type="button" class="btn btn-warning order_goods_delete">删除</button>
                                 </div>                               
                             </div>
                             @endforeach
@@ -111,6 +111,7 @@
                                     <input type="hidden" name="goods_ajax_request_url" value="{{route('goods.getChildGoods')}}">
                                     <input type="hidden" name="goods_price_ajax_request_url" value="{{route('goods.getGoodsPrice')}}">
                                     <input type="hidden" name="user_ajax_request_url" value="{{route('user.getUserChain')}}">
+                                    <input type="hidden" name="goods_delete_url" value="{{route('orderGoods.ajaxDelete')}}">
                                     <input type="hidden"  id="is_update" value='1'>
                                     <button type="submit" style="float:left;" class="btn btn-sm btn-success">修改订单</button>
                                     <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
@@ -139,22 +140,61 @@
 <script src="{{URL::asset('yazan/js/order.js')}}"></script>
 <script>
     $(document).ready(function(){
-        // alert('hehe');
-        /*var current_user_id = {{$order->user_id}};
-        console.log(current_user_id);
-        console.log($('#user_id').children('option'));
-
-        $('#user_id').children('option').each(function(index, el) {
-            console.log(index);
-            console.log('--');
-            console.log($(this));
-            if($(this).val() == current_user_id){
-                console.log($(this));
-                $(this).prop('selected', true);
+        // 删除商品
+        $('.order_goods_delete').click(function(event) {
+        /* Act on the event */
+            var token          = $("input[name='_token']").val();
+            var goods_list_num = $('.goods_list').length;
+            var request_url    = $("input[name='goods_delete_url']").val();
+            var order_goods_id = $(this).prev().val();
+            
+            console.log(order_goods_id);
+            if(goods_list_num == 1){
+                alert('大哥,留一个呗');
+                return false;
             }
-        });*/
-
-        // $('#user_id').trigger('change'); //刷新页面时触发change事件
+            var obj = $(this);
+            $.confirm({
+                title: '注意!',
+                content: '确实要删除吗?',
+                cancelButton: '取消',
+                confirmButtonClass: 'btn-danger',
+                confirm: function () {
+                    $.ajax({
+                        type: 'POST',       
+                        url: request_url,       
+                        data: { order_goods_id : order_goods_id},        
+                        dataType: 'json',       
+                        headers: {      
+                        'X-CSRF-TOKEN': token       
+                        },      
+                        success: function(data){   
+                            // console.log(data);  
+                            if(data.status == 1){
+                                alert(data.message);
+                                obj.parents('.goods_list').remove();
+                                // console.log(content);
+                            }else{
+                                alert(data.message);
+                                return false;
+                            }
+                        },      
+                        error: function(xhr, type){
+                
+                            /*alert('Ajax error!');*/
+                        }
+                    });
+                    
+                    // console.log(obj.parent('form'));
+                    // return false;
+                },
+                cancel: function () {
+                    return false;
+                }
+            });
+            // $(this).parents('.goods_list').remove();
+            // console.log($(this).parents('.goods_list'));
+        });
     });
 </script>
 @endsection

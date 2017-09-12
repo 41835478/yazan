@@ -15,8 +15,6 @@ use App\Repositories\Order\OrderRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use App\Repositories\Goods\GoodsRepositoryContract;
 use App\Repositories\Category\CategoryRepositoryContract;
-//use App\Http\Requests\Order\UpdateOrderRequest;
-//use App\Http\Requests\Order\StoreOrderRequest;
 
 class OrderController extends Controller
 {   
@@ -245,7 +243,7 @@ class OrderController extends Controller
         $orderRequest['order_goods_insert'] = $order_goods_insert;        //需插入订单商品
 
         $this->order->update($orderRequest, $id);
-        return redirect()->route('admin.order.self')->withInput();
+        return redirect()->route('order.index')->withInput();
     }
 
     /**

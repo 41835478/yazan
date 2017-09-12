@@ -8,6 +8,8 @@ use Auth;
 
 class Order extends Model
 {
+    use SoftDeletes; //使用软删除
+    
     /**
      * The database table used by the model.
      * 定义模型对应数据表及主键
