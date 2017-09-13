@@ -5,6 +5,7 @@
 
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/global/plugins/select2/select2-custom.css')}}">
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/plugins/multi-select/css/multi-select-custom.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/plugins/bootstrap-validator/css/bootstrapValidator.min.css')}}">
     <style type="text/css">
         input.shaddress{
             margin-bottom:5px;
@@ -36,7 +37,7 @@
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-body form">
-                    <form action="{{route('order.store')}}" class="form-horizontal form-seperated" method="post">
+                    <form action="{{route('order.store')}}" id="orderCreate" class="form-horizontal form-seperated" method="post">
                         {!! csrf_field() !!}
                         <div class="form-body">
                             <div class="form-group">
@@ -71,9 +72,15 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-1">收货地址: </label>
-                                <div class="col-md-4">
-                                    <input style="display: inline-block;" placeholder="收货地址" type="text" name="address" value="" class="form-control" />
+                                <label class="control-label col-md-1">收货人: </label>
+                                <div class="col-md-2">
+                                    <input style="display: inline-block;"  placeholder="姓名" type="text" name="sh_name" value="" class="form-control" />
+                                </div>
+                                <div class="col-md-3">
+                                    <input style="display: inline-block;"  placeholder="电话" type="text" name="sh_telephone" value="" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <input style="display: inline-block;"  placeholder="地址" type="text" name="address" value="" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -122,10 +129,9 @@
 @endsection
 @section('script_content')
 <!-- 引入表单js -->
-<!-- <script src="{{URL::asset('yazan/assets/plugins/bootstrap-validator/js/bootstrapValidator.min.js')}}"></script> -->
+<script src="{{URL::asset('yazan/assets/plugins/bootstrap-validator/js/bootstrapValidator.min.js')}}"></script>
 <!-- <script src="{{URL::asset('yazan/assets/js/form-validation.js')}}"></script> -->
-<!-- <script src="{{URL::asset('yazan/assets/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js')}}"></script> -->
-<!-- <script src="{{URL::asset('yazan/assets/js/form-wizard.js')}}"></script> -->
+
 <script src="{{URL::asset('yazan/global/plugins/select2/select2.min.js')}}"></script>
 <script src="{{URL::asset('yazan/assets/plugins/multi-select/js/jquery.multi-select.js')}}"></script>
 <script src="{{URL::asset('yazan/assets/plugins/multi-select/js/jquery.quicksearch.js')}}"></script>
@@ -137,7 +143,37 @@
 <script>
 	$(document).ready(function(){
 
-        // $("#user_id").select2({});
+        /*$('#orderCreate').bootstrapValidator({
+        live: 'submitted',
+        feedbackIcons: {
+            valid: '',
+            invalid: '',
+            validating: ''
+        },
+        fields: {
+            sh_name: {
+                validators: {
+                    notEmpty: {
+                        message: '这个可以有'
+                    }
+                }
+            }, 
+            sh_telephone: {
+                validators: {
+                    notEmpty: {
+                        message: '这个可以有'
+                    }
+                }
+            },
+            address: {
+                validators: {
+                    notEmpty: {
+                        message: '这个可以有'
+                    }
+                }
+            },        
+        }
+        });*/
         
 	});
 </script>

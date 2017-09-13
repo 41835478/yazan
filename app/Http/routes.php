@@ -53,6 +53,9 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::match(['get', 'post'], 'order/index', 'OrderController@index')->name('order.index');
 	//ajax删除订单商品
 	Route::post('orderGoods/ajaxDelete', 'OrderGoodsController@ajaxDelete')->name('orderGoods.ajaxDelete');
+	//导出订单
+	// Route::post('order/export', 'OrderController@export')->name('order.export');
+	Route::post('excel/export','ExcelController@export')->name('order.export'); //Excel路由
 
 	Route::resource('user', 'UserController'); //用户管理资源路由
 	Route::resource('category', 'CategoryController'); //商品分类管理资源路由

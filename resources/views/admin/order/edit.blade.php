@@ -70,11 +70,23 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="control-label col-md-1">收货人: </label>
+                                <div class="col-md-2">
+                                    <input style="display: inline-block;"  placeholder="姓名" type="text" name="sh_name" value="{{$order->sh_name}}" class="form-control" />
+                                </div>
+                                <div class="col-md-3">
+                                    <input style="display: inline-block;"  placeholder="电话" type="text" name="sh_telephone" value="{{$order->sh_telephone}}" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <input style="display: inline-block;"  placeholder="地址" type="text" name="address" value="{{$order->address}}" class="form-control" />
+                                </div>
+                            </div>
+                            <!-- <div class="form-group">
                                 <label class="control-label col-md-1">收货地址: </label>
                                 <div class="col-md-4">
                                     <input style="display: inline-block;" placeholder="收货地址" type="text" name="address" value="{{$order->address}}" class="form-control" />
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label class="control-label col-md-1">快递单号: </label>
                                 <div class="col-md-4">
@@ -147,7 +159,7 @@
             var goods_list_num = $('.goods_list').length;
             var request_url    = $("input[name='goods_delete_url']").val();
             var order_goods_id = $(this).prev().val();
-            
+
             console.log(order_goods_id);
             if(goods_list_num == 1){
                 alert('大哥,留一个呗');

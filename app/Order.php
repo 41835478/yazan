@@ -9,7 +9,7 @@ use Auth;
 class Order extends Model
 {
     use SoftDeletes; //使用软删除
-    
+
     /**
      * The database table used by the model.
      * 定义模型对应数据表及主键
@@ -24,7 +24,7 @@ class Order extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['order_code', 'exp_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'remark', 'status', 'address'];
+    protected $fillable = ['order_code', 'exp_code', 'goods_num', 'type_num', 'total_price', 'user_id', 'user_top_id', 'user_level', 'exp_price', 'exp_company', 'user_telephone', 'user_name', 'creater_id', 'remark', 'status', 'address','sh_name', 'sh_telephone'];
 
     /**
      * The attributes excluded from the model's JSON form.

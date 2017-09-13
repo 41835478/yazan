@@ -8,16 +8,35 @@ use Illuminate\Http\Request;
 //use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use App\Cars;
-use App\Want;
+use App\Order;
+use App\OrderGoods;
 use App\User;
+use App\Repositories\Order\OrderRepositoryContract;
+use App\Repositories\User\UserRepositoryContract;
 
 use Excel;
 
 class ExcelController extends Controller
-{
+{   
+    protected $order;
+    protected $user;
+
+    public function __construct(
+
+        OrderRepositoryContract $order,
+        UserRepositoryContract $user
+    ) {
+    
+        $this->order    = $order;
+        $this->user     = $user;
+        // $this->middleware('brand.create', ['only' => ['create']]);
+    }
+
     //Excel文件导出功能 By Laravel学院
-    public function export(){
+    public function export(Request $request){
+
+        ($request->method());
+        dd($request->all());
         //车源搜索内容列
         $select_columns_want = ['id', 'want_code', 'name', 'want_type', 'brand_id', 'categorey_id', 'car_factory', 'cate_id', 'capacity', 'gearbox', 'bottom_price', 'top_price', 'age', 'mileage', 'sale_number', 'out_color', 'inside_color', 'customer_id', 'creater_id', 'want_area', 'remark', 'want_status', 'shop_id', 'created_at', 'updated_at','recommend','is_top','xs_remark', 'alternate_car', 'alternate_car_another'];
 

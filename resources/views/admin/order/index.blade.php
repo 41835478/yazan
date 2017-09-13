@@ -31,8 +31,12 @@
             		<ul class="nav nav-tabs">
             		  	<li style="display: inline-block;line-height:20px;">
 							<!-- <a class="btn btn-search" href="#modal-default"><i class="halflings-icon search"></i>搜索订单</a> -->
-                            <a href="#modal-default" data-toggle="modal" class="btn btn-primary btn-sm">搜索订单</a>
+                            <a href="#modal-select" data-toggle="modal" class="btn btn-primary btn-sm">搜索订单</a>
 						</li>
+                        <li style="display: inline-block;line-height:20px;">
+                            <!-- <a class="btn btn-search" href="#modal-default"><i class="halflings-icon search"></i>搜索订单</a> -->
+                            <a href="#modal-export" data-toggle="modal" class="btn btn-warning btn-sm">导出订单</a>
+                        </li>
             		  	<li style="display: inline-block;line-height:20px;float:right;">
 							<a class="btn btn-primary" href="{{route('order.create')}}">添加订单</a>
 						</li>
@@ -101,7 +105,7 @@
             </div>
         </div>
     </div>
-    <div id="modal-default" class="modal fade">
+    <div id="modal-select" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -140,6 +144,44 @@
             </div>
         </div>
     </div>
+    <div id="modal-export" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" data-dismiss="modal" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 id="myModalLabel" class="modal-title">订单导出</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="condition" action="{{route('order.export')}}" method="post">
+                    {!! csrf_field() !!}
+                        <!-- <fieldset>
+                        <div class="control-group">
+                            <label class="control-label" for="car_code">客户电话</label>
+                                <input class="input-xlarge focused" name="car_code" id="car_code" type="text" value="">
+                                <input type="text" class="col-md-12 form-control mbm" />
+                        </div>                      
+                        <div class="control-group">
+                            <label class="control-label" for="begin_date">日期范围</label>
+                            <div class="controls">
+                                <input type="text" class="input-xlarge date-picker one_line" name="begin_date" id="begin_date" value="{{$select_conditions['begin_date'] or ''}}" placeholder="开始日期" >
+                                <input type="text" class="input-xlarge one_line date-picker" name="end_date" id="end_date" value="{{$select_conditions['end_date'] or ''}}" placeholder="结束日期">
+                            </div>
+                        </div>                                
+                        </fieldset> -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="text" placeholder="客户电话" class="col-md-12 form-control mbm" />
+                                <input type="text" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">导出</button>
+                            <a href="javascript:void(0);" class="btn" data-dismiss="modal">关闭</a>                            
+                        </div>                       
+                    </form>
+                </div>
+            </div>
+        </div>
 </section>
 
 @endsection
