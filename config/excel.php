@@ -2,6 +2,9 @@
 
 return array(
 
+    // 'upload_tmp_dir' = 'F:\phpStudy\WWW\www.wmyz.net\Temp',
+    // 'upload_tmp_dir' =  base_path('Temp'),
+
     'cache'      => array(
 
         /*

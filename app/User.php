@@ -236,6 +236,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	// 定义User表与order表一对多关系
+	public function hasManyUserWithTopUser() {
+
+		return $this->hasMany('App\Order', 'user_top_id', 'id');
+	}
+
+	// 定义User表与order表一对多关系
 	public function hasManyCreater() {
 
 		return $this->hasMany('App\Order', 'creater_id', 'id');

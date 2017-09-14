@@ -35,107 +35,76 @@ class ExcelController extends Controller
     //Excel文件导出功能 By Laravel学院
     public function export(Request $request){
 
-        ($request->method());
-        dd($request->all());
-        //车源搜索内容列
-        $select_columns_want = ['id', 'want_code', 'name', 'want_type', 'brand_id', 'categorey_id', 'car_factory', 'cate_id', 'capacity', 'gearbox', 'bottom_price', 'top_price', 'age', 'mileage', 'sale_number', 'out_color', 'inside_color', 'customer_id', 'creater_id', 'want_area', 'remark', 'want_status', 'shop_id', 'created_at', 'updated_at','recommend','is_top','xs_remark', 'alternate_car', 'alternate_car_another'];
+        /*($request->method());
+        dd($request->all());*/
 
-        //求购搜索内容列
-        $select_columns_car = ['id', 'name', 'car_code', 'vin_code', 'capacity', 'top_price', 'plate_date', 'plate_end', 'mileage', 'age', 'out_color', 'inside_color', 'gearbox', 'plate_provence', 'plate_city', 'safe_end', 'sale_number', 'categorey_type', 'shop_id', 'creater_id', 'created_at', 'updated_at', 'description', 'bottom_price', 'safe_type','recommend', 'is_top', 'car_type', 'car_status', 'customer_id', 'guide_price', 'pg_description','xs_description', 'cate_id', 'appraiser_price', 'is_appraiser', 'appraiser_at'];
+        $orders = $this->order->getAllOrdersWithNotPage($request);
 
-        $users = User::select('id', 'name', 'nick_name')
-                      ->whereIn('shop_id', ['2', '38'])
-                      ->get();
-
-        /*foreach ($users as $key => $value) {
-            
-            p($value->id);
-            p($value->nick_name);
-        }exit;*/
-
-        $begin_date         = '2017-07-01';
-        $end_date           = '2017-07-31';
-        $out_color          = config('tcl.out_color'); //获取配置文件中外观颜色
-        $car_status_config  = config('tcl.car_stauts'); //获取配置文件中外观颜色
-        $mileage_config     = config('tcl.mileage'); //获取配置文件中里程配置
-        $want_status_config = config('tcl.want_stauts'); //获取配置文件中求购信息状态
-        // dd($out_color);
-        // dd($car_status_config);
-        //车源搜索条件
-        $query_cars = new Cars();
-        $query_cars = $query_cars->whereIn('creater_id', ['64', '65', '78', '89', '36', '4', '105']);
-        $query_cars = $query_cars->where('created_at', '<=', $end_date);
-        $query_cars = $query_cars->where('created_at', '>=', $begin_date);
-
-        //求购搜索条件
-        $query_wants = new Want();
-        $query_wants = $query_wants->whereIn('creater_id', ['64', '65', '78', '89', '36', '4', '105']);
-        $query_wants = $query_wants->where('created_at', '<=', $end_date);
-        $query_wants = $query_wants->where('created_at', '>=', $begin_date);       
-
-        $cars_info = $query_cars->select($select_columns_car)
-                     ->orderBy('creater_id', 'asc')
-                     ->orderBy('updated_at', 'desc')
-                     ->get();
-
-        // dd(lastSql());
-        // dd($cars_info[0]);
-
-        $wants_info = $query_wants->select($select_columns_want)
-                     ->orderBy('creater_id', 'asc')
-                     ->orderBy('updated_at', 'desc')
-                     ->get();
-
-        $cars_info_content = [];
-        foreach ($cars_info as $key => $value){
-
-            $cars_info_content[] =  array(
-                $value->name, 
-                $car_status_config[$value->car_status],                  
-                $value->top_price,
-                $value->plate_date,
-                $value->mileage,
-                $out_color[$value->out_color],
-                $value->belongsToUser->nick_name,
-                $value->belongsToShop->shop_name,
-                substr($value->created_at, 0 ,10),
-            );
-        }
-
-        array_unshift($cars_info_content, ['车型','状态','价格','上牌','里程','颜色','负责人','门店','上传日期']);
+        /*dd($orders);
+        dd($orders[0]->hasManyOrderGoods);
+        dd($orders[0]->hasManyOrderGoods[0]->belongsToCategory);*/
 
         // dd($cars_info_content);
 
-        $wants_info_content = [];
-        foreach ($wants_info as $key => $value){
+        $orders_info_content = [];
+        foreach ($orders as $key => $value){
 
-            $wants_info_content[] =  array(
-                $value->name, 
-                $want_status_config[$value->want_status],                 
-                $value->top_price,
-                $mileage_config[$value->mileage],
-                $out_color[$value->out_color],
-                $value->belongsToUser->nick_name,
-                $value->belongsToShop->shop_name,
-                substr($value->created_at, 0 ,10),
+            $goods_info = null;
+
+            foreach ($value->hasManyOrderGoods as $key => $goods) {
+                $goods_info .= $goods->belongsToCategory->name;
+                $goods_info .= $goods->goods_name;
+                $goods_info .= $goods->goods_num;
+                $goods_info .= "\r\n";
+            }
+
+            $goods_info .= '发件人:'.$value->belongsToUserWithTopUser->nick_name;
+            $goods_info .= '  '.$value->belongsToUserWithTopUser->user_telephone;
+
+            $orders_info_content[] =  array(
+                $value->sh_name, 
+                $value->sh_telephone,                 
+                $value->address,
+                $goods_info,
+                $value->total_price,
+                $value->belongsToUserWithTopUser->nick_name,
+                
             );
         }
 
-        array_unshift($wants_info_content, ['车型','状态','价格','里程','颜色','负责人', '门店','上传日期']);
+        // dd($orders_info_content[0][3]);
+        /*$goods_info = 'F1订单（2件）：';
+        $goods_info .= "\r\n";
+        $goods_info .= "卡通鹿迷你被1";
+        $goods_info .= "\r\n";
+        $goods_info .= "卡通鹿包脚睡袍1";
+        $goods_info .= "\r\n";
+        $goods_info .= "发件人：赵景  13315969112";
 
+        $orders_info_content = array(
+            ['詹丽花',
+                        '13599800785',
+                        '广东省惠州市龙门县龙城街道古楼村路口（联塑管道）锦宁建材有限公司',
+                        $goods_info,
+                        '192.0',
+                        '元芳',]
+        );*/
 
-        /*$excels = Excel::create('车源统计',function($excel) use ($cars_info_content){
-            $excel->sheet('score', function($sheet) use ($cars_info_content){
-                $sheet->rows($cars_info_content);
-            });
-        });*/
+        array_unshift($orders_info_content, ['收件人','手机/电话','地址','物品名称', '总价', '总代']);
 
-        $excels = Excel::create('求购统计',function($excel) use ($wants_info_content){
-            $excel->sheet('score', function($sheet) use ($wants_info_content){
-                $sheet->rows($wants_info_content);
+        // dd($orders_info_content);
+
+        $excels = Excel::create('订单',function($excel) use ($orders_info_content){
+            $excel->sheet('score', function($sheet) use ($orders_info_content){
+                
+                $sheet->setWidth('A', 10);
+                $sheet->setWidth('B', 20);
+                $sheet->setWidth('C', 80);
+                $sheet->setWidth('D', 50);       
+                $sheet->rows($orders_info_content);
             });
         });
-
+        // dd($excels->save());
         $excels->export('xls');
     }
 }

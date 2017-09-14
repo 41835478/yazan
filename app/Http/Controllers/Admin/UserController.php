@@ -37,7 +37,6 @@ class UserController extends Controller {
 	public function index() {
 		// dd(Auth::user());
 		$users = $this->users->getAllUsers();
-		// dd(lastSql());
 		// dd($users[0]->hasManyRoles->name);
 		/*foreach ($users as $key => $value) {
 			           dd($value->belongsToShop);

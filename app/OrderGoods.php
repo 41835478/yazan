@@ -10,7 +10,7 @@ class OrderGoods extends Model
 {
 
     use SoftDeletes; //使用软删除
-    
+
     /**
      * The database table used by the model.
      * 定义模型对应数据表及主键
@@ -227,4 +227,5 @@ class OrderGoods extends Model
         return $this->hasManyThrough('App\Goods', 'App\Category', 'id', 'category_id', 'category_id')
                     ->select('yz_goods.id as goods_id', 'yz_goods.name as goods_name');
     }
+
 }

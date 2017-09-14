@@ -41,6 +41,21 @@ class OrderRepository implements OrderRepositoryContract
                      ->paginate(10);
     }
 
+    // 根据不同参数获得订单列表
+    public function getAllOrdersWithNotPage($request)
+    {   
+        // dd($request->all());
+        // $query = Order::query();  // 返回的是一个 QueryBuilder 实例
+        $query = new Order();       // 返回的是一个Order实例,两种方法均可
+
+        $query = $query->addCondition($request->all()); //根据条件组合语句
+
+        return $query->select($this->select_columns)
+                     ->orderBy('user_top_id', 'desc')
+                     ->orderBy('created_at', 'desc')
+                     ->get();
+    }
+
     // 创建订单
     public function create($requestData)
     {   
