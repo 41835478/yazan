@@ -159,7 +159,7 @@ $(document).ready(function(){
                	// console.log(data);  
                 if(data.status == 1){
 
-                    var content = '<option  value="0">==选择商品==</option>';
+                    var content = '<option  value="">==选择商品==</option>';
                     $.each(data.data, function(index, value){
                         content += '<option value="';
                         content += value.id;
@@ -175,7 +175,7 @@ $(document).ready(function(){
                 }else{
                     alert(data.message);
                     goods_list.empty();
-                    goods_list.append('<option  value="0">==选择商品==</option>');
+                    goods_list.append('<option  value="">==选择商品==</option>');
                     return false;
                 }
             },      

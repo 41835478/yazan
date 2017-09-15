@@ -44,7 +44,7 @@
                                 <label class="control-label col-md-1">商户选择: <span class="required">*</span></label>
                                 <div class="col-md-2">
                                     <select class="form-control select2" name="user_id" id="user_id" style="width:100%;display: inline-block;">
-                                        <option  value="0">--请选择商户--</option>
+                                        <option  value="">--请选择商户--</option>
                                         @foreach($all_merchant as $key=>$value)
                                         <option value="{{$value->id}}" >{{$value->nick_name}}</option>
                                         @endforeach 
@@ -52,7 +52,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <select class="form-control" name="exp_company" style="width:60%;display: inline-block;">
-                                        <option  value="0">==快递公司==</option>
+                                        <option  value="">==快递公司==</option>
                                         @foreach($exp_company as $key=>$company)
                                         <option value="{{$key}}" >{{$company}}</option>
                                         @endforeach                                  
@@ -94,13 +94,13 @@
                                 <label class="control-label col-md-1">商品: <span class="required">*</span></label>
                                 <div class="col-md-8">
                                     <select class="form-control goods_category" name="category_id[]" style="width:15%;display: inline-block;">
-                                        <option  value="0">==系列==</option>
+                                        <option  value="">==系列==</option>
                                         @foreach($all_series as $key=>$series)
                                         <option value="{{$series->id}}" >{{$series->name}}</option>
                                         @endforeach                                  
                                     </select>
                                     <select class="form-control goods" name="goods_id[]" style="width:15%;display: inline-block;">
-                                        <option  value="0">==选择商品==</option>
+                                        <option  value="">==选择商品==</option>
                                     </select>
                                     <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="goods_num[]" value="1" placeholder="商品数" class="form-control goods_num" />
                                     <input style="margin-top: 5px;width:10%;display:inline-block;" value="" type="text" readonly = "readonly" placeholder="单价" name="goods_price[]" class="form-control goods_price" />
@@ -114,7 +114,7 @@
                                     <input type="hidden" name="goods_ajax_request_url" value="{{route('goods.getChildGoods')}}">
                                     <input type="hidden" name="goods_price_ajax_request_url" value="{{route('goods.getGoodsPrice')}}">
                                     <input type="hidden" name="user_ajax_request_url" value="{{route('user.getUserChain')}}">
-                                    <button type="submit" style="float:left;" class="btn btn-sm btn-success">提交订单</button>
+                                    <button type="submit" style="float:left;" id="orderAdd" class="btn btn-sm btn-success">提交订单</button>
                                     <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
                                     <button type="button" id="goods_add" class="btn btn-success">添加商品</button>
                                 </div>
@@ -143,38 +143,82 @@
 <script>
 	$(document).ready(function(){
 
-        /*$('#orderCreate').bootstrapValidator({
-        live: 'submitted',
-        feedbackIcons: {
-            valid: '',
-            invalid: '',
-            validating: ''
-        },
-        fields: {
-            sh_name: {
-                validators: {
-                    notEmpty: {
-                        message: '这个可以有'
-                    }
+        $('#orderAdd').click(function(){
+            //提交前验证商品信息完整性
+            var goods_list    = $('.goods');
+            var category_list = $('.goods_category');
+            var is_empty      = false;
+
+            category_list.each(function(index, el) {
+                // console.log($(this).val());
+                if($(this).val() == 0){
+                    // alert('请确认商品信息');
+                    is_empty = true;return;
                 }
-            }, 
-            sh_telephone: {
-                validators: {
-                    notEmpty: {
-                        message: '这个可以有'
-                    }
+            });
+
+            goods_list.each(function(index, el) {
+                // console.log($(this).val());
+                if($(this).val() == 0){
+                    // alert('请确认商品信息');
+                    is_empty = true;return;
                 }
+
+            });
+
+            // console.log(is_empty);
+
+            if(is_empty){
+                alert('请确认商品信息');
+                return false;
+            }else{
+                return true;
+            }
+            
+            // console.log(goods_list);
+            // console.log(category_list);
+            // return false;
+
+        });
+
+        $('#orderCreate').bootstrapValidator({
+            live: 'submitted',
+            feedbackIcons: {
+                valid: '',
+                invalid: '',
+                validating: ''
             },
-            address: {
-                validators: {
-                    notEmpty: {
-                        message: '这个可以有'
+            fields: {
+                sh_name: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入收件人'
+                        }
                     }
-                }
-            },        
-        }
-        });*/
-        
+                }, 
+                sh_telephone: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入电话'
+                        }
+                    }
+                },
+                address: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入收件人地址'
+                        }
+                    }
+                },        
+                user_id: {
+                    validators: {
+                        notEmpty: {
+                            message: '请选择商户'
+                        }
+                    }
+                },                
+            }
+        });      
 	});
 </script>
 @endsection

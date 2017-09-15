@@ -15,6 +15,8 @@ use App\Repositories\Order\OrderRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use App\Repositories\Goods\GoodsRepositoryContract;
 use App\Repositories\Category\CategoryRepositoryContract;
+use App\Http\Requests\Order\UpdateOrderRequest;
+use App\Http\Requests\Order\StoreOrderRequest;
 
 class OrderController extends Controller
 {   
@@ -96,7 +98,7 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
 
         // dd($request->all());
