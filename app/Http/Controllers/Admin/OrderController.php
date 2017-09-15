@@ -237,9 +237,10 @@ class OrderController extends Controller
         // p($order_goods_insert);
         // p(count($order_goods));
         // dd($total_price_i);
+        // 
 
         $orderRequest['type_num']           = count($order_goods) + count($order_goods_insert); //订单商品种类数
-        $orderRequest['goods_num']          = $goods_num + $goods_num_i;          //订单商品总数
+        $orderRequest['goods_num']          = $goods_num + $goods_num_i ;          //订单商品总数
         $orderRequest['total_price']        = $total_price + $total_price_i;        //订单总价
         $orderRequest['order_goods_update'] = $order_goods;               //需更新订单商品
         $orderRequest['order_goods_insert'] = $order_goods_insert;        //需插入订单商品

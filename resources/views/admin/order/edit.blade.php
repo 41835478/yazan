@@ -3,6 +3,7 @@
 @section('head_content')
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/global/plugins/select2/select2-custom.css')}}">
     <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/plugins/multi-select/css/multi-select-custom.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/plugins/bootstrap-validator/css/bootstrapValidator.min.css')}}">
     <style type="text/css">
         input.shaddress{
             margin-bottom:5px;
@@ -33,7 +34,7 @@
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-body">
-                    <form action="{{route('order.update', ['order'=>$order->id])}}" class="form-horizontal" method="post">
+                    <form id="orderCreate" action="{{route('order.update', ['order'=>$order->id])}}" class="form-horizontal" method="post">
                     {!! csrf_field() !!}
                     {{ method_field('PUT') }}
                         <div class="form-body">
@@ -123,9 +124,8 @@
                                     <input type="hidden" name="goods_ajax_request_url" value="{{route('goods.getChildGoods')}}">
                                     <input type="hidden" name="goods_price_ajax_request_url" value="{{route('goods.getGoodsPrice')}}">
                                     <input type="hidden" name="user_ajax_request_url" value="{{route('user.getUserChain')}}">
-                                    <input type="hidden" name="goods_delete_url" value="{{route('orderGoods.ajaxDelete')}}">
                                     <input type="hidden"  id="is_update" value='1'>
-                                    <button type="submit" style="float:left;" class="btn btn-sm btn-success">修改订单</button>
+                                    <button type="submit" id="orderAdd" style="float:left;" class="btn btn-sm btn-success">修改订单</button>
                                     <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
                                     <button type="button" id="goods_add" class="btn btn-success">添加商品</button>
                                 </div>
@@ -140,9 +140,9 @@
 @endsection
 @section('script_content')
 <!-- 引入表单验证js -->
-<!-- <script src="{{URL::asset('yazan/assets/plugins/bootstrap-validator/js/bootstrapValidator.min.js')}}"></script>
-<script src="{{URL::asset('yazan/global/plugins/select2/select2.min.js')}}"></script>
-<script src="{{URL::asset('yazan/assets/js/form-validation.js')}}"></script> -->
+<script src="{{URL::asset('yazan/assets/plugins/bootstrap-validator/js/bootstrapValidator.min.js')}}"></script>
+<!-- <script src="{{URL::asset('yazan/global/plugins/select2/select2.min.js')}}"></script> -->
+<!-- <script src="{{URL::asset('yazan/assets/js/form-validation.js')}}"></script> -->
 <!-- 引入表单select功能js -->
 <script src="{{URL::asset('yazan/global/plugins/select2/select2.min.js')}}"></script>
 <script src="{{URL::asset('yazan/assets/plugins/multi-select/js/jquery.multi-select.js')}}"></script>
@@ -155,10 +155,15 @@
         // 删除商品
         $('.order_goods_delete').click(function(event) {
         /* Act on the event */
-            var token          = $("input[name='_token']").val();
+            var order_goods_id = $(this).prevAll("input.order_goods_id");
+            var order_goods_num = $(this).prevAll("input.goods_num");
+            var category_id = $(this).prevAll("select.goods_category");
+            var goods_id = $(this).prevAll("select.goods");
+            var order_goods_price = $(this).prevAll("input.goods_price");
+            var total_price = $(this).prevAll("input.total_price");
+            var goods_name = $(this).prevAll("input.goods_name");
             var goods_list_num = $('.goods_list').length;
-            var request_url    = $("input[name='goods_delete_url']").val();
-            var order_goods_id = $(this).prev().val();
+
 
             console.log(order_goods_id);
             if(goods_list_num == 1){
@@ -172,31 +177,19 @@
                 cancelButton: '取消',
                 confirmButtonClass: 'btn-danger',
                 confirm: function () {
-                    $.ajax({
-                        type: 'POST',       
-                        url: request_url,       
-                        data: { order_goods_id : order_goods_id},        
-                        dataType: 'json',       
-                        headers: {      
-                        'X-CSRF-TOKEN': token       
-                        },      
-                        success: function(data){   
-                            // console.log(data);  
-                            if(data.status == 1){
-                                alert(data.message);
-                                obj.parents('.goods_list').remove();
-                                // console.log(content);
-                            }else{
-                                alert(data.message);
-                                return false;
-                            }
-                        },      
-                        error: function(xhr, type){
-                
-                            /*alert('Ajax error!');*/
-                        }
-                    });
-                    
+
+                    if(order_goods_id === undefined){
+                        obj.parents('.goods_list').remove();
+                    }else{
+                        order_goods_id.attr('name', 'order_goods_id_d[]');
+                        order_goods_num.attr('name', 'goods_num_d[]');
+                        order_goods_price.attr('name', 'goods_pricee_d[]');
+                        category_id.attr('name', 'category_id_d[]');
+                        total_price.attr('name', 'total_price_d[]');
+                        goods_name.attr('name', 'goods_name_d[]');
+                        goods_id.attr('name', 'goods_id_d[]');
+                        obj.parents('.goods_list').hide();
+                    }               
                     // console.log(obj.parent('form'));
                     // return false;
                 },
@@ -206,6 +199,81 @@
             });
             // $(this).parents('.goods_list').remove();
             // console.log($(this).parents('.goods_list'));
+        });
+
+        $('#orderAdd').click(function(){
+            //提交前验证商品信息完整性
+            var goods_list    = $('.goods');
+            var category_list = $('.goods_category');
+            var is_empty      = false;
+
+            category_list.each(function(index, el) {
+                // console.log($(this).val());
+                if($(this).val() == 0){
+                    is_empty = true;return;
+                }
+            });
+
+            goods_list.each(function(index, el) {
+                // console.log($(this).val());
+                if($(this).val() == 0){
+                    is_empty = true;return;
+                }
+
+            });
+
+            // console.log(is_empty);
+
+            if(is_empty){
+                alert('请确认商品信息');
+                return false;
+            }else{
+                return true;
+            }
+            
+            // console.log(goods_list);
+            // console.log(category_list);
+            // return false;
+
+        });
+
+        $('#orderCreate').bootstrapValidator({
+            live: 'submitted',
+            feedbackIcons: {
+                valid: '',
+                invalid: '',
+                validating: ''
+            },
+            fields: {
+                sh_name: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入收件人'
+                        }
+                    }
+                }, 
+                sh_telephone: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入电话'
+                        }
+                    }
+                },
+                address: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入收件人地址'
+                        }
+                    }
+                },        
+                user_id: {
+                    validators: {
+                        notEmpty: {
+                            message: '请选择商户'
+                        }
+                    }
+                },                
+            }
         });
     });
 </script>

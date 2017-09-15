@@ -62,13 +62,14 @@ class ExcelController extends Controller
             $goods_info .= '  '.$value->belongsToUserWithTopUser->user_telephone;
 
             $orders_info_content[] =  array(
+                $value->order_code,
                 $value->sh_name, 
                 $value->sh_telephone,                 
                 $value->address,
                 $goods_info,
                 $value->total_price,
                 $value->belongsToUserWithTopUser->nick_name,
-                
+                substr($value->created_at, 0 ,10),
             );
         }
 
@@ -90,17 +91,17 @@ class ExcelController extends Controller
                         '元芳',]
         );*/
 
-        array_unshift($orders_info_content, ['收件人','手机/电话','地址','物品名称', '总价', '总代']);
+        array_unshift($orders_info_content, ['编号','收件人','手机/电话','地址','物品名称', '总价', '总代', '下单时间']);
 
         // dd($orders_info_content);
 
         $excels = Excel::create('订单',function($excel) use ($orders_info_content){
             $excel->sheet('score', function($sheet) use ($orders_info_content){
-                
-                $sheet->setWidth('A', 10);
-                $sheet->setWidth('B', 20);
-                $sheet->setWidth('C', 80);
-                $sheet->setWidth('D', 50);       
+                $sheet->setWidth('A', 15);
+                $sheet->setWidth('B', 10);
+                $sheet->setWidth('C', 20);
+                $sheet->setWidth('D', 80);
+                $sheet->setWidth('E', 50);       
                 $sheet->rows($orders_info_content);
             });
         });

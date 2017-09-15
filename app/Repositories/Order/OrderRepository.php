@@ -119,7 +119,7 @@ class OrderRepository implements OrderRepositoryContract
             $order = Order::select($this->select_columns)->findorFail($id); //车源对象
             /*p($requestData->all());
             dd($order);*/
-            // 车源编辑信息
+            // 订单编辑信息
             $order->exp_code     = $requestData->exp_code;
             $order->goods_num    = $requestData->goods_num;
             $order->type_num     = $requestData->type_num;
@@ -131,9 +131,14 @@ class OrderRepository implements OrderRepositoryContract
             $order->sh_telephone = $requestData->sh_telephone;
             
             // dd($order);
-            $order->save();
+            
 
+            if(count($requestData->order_goods_id_d) > 0){
+                $this->orderGoodsDelete($requestData->order_goods_id_d);
+            }
+            
             $this->orderGoodsUpdate($requestData->order_goods_update);
+            
 
             $order_goods = new orderGoods(); //订单商品信息添加
             
@@ -147,7 +152,7 @@ class OrderRepository implements OrderRepositoryContract
 
             // dd($order_goods_input);
             $order_goods->insert($order_goods_input);
-
+            $order->save();
             Session::flash('sucess', '修改订单成功');
             return $order;           
         });     
@@ -238,5 +243,22 @@ class OrderRepository implements OrderRepositoryContract
                 $order_goods_obj->save();
             }
         }
+    }
+
+    /**
+     * 删除订单商品
+     * @param  [type] $order_goods [description]
+     * @return [type]              [description]
+     */
+    protected function orderGoodsDelete($order_goods){
+
+        // dd($order_goods);
+
+        foreach ($order_goods as $key => $value) {
+            // p($value['order_goods_id']);
+            $order_goods_obj = OrderGoods::find($value);
+
+            $order_goods_obj->delete();
+        } 
     }
 }

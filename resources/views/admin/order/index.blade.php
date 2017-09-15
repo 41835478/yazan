@@ -74,10 +74,10 @@
                             <td>{{$order->belongsToCreater->nick_name}}</td>                          
                             <td>{{substr($order->created_at, 0 ,10)}}</td>      
                             <td class="center">
-                                <a class="btn btn-success" href="{{route('order.show', ['order'=>$order->id])}}">
+                                <a class="btn btn-success" target="_blank" href="{{route('order.show', ['order'=>$order->id])}}">
                                     <i class="icon-edit icon-white"></i> 查看
                                 </a>
-                                <a class="btn btn-warning" href="{{route('order.edit', ['order'=>$order->id])}}">
+                                <a class="btn btn-warning"  href="{{route('order.edit', ['order'=>$order->id])}}">
                                     <i class="icon-edit icon-white"></i> 编辑
                                 </a>
                                 <input type="hidden" name="order_id" value="{{$order->id}}">
