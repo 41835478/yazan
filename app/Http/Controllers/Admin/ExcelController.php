@@ -35,12 +35,12 @@ class ExcelController extends Controller
     //Excel文件导出功能 By Laravel学院
     public function export(Request $request){
 
-        /*($request->method());
-        dd($request->all());*/
+        // dd($request->all());
 
         $orders = $this->order->getAllOrdersWithNotPage($request);
 
-        /*dd($orders);
+        /*dd(lastSql());
+        dd($orders);
         dd($orders[0]->hasManyOrderGoods);
         dd($orders[0]->hasManyOrderGoods[0]->belongsToCategory);*/
 

@@ -131,8 +131,8 @@
                         </fieldset> -->
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="text" placeholder="客户电话" class="col-md-12 form-control mbm" />
-                                <input type="text" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
+                                <input type="text"  name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
+                                <input type="text" name="date" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -170,8 +170,8 @@
                         </fieldset> -->
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="text" placeholder="客户电话" class="col-md-12 form-control mbm" />
-                                <input type="text" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
+                                <input type="text" name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
+                                <input type="text" name="date" placeholder="日期" id="daterangepicker_export" class="col-md-12 form-control mbm" />
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -211,6 +211,23 @@
 	jQuery(document).ready(function($){
 
         $('#daterangepicker_default').daterangepicker({ 
+            format: 'YYYY-MM-DD',
+            startDate: new Date(),
+            endDate: new Date(),
+            // maxDate:new Date(),
+            locale:{
+                applyLabel: '确认',
+                cancelLabel: '取消',
+                fromLabel: '从',
+                toLabel: '到',
+                weekLabel: 'W',
+                customRangeLabel: 'Custom Range',
+                daysOfWeek:["日","一","二","三","四","五","六"],
+                monthNames: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+            }
+        });
+
+        $('#daterangepicker_export').daterangepicker({ 
             format: 'YYYY-MM-DD',
             startDate: new Date(),
             endDate: new Date(),

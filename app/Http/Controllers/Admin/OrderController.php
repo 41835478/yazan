@@ -52,9 +52,9 @@ class OrderController extends Controller
         //$request['order_status'] = '1';
         //$select_conditions  = $request->all();
         // dd($select_conditions);
-        $orders = $this->order->getAllorders($request);
-        // dd(lastSql());
-        // dd($orders[0]->belongsToCreater->nick_name);
+        $orders = $this->order->getAllOrders($request);
+        /*dd(lastSql());
+        dd($orders);*/
         //$shops = $this->shop->getShopsInProvence('10');
 
         // dd($shops);

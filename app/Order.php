@@ -88,14 +88,14 @@ class Order extends Model
             $query = $query->where('status', '1');
         }    
 
-        if(!empty($requestData['end_date'])){
-            $query = $query->where('created_at', '<=', $requestData['end_date']);
+        if(!empty($requestData['date'])){
+            /*p(substr($requestData['date'], 0, 10));
+            p(substr($requestData['date'], -10));
+            p(explode('-',$requestData['date']));exit;*/
+            $date_section = [substr($requestData['date'], 0, 10),substr($requestData['date'], -10)];
+            $query = $query->whereBetween('created_at', $date_section);
         }
         
-        if(!empty($requestData['begin_date'])){
-            $query = $query->where('created_at', '>=', $requestData['begin_date']);
-        } 
- 
         return $query;
     }
 
