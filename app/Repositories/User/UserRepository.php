@@ -226,6 +226,31 @@ class UserRepository implements UserRepositoryContract {
         return $userTree;
     }
 
+    // 递归获得用户子用户
+    public function getChildRecursive($user_id){
+
+        $child = [];
+
+        if ($this->haveChildUser($user_id)) {
+
+            $user_info = $this->getChildUser($user_id)->toArray();
+            // dd($user_info);
+            foreach ($user_info as $key => $value) {
+
+                $child[$key] = $value;
+                $child[$key]['child'] = $this->getChildRecursive($value['id']);
+            }
+
+            /*foreach ($user_info as $key => $value) {
+
+                $child = array_merge($child, $this->getChildRecursive($value['id']));
+            }*/
+        }
+
+        return$child;
+    }
+
+
     //获得指定品牌下所有子品牌
     protected function getAllChild($user_id, $lev = 1) {
 

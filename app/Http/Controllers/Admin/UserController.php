@@ -37,10 +37,10 @@ class UserController extends Controller {
 	public function index() {
 		// dd(Auth::user());
 		$users = $this->users->getAllUsers();
-		// dd($users[0]->hasManyRoles->name);
-		/*foreach ($users as $key => $value) {
-			           dd($value->belongsToShop);
-		*/
+
+		$user_children = $this->users->getChildRecursive(5);
+		dd($user_children);
+
 		return view('admin.user.index', compact(
 
 			'users'
