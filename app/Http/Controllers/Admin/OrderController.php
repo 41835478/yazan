@@ -50,11 +50,11 @@ class OrderController extends Controller
         // dd($request->method());
         //$all_top_brands = $this->brands->getChildBrand(0);
         //$request['order_status'] = '1';
-        //$select_conditions  = $request->all();
+        $select_conditions  = $request->all();
         // dd($select_conditions);
         $orders = $this->order->getAllOrders($request);
-        /*dd(lastSql());
-        dd($orders);*/
+        // dd(lastSql());
+        // dd($orders);
         //$shops = $this->shop->getShopsInProvence('10');
 
         // dd($shops);
@@ -68,7 +68,7 @@ class OrderController extends Controller
         //$order_status_current = '1';
         
         /*return view('admin.order.index', compact('orders','order_status_current', 'all_top_brands', 'select_conditions','shops'));*/
-        return view('admin.order.index', compact('orders'));
+        return view('admin.order.index', compact('orders', 'select_conditions'));
     }
 
     /**

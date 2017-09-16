@@ -97,9 +97,17 @@
                     </table>
                 </div>
                 <div class="col-md-7 col-sm-12">
+                    <div class="dataTables_paginate paging_simple_numbers" style="float:left;">
+                        <div class="pagination pagination-centered">
+                          <ul class="pagination">
+                            <li class="disabled"><span>共{{ $orders->total() }}条</span></li>
+                          </ul>
+                        </div>
+                    </div>
                 	<div class="dataTables_paginate paging_simple_numbers" id="datatables_paginate">
-                	<div class="pagination pagination-centered">
-                	   {!! $orders->links() !!}</div>
+                	    <div class="pagination pagination-centered">
+                	       {!! $orders->links() !!}
+                        </div>
                 	</div>
                 </div>
             </div>
@@ -131,8 +139,8 @@
                         </fieldset> -->
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="text"  name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
-                                <input type="text" name="date" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
+                                <input type="text" value="{{$select_conditions['user_telephone'] or ''}}"  name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
+                                <input type="text" name="date" value="{{$select_conditions['date'] or ''}}" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -152,7 +160,7 @@
                     <h4 id="myModalLabel" class="modal-title">订单导出</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" id="condition" action="{{route('order.export')}}" method="post">
+                    <form class="form-horizontal" id="condition_export" action="{{route('order.export')}}" method="post">
                     {!! csrf_field() !!}
                         <!-- <fieldset>
                         <div class="control-group">
@@ -210,7 +218,7 @@
 
 	jQuery(document).ready(function($){
 
-        $('#daterangepicker_default').daterangepicker({ 
+        $('#daterangepicker_default,#daterangepicker_export').daterangepicker({ 
             format: 'YYYY-MM-DD',
             startDate: new Date(),
             endDate: new Date(),
@@ -227,7 +235,7 @@
             }
         });
 
-        $('#daterangepicker_export').daterangepicker({ 
+        /*$('#daterangepicker_export').daterangepicker({ 
             format: 'YYYY-MM-DD',
             startDate: new Date(),
             endDate: new Date(),
@@ -242,6 +250,15 @@
                 daysOfWeek:["日","一","二","三","四","五","六"],
                 monthNames: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
             }
+        });*/
+
+        $('.pagination').children('li').children('a').click(function(){
+
+            // alert($(this).attr('href'));
+            $('#condition').attr('action', $(this).attr('href'));
+            // alert($('#condition').attr('action'));
+            $('#condition').submit();
+            return false;
         });
 	});
 </script>

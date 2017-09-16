@@ -89,7 +89,7 @@
                                 <a href="{{route('admin.index')}}"><i class="icon-home"></i><span class="sidebar-text">首页</span></a>
                             </li>
                             <li>
-                                <a href="{{route('order.index')}}"><i class="icon-rocket"></i><span class="sidebar-text">订单管理</span></a>
+                                <a href="{{route('order.index')}}/index"><i class="icon-rocket"></i><span class="sidebar-text">订单管理</span></a>
                             </li>
 
                             <li>

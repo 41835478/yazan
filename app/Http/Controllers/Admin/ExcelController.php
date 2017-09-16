@@ -101,7 +101,9 @@ class ExcelController extends Controller
                 $sheet->setWidth('B', 10);
                 $sheet->setWidth('C', 20);
                 $sheet->setWidth('D', 80);
-                $sheet->setWidth('E', 50);       
+                $sheet->setWidth('E', 50); 
+                $sheet->setFontSize(15);
+                // $sheet->setValignment('middle');      
                 $sheet->rows($orders_info_content);
             });
         });
