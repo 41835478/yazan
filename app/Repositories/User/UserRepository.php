@@ -72,6 +72,15 @@ class UserRepository implements UserRepositoryContract {
                    ->get();
     }
 
+     // 获取总代、1、2、3级代理
+    public function getAllSuppliers(){
+
+        return User::select($this->select_columns)
+                   ->whereIn('level', ['0', '1','2', '3',])
+                   ->where('status', '=', '1')
+                   ->get();
+    }
+
 	public function create($requestData) {
 
 		// dd($requestData->all());
@@ -84,7 +93,7 @@ class UserRepository implements UserRepositoryContract {
         p($requestData->agents_frist);
         dd($requestData->agents_secend);*/
         //设置用户pid
-        if(!empty($requestData->agents_secend)){
+        /*if(!empty($requestData->agents_secend)){
             // 有二级代理
             $pid = $requestData->agents_secend;
         }else if(!empty($requestData->agents_frist)){
@@ -93,10 +102,10 @@ class UserRepository implements UserRepositoryContract {
         }else{
             // 总代理
             $pid = $requestData->agents_total;
-        }
+        }*/
 
 		// 添加用户到用户表
-		$input = array_replace($requestData->all(), ['password' => "$password", 'creater_id' => Auth::id(), 'level' => $role_info->level, 'pid'=>$pid]);
+		$input = array_replace($requestData->all(), ['password' => "$password", 'creater_id' => Auth::id(), 'level' => $role_info->level]);
 
 		// dd($input);
 

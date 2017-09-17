@@ -36,10 +36,11 @@ class UserController extends Controller {
 	 */
 	public function index() {
 		// dd(Auth::user());
+		// 获取所有用户
 		$users = $this->users->getAllUsers();
 
-		$user_children = $this->users->getChildRecursive(5);
-		dd($user_children);
+		// $user_children = $this->users->getChildRecursive(5);
+		// dd($user_children);
 
 		return view('admin.user.index', compact(
 
@@ -65,8 +66,8 @@ class UserController extends Controller {
 		//$role_add_allow = $this->roles->getAllowList($user_role_id);
 		// p($role_add_allow);
 
-		//所有总代理
-		$agents_total = $this->users->getAllUsersByRole('3');
+		//所有总代、一级代理、二级代理
+		$agents_total = $this->users->getAllSuppliers();
 		// dd(lastSql());
 		// dd($agents_total);
 

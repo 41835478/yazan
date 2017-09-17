@@ -28,14 +28,14 @@
 @section('content')
 
 @include('layouts.message')
-<!-- <section class="main-content">
+<section class="main-content">
     <div class="row">
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-body">
                     <ul class="nav nav-tabs">
                           <li style="display: inline-block;line-height:20px;">
-                            <a class="btn btn-search" href="#"><i class="halflings-icon search"></i>搜索商户</a>
+                            <a class="btn btn-search" href="javascript:void(0);"><i class="halflings-icon search"></i>搜索商户</a>
                         </li>
                           <li style="display: inline-block;line-height:20px;float:right;">
                             <a class="btn btn-primary" href="{{route('user.create')}}">添加商户</a>
@@ -66,21 +66,17 @@
                             <td>{{$user->telephone}}</td>                           
                             <td>{{substr($user->created_at, 0 ,10)}}</td>      
                             <td class="center">
+                                <a class="btn btn-success" target="_blank"  href="{{route('user.show', ['user'=>$user->id])}}">
+                                    <i class="icon-edit icon-white"></i> 查看
+                                </a>
                                 <a class="btn btn-warning" href="{{route('user.edit', ['user'=>$user->id])}}">
                                     <i class="icon-edit icon-white"></i> 编辑
                                 </a>
                                 <input type="hidden" name="user_id" value="{{$user->id}}">
-                                <a class="btn btn-success" href="{{route('user.address', ['user'=>$user->id])}}">
+                                <!-- <a class="btn btn-success" href="{{route('user.address', ['user'=>$user->id])}}">
                                     <i class="icon-edit icon-white"></i> 地址管理
-                                </a>
+                                </a> -->
                                 <span>
-                                <form action="{{route('user.address')}}" method="post" style="display: inherit;margin:0px;">
-                                    {{ csrf_field() }}
-                                    <input type="hidden" name="user_id" value="{{$user->id}}">
-                                    <button class="btn btn-success" type="submit">
-                                        地址管理
-                                    </button>
-                                </form>
                                 <form action="{{route('user.destroy', ['user'=>$user->id])}}" method="post" style="display: inherit;margin:0px;">
                                     {{ csrf_field() }}
                                     {{ method_field('DELETE') }}
@@ -105,8 +101,8 @@
             </div>
         </div>
     </div>
-</section> -->
-<section class="main-content">
+</section>
+<!-- <section class="main-content">
     <div class="row">
         <div class="col-md-12">
             <h4 class="mbm"><strong class="text-uppercase text-success">
@@ -189,7 +185,7 @@
             </ul>
         </div>
     </div>
-</section>
+</section> -->
 @endsection
 
 @section('script_content')

@@ -1,6 +1,9 @@
 @extends('layouts.main')
 
 @section('head_content')
+<link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/global/plugins/select2/select2-custom.css')}}">
+<link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/plugins/multi-select/css/multi-select-custom.css')}}">
+<link type="text/css" rel="stylesheet" href="{{URL::asset('yazan/assets/plugins/bootstrap-validator/css/bootstrapValidator.min.css')}}">
     <style type="text/css">
         input.shaddress{
             margin-bottom:5px;
@@ -109,20 +112,20 @@
                         </div> -->
                         <!-- 用户代理上溯 -->
                         <div class="form-group" id="agents_chain" style="display:none;">
-                            <label class="col-md-1 control-label">代理等级</label>
+                            <label class="col-md-1 control-label">上级代理</label>
                             <div class="col-md-8">
-                                <select class="form-control" name="agents_total" id="agents_total" style="width:15%;display: inline-block;">
-                                    <option  value="0">--总代理--</option>
+                                <select class="form-control select2" name="pid" id="pid" style="width:25%;display: inline-block;">
+                                    <option  value="0">--请选择上级代理--</option>
                                     @foreach($agents_total as $key=>$value)
                                     <option value="{{$value->id}}" >{{$value->nick_name}}</option>
                                     @endforeach                                  
                                 </select>
-                                <select class="form-control" name="agents_frist" id="agents_frist" style="width:15%;display: none;">
+                                <!-- <select class="form-control" name="agents_frist" id="agents_frist" style="width:15%;display: none;">
                                     <option  value="0">--一级代理--</option>
                                 </select>
                                 <select class="form-control" name="agents_secend" id="agents_secend" style="width:15%;display: none;">
                                     <option  value="0">--二级代理--</option>
-                                </select>
+                                </select> -->
                             </div>
                         </div>
                         <!-- <div class="form-group" id="agents_chain" style="display:none;">
@@ -172,8 +175,11 @@
 @section('script_content')
 <!-- 引入表单验证js -->
 <script src="{{URL::asset('yazan/assets/plugins/bootstrap-validator/js/bootstrapValidator.min.js')}}"></script>
+<!-- <script src="{{URL::asset('yazan/assets/js/form-validation.js')}}"></script> -->
 <script src="{{URL::asset('yazan/global/plugins/select2/select2.min.js')}}"></script>
-<script src="{{URL::asset('yazan/assets/js/form-validation.js')}}"></script>
+<script src="{{URL::asset('yazan/assets/plugins/multi-select/js/jquery.multi-select.js')}}"></script>
+<script src="{{URL::asset('yazan/assets/plugins/multi-select/js/jquery.quicksearch.js')}}"></script>
+<script src="{{URL::asset('yazan/assets/js/form-select.js')}}"></script>
 <!-- 引入user模块js -->
 <script src="{{URL::asset('yazan/js/user.js')}}"></script>
 <script>
