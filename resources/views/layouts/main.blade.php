@@ -29,7 +29,7 @@
         <div class="page-wrapper">
             <!--BEGIN HEADER-->
             <header class="header">
-                <div class="logo"><a href="/" class="logo-text">宝贝的系统</a><a href="#" data-toggle="offcanvas" class="sidebar-toggle pull-right"><i class="fa fa-bars"></i></a></div>
+                <div class="logo"><a href="/" class="logo-text">订单系统</a><a href="#" data-toggle="offcanvas" class="sidebar-toggle pull-right"><i class="fa fa-bars"></i></a></div>
                 <nav role="navigation" class="navbar navbar-static-top">
                     <div class="navbar-right">
                         <ul class="nav navbar-nav">

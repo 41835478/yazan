@@ -45,6 +45,7 @@ class AuthController extends Controller {
 	}
 
 	public function getLogin() {
+
 		return $this->showLoginForm();
 	}
 
