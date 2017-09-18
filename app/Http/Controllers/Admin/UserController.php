@@ -9,6 +9,7 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Repositories\Role\RoleRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use App\User;
+use App\Role;
 use Auth;
 use Session;
 use Illuminate\Http\Request;
@@ -71,7 +72,7 @@ class UserController extends Controller {
 		// dd(lastSql());
 		// dd($agents_total);
 
-		$role_add_allow = array(
+		/*$role_add_allow = array(
 
 			'2' => '管理员',
 			'3' => '总代理',
@@ -79,8 +80,12 @@ class UserController extends Controller {
 			'5' => '二级代理',
 			'6' => '三级代理',
 			'7' => '零售客户',
-		);
+		);*/
 
+		$role_add_allow = Role::select('id', 'name', 'level')
+							  ->where('level', '>=', '0')
+							  ->get();
+		// dd($role_add_allow);
 		return view('admin.user.create', compact(
 				'role_add_allow', 
 				'agents_total'
@@ -110,6 +115,36 @@ class UserController extends Controller {
             return response()->json(array(
                 'status' => 0,
                 'message'   => '该用户无子代理'
+            ));
+        }        
+    }
+
+    //获得用户角色可属上级
+    public function getParentAgents(Request $request){
+
+
+        $role_level = $request->input('role_level');
+
+        // p($role_level);exit;
+        
+        $junior_users = $this->users->getAgentsParent($role_level);
+
+        // p($junior_users->toArray());exit;
+        /*p($junior_users[0]->toArray());
+        p($junior_users->toJson());exit;*/
+
+        if($junior_users->count() > 0){
+
+            return response()->json(array(
+                'status' => 1,
+                'data'   => $junior_users,
+                'message'   => '获取代理成功'
+            ));
+        }else{
+
+            return response()->json(array(
+                'status' => 0,
+                'message'   => '获取代理失败'
             ));
         }        
     }

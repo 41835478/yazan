@@ -93,7 +93,7 @@
                                 <select class="form-control" name="role_id" id="role_id">
                                     <option  value="0">---请选择角色---</option>
                                     @foreach($role_add_allow as $key=>$value)
-                                    <option value="{{$key}}" >{{$value}}</option>
+                                    <option data="{{$value->level}}" value="{{$value->id}}" >{{$value->name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -117,7 +117,7 @@
                                 <select class="form-control select2" name="pid" id="pid" style="width:25%;display: inline-block;">
                                     <option  value="0">--请选择上级代理--</option>
                                     @foreach($agents_total as $key=>$value)
-                                    <option value="{{$value->id}}" >{{$value->nick_name}}</option>
+                                    <option data="{{$value->level}}" value="{{$value->id}}" >{{$value->nick_name}}</option>
                                     @endforeach                                  
                                 </select>
                                 <!-- <select class="form-control" name="agents_frist" id="agents_frist" style="width:15%;display: none;">
@@ -160,7 +160,7 @@
                         <div class="form-group">
 
                             <div class="col-md-4" style="text-align:center;">
-                                <input type="hidden" name="agents_ajax_request_url" value="{{route('user.getChildUser')}}">
+                                <input type="hidden" name="agents_ajax_request_url" value="{{route('user.getParentAgents')}}">
                              	<button type="submit" class="btn btn-sm btn-success">添加</button>
                                 <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
                             </div>

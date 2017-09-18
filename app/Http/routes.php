@@ -42,6 +42,8 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::post('user/getChildUser', 'UserController@getChildUser')->name('user.getChildUser');
 	//获得用户代理树
 	Route::post('user/getUserChain', 'UserController@getUserChain')->name('user.getUserChain');
+	//获得用户角色可属上级
+	Route::post('user/getParentAgents', 'UserController@getParentAgents')->name('user.getParentAgents');
 	//获得商品
 	Route::post('goods/getChildGoods', 'GoodsController@getChildGoods')->name('goods.getChildGoods');
 	Route::post('goods/getGoodsPrice', 'GoodsController@getGoodsPrice')->name('goods.getGoodsPrice');

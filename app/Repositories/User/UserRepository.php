@@ -210,7 +210,7 @@ class UserRepository implements UserRepositoryContract {
                    ->get();
     }
 
-    //获得指定品牌的父品牌
+    //获得用户父用户
     protected function getParentUser($user_id) {
 
         $pid = User::select('id', 'pid')
@@ -336,5 +336,16 @@ class UserRepository implements UserRepositoryContract {
         } else {
             return false;
         }
+    }
+
+    //获得用户父用户
+    public function getAgentsParent($role_level) {
+
+        // p($role_level);exit;
+
+        return User::select('id','nick_name', 'pid')
+            ->where('level', '<', $role_level)
+            ->where('level', '>=', '0')
+            ->get();
     }
 }
