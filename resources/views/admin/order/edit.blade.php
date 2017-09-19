@@ -49,18 +49,6 @@
                                         @endforeach 
                                     </select>
                                 </div>
-                                <div class="col-md-3">
-                                    <select class="form-control" name="exp_company" style="width:60%;display: inline-block;">
-                                        <option  value="0">==快递公司==</option>
-                                        @foreach($exp_company as $key=>$company)
-                                        <option @if(($order->exp_company) == $key) selected @endif value="{{$key}}" >{{$company}}</option>
-                                        @endforeach                                  
-                                    </select>
-                                    <input style="width:25%;display: inline-block;" placeholder="快递费" type="text" name="exp_price" value="{{$order->exp_price}}" class="form-control" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-1">商户信息:</label>
                                 <div class="col-md-4">
                                     <textarea id="merchant_info" disabled name="merchant_info" required style="width:400px;">
                                     </textarea>
@@ -68,6 +56,15 @@
                                     <input type="hidden" id="level" name="level" value="{{$order->level}}">
                                     <input type="hidden" id="user_telephone" name="user_telephone" value="{{$order->user_telephone}}">
                                     <input type="hidden" id="user_top_id" name="user_top_id" value="{{$order->user_top_id}}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-1">发货人: </label>
+                                <div class="col-md-2">
+                                    <input style="display: inline-block;"  placeholder="姓名" type="text" name="send_name" value="{{$order->send_name}}" class="form-control" />
+                                </div>
+                                <div class="col-md-3">
+                                    <input style="display: inline-block;"  placeholder="电话" type="text" name="send_telephone" value="{{$order->send_telephone}}" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -92,6 +89,15 @@
                                 <label class="control-label col-md-1">快递单号: </label>
                                 <div class="col-md-4">
                                     <input type="text" name="exp_code" value="{{$order->exp_code}}" placeholder="快递单号" class="form-control" />
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" name="exp_company" style="width:60%;display: inline-block;">
+                                        <option  value="0">==快递公司==</option>
+                                        @foreach($exp_company as $key=>$company)
+                                        <option @if(($order->exp_company) == $key) selected @endif value="{{$key}}" >{{$company}}</option>
+                                        @endforeach                                  
+                                    </select>
+                                    <input style="width:25%;display: inline-block;" placeholder="快递费" type="text" name="exp_price" value="{{$order->exp_price}}" class="form-control" />
                                 </div>
                             </div>
                             @foreach($order_goods as $key=>$goods)
@@ -272,7 +278,23 @@
                             message: '请选择商户'
                         }
                     }
-                },                
+                },  
+
+                send_name: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入发件人'
+                        }
+                    }
+                },
+
+                send_telephone: {
+                    validators: {
+                        notEmpty: {
+                            message: '请输入发件人电话'
+                        }
+                    }
+                },              
             }
         });
     });

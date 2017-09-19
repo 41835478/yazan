@@ -58,8 +58,8 @@ class ExcelController extends Controller
                 $goods_info .= "\r\n";
             }
 
-            $goods_info .= '发件人:'.$value->belongsToUserWithTopUser->nick_name;
-            $goods_info .= '  '.$value->belongsToUserWithTopUser->user_telephone;
+            $goods_info .= '发件人:'.$value->send_name;
+            $goods_info .= '  '.$value->send_telephone;
 
             $orders_info_content[] =  array(
                 $value->order_code,
@@ -70,6 +70,7 @@ class ExcelController extends Controller
                 $value->total_price,
                 $value->belongsToUserWithTopUser->nick_name,
                 substr($value->created_at, 0 ,10),
+                $value->user_name,
             );
         }
 
@@ -91,7 +92,7 @@ class ExcelController extends Controller
                         '元芳',]
         );*/
 
-        array_unshift($orders_info_content, ['编号','收件人','手机/电话','地址','物品名称', '总价', '总代', '下单时间']);
+        array_unshift($orders_info_content, ['编号','收件人','手机/电话','地址','物品名称', '总价', '总代', '下单时间','下单商户']);
 
         // dd($orders_info_content);
 

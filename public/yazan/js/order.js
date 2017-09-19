@@ -57,6 +57,8 @@ $(document).ready(function(){
 					$('#level').val(data.self.level);
 					$('#user_telephone').val(data.self.telephone);
 					$('#user_top_id').val(data.self.user_top_id);
+					$('#send_name').val(data.self.nick_name);
+					$('#send_telephone').val(data.self.telephone);
 					//改变下单商户是刷新商品价格
 					$('.goods').each(function(index, el) {
 						$(this).trigger('change');
