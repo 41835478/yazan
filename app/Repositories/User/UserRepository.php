@@ -68,7 +68,7 @@ class UserRepository implements UserRepositoryContract {
 
         return User::select($this->select_columns)
                    ->where('status', '1')
-                   ->where('pid', '>', '0')
+                   ->where('level', '>=', '0')
                    ->get();
     }
 
