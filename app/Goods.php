@@ -51,36 +51,13 @@ class Goods extends Model
     }
 
     // 搜索条件处理
-    public function addCondition($requestData, $is_self){
+    public function addCondition($requestData){
 
         $query = $this;
 
-        if($is_self){
-
-            if(!(Auth::user()->isSuperAdmin())){
-
-               if(Auth::user()->isMdLeader()){
-                    //店长
-                    $user_shop_id = Auth::user()->shop_id; //用户所属门店id
-                    // $this->where('shop_id', $user_shop_id);
-                    $query = $query->where('shop_id', $user_shop_id);    
-                }else{
-                    //店员
-                    // $this->where('creater_id', Auth::id());
-                    $query = $query->where('creater_id', Auth::id());  
-                } 
-            }           
-        }
-
-        if(!empty($requestData['car_code'])){  //有车源编码选择
-
-            $query = $query->where('car_code', $requestData['car_code']);
-
-            return $query;
-        }
 
         //if(isset($requestData['car_status']) && $requestData['car_status'] != ''){
-        if(!empty($requestData['car_status'])){
+        /*if(!empty($requestData['car_status'])){
             //有车源状态选项
             if($requestData['car_status'] == '1'){
 
@@ -100,89 +77,13 @@ class Goods extends Model
                 //非自身车源
                 $query = $query->where('car_status', '1');
             }       
-        }  
+        } */ 
 
-        if(!empty($requestData['gearbox'])){
-            // dd($requestData['gearbox']);
-            $query = $query->where(function($query) use ($requestData){
-                foreach ($requestData['gearbox'] as $key => $gear) {
-                    $query = $query->orWhere('gearbox', $gear);
-                }                       
-            });
-        }
-
-        if(!empty($requestData['shop_id'])){
-
-            $query = $query->where('shop_id', $requestData['shop_id']);
-        }
-
-        if(!empty($requestData['is_appraiser'])){
-
-            $query = $query->where('is_appraiser', $requestData['is_appraiser']);
-        }
-
-        if(!empty($requestData['sale_number'])){
-
-            $query = $query->where('sale_number', $requestData['sale_number']);
-        }
-
-        if(!empty($requestData['out_color'])){
-
-            $query = $query->where('out_color', $requestData['out_color']);
-        }
-
-        if(!empty($requestData['capacity'])){
-
-            $query = $query->where('capacity', $requestData['capacity']);
-        }
-
-        if(!empty($requestData['category_type'])){
-
-            $query = $query->where('categorey_type', $requestData['category_type']);
-        } 
 
         if(!empty($requestData['category_id'])){
 
             $query = $query->where('category_id', $requestData['category_id']);
-        }else{
-
-            if(!empty($requestData['car_factory'])){
-               $query = $query->where('car_factory', $requestData['car_factory']); 
-            }else{
-
-                if(!empty($requestData['brand_id'])){
-                    $query = $query->where('brand_id', $requestData['brand_id']);
-                }
-           }
         } 
-
-        if(!empty($requestData['begin_mileage'])){
-            $query = $query->where('mileage', '>=', $requestData['begin_mileage']);
-        }
-        
-        if(!empty($requestData['end_mileage'])){
-            $query = $query->where('mileage', '<=', $requestData['end_mileage']);
-        }
-
-        if(!empty($requestData['top_price'])){
-            $query = $query->where('top_price', '<=', $requestData['top_price']);
-        }
-        
-        if(!empty($requestData['bottom_price'])){
-            $query = $query->where('top_price', '>=', $requestData['bottom_price']);
-        }
-
-        if(!empty($requestData['end_date'])){
-            $query = $query->where('created_at', '<=', $requestData['end_date']);
-        }
-        
-        if(!empty($requestData['begin_date'])){
-            $query = $query->where('created_at', '>=', $requestData['begin_date']);
-        } 
-
-        if(!empty($requestData['need_follow'])){
-            $query = $query->where('updated_at', '<=', $requestData['need_follow']);
-        }   
 
         return $query;
     }
@@ -209,7 +110,7 @@ class Goods extends Model
     // 定义Category表与Cars表一对多关系
     public function belongsToCategory(){
 
-      return $this->belongsTo('App\Category', 'cate_id', 'id')->select('id', 'name AS category_name');
+      return $this->belongsTo('App\Category', 'category_id', 'id')->select('id', 'name AS category_name');
     }
 
     // 定义goods表与goods_price表一对多关系

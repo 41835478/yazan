@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use Auth;
 use Gate;
 use DB;
+use Carbon;
 use App\Area;
 use App\Image;
-use App\Cars;
+use App\Goods;
+use App\Role;
+use App\GoodsPrice;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 // use App\Repositories\Brand\BrandRepositoryContract;
@@ -46,27 +49,74 @@ class GoodsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-        // dd($request->method());
-        $all_top_brands = $this->brands->getChildBrand(0);
-        $request['car_status'] = '1';
+    {     
+        /*$all_price_goods_id = GoodsPrice::select('goods_id')->groupBy('goods_id')->get();
+        $goods_price = new GoodsPrice;
+        // dd($all_price_goods_id->toArray());
+        foreach ($all_price_goods_id as $key => $value) {
+            $goods_list[] = $value->goods_id;
+        }
+        // dd($goods_list);
+        foreach ($goods_list as $key => $value) {
+            if(($value > 300) && ($value <= 518)){
+                DB::table('yz_goods_price')->insert(['goods_id' => $value, 'price_level' => 0, 'price_status' => 1, 'goods_price' => 0, 'created_at' => '2017-10-18 09:40:23']);
+            }
+            // usleep(200000);
+        }
+        dd('hehe');*/
         $select_conditions  = $request->all();
         // dd($select_conditions);
-        $cars = $this->car->getAllcars($request);
-        // dd(lastSql());
-        $shops = $this->shop->getShopsInProvence('10');
+        $all_goods = $this->goods->getAllGoods($request);
+        /*$role_have_price = Role::whereIn('level', ['-1', '0', '1', '2', '3', '4',])
+                               ->select('slug', 'level')
+                               ->get();*/
+        // dd($role_have_price);
+        // dd($all_goods[0]->hasManyGoodsPrice);
+        foreach ($all_goods as $key => $value) {
+            # 处理价格
+            foreach ($value->hasManyGoodsPrice as $ke => $va) {
+                
+                switch ($va->price_level) {
+                    case '-1':
+                        //零售价格
+                        $value->retailer = $va->goods_price;
+                        break;
+                    case '0':
+                        //CEO价格
+                        $value->agents_ceo = $va->goods_price;
+                        break;
+                    case '1':
+                        //总代价格
+                        $value->agents_total = $va->goods_price;
+                        break;
+                    case '2':
+                        //一级代理价格
+                        $value->agents_frist = $va->goods_price;
+                        break;
+                    case '3':
+                        //二级代理价格
+                        $value->agents_secend = $va->goods_price;
+                        break;
+                    case '4':
+                        //三级代理价格
+                        $value->agents_third = $va->goods_price;
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+            }
+        }
 
-        // dd($shops);
-        // dd(lastSql());
-        // dd($cars);
+        // dd($all_goods[0]);
         /*foreach ($cars as $key => $value) {
             p($value->id);
             p($value->belongsToUser->nick_name);
         }
         exit;*/
-        $car_status_current = '1';
+        $goods_status_current = '1';
         
-        return view('admin.car.index', compact('cars','car_status_current', 'all_top_brands', 'select_conditions','shops'));
+        return view('admin.goods.index', compact('all_goods','goods_status_current','select_conditions'));
     }
 
     //获系列商品
@@ -138,69 +188,6 @@ class GoodsController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     * 我的车源列表
-     * @return \Illuminate\Http\Response
-     */
-    public function carself(Request $request)
-    {
-        
-        // dd($request->method());
-
-        if($request->method() == 'POST'){
-            //初始搜索条件
-            $select_conditions  = $request->all();
-        }else{
-            $select_conditions['car_status'] = '1';
-            $request['car_status'] = '1';
-        }
-
-        $all_top_brands = $this->brands->getChildBrand(0);
-        $cars = $this->car->getAllcars($request, true);
-        
-        // dd($select_conditions['car_status']);
-
-        return view('admin.car.self', compact('cars', 'select_conditions','all_top_brands'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        // dd(Auth::user());
-        $car_code = getCarCode();
-        $all_top_brands = $this->brands->getChildBrand(0);
-        /*$year_type      = config('tcl.year_type'); //获取配置文件中所有车款年份
-        $category_type  = config('tcl.category_type'); //获取配置文件中车型类别
-        $gearbox        = config('tcl.gearbox'); //获取配置文件中车型类别
-        $out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
-        $inside_color   = config('tcl.inside_color'); //获取配置文件中内饰颜色
-        $sale_number    = config('tcl.sale_number'); //获取配置文件中过户次数
-        $car_type       = config('tcl.car_type'); //获取配置文件车源类型
-        $customer_res   = config('tcl.customer_res'); //获取配置文件客户来源
-        $safe_type      = config('tcl.safe_type'); //获取配置文件保险类别
-        $capacity       = config('tcl.capacity'); //获取配置文件排量*/
-        $city_id        = $this->shop->find(Auth::user()->shop_id)->city_id; //车源所在城市
-        $provence_id    = $this->shop->find(Auth::user()->shop_id)->provence_id; //车源所在省份
-
-        $area = Area::withTrashed()
-                    ->where('pid', '1')
-                    ->where('status', '1')
-                    ->get();
-
-        // dd($city_id);
-        return view('admin.car.create',compact(
-            'all_top_brands',           
-            'city_id',
-            'provence_id',
-            'area'
-        ));
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -224,26 +211,6 @@ class GoodsController extends Controller
         /*p('hehe');
         dd($car);*/
         return response()->json($cars); 
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * ajax存储跟进信息(互动)
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function interactiveAdd(Request $request)
-    {
-        // p($request->all());exit;
-
-        $this->car->interactiveAdd($request, $request->input('car_id'));
-
-        return response()->json(array(
-            'status'      => 1,
-            'msg'         => '添加成功',
-            'content'     => $request->input('content'),
-            'follow_time' => date('Y-m-d, H:i:s', time()),
-        )); 
     }
 
     /**
@@ -315,26 +282,7 @@ class GoodsController extends Controller
      */
     public function editImg($id)
     {
-        $car =  $this->car->find($id);
-        $imgs = $car->hasManyImages;
-
-        /*$out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
-        $inside_color   = config('tcl.inside_color'); //获取配置文件中内饰颜色
-        $sale_number    = config('tcl.sale_number'); //获取配置文件中过户次数
-        $car_type       = config('tcl.car_type'); //获取配置文件车源类型
-        $customer_res   = config('tcl.customer_res'); //获取配置文件客户来源
-        $safe_type      = config('tcl.safe_type'); //获取配置文件保险类别
-        $capacity       = config('tcl.capacity'); //获取配置文件排量*/
         
-        /*if (Gate::denies('update', $cars)) {
-            //不允许编辑,基于Policy
-            dd('no no');
-        }*/
-
-        // dd($imgs);
-        return view('admin.car.editImg', compact(
-            'imgs','car'
-        ));
     }
 
     /**
@@ -361,159 +309,4 @@ class GoodsController extends Controller
         //
     }
 
-    /**
-     * 修改车源状态
-     * 暂时只有激活-废弃转换
-     * @return \Illuminate\Http\Response
-     */
-    public function changeStatus(Request $request)
-    {    
-        /*if($request->ajax()){
-            echo "zhen de shi AJAX";
-        }*/
-        /*p($request->input('id'));
-        p($request->input('status'));
-        p($request->method());exit;*/
-
-        $car = $this->car->find($request->id);
-
-        // $is_repeat = $this->car->isRepeat($car->vin_code);
-
-        if($request->input('status') == '0'){
-            //激活车源
-            if($this->car->repeatCarNum($car->vin_code) > 0){
-
-                $msg = '已存在该车架号,无法激活';
-            }else{
-                $this->car->statusChange($request, $request->input('id'));
-                $msg = '车源已经激活';
-            }
-           
-        }else{
-            //废弃车源
-            $this->car->statusChange($request, $request->input('id'));
-            $msg = '车源已经废弃';
-
-        }
-        
-        return response()->json(array(
-            'status' => 1,
-            'msg' => $msg,
-        ));      
-    }
-
-    /**
-     * 快速跟进，只修改跟进时间
-     * @return \Illuminate\Http\Response
-     */
-    public function follwQuickly(Request $request)
-    {    
-        /*if($request->ajax()){
-            echo "zhen de shi AJAX";
-        }
-        p($request->input('id'));
-        p($request->input('status'));
-        p($request->method());exit;*/
-
-        /*$car = $this->car->find($request->id);
-
-        $car->status = $request->input('status');
-
-        $car->save();*/
-        // p($request->id);exit;
-        $this->car->quicklyFollow($request->input('id'));
-
-        return response()->json(array(
-            'status' => 1,
-            'msg' => '跟进成功',
-        ));      
-    }
-
-    /**
-     * ajax获得车源信息
-     * @return \Illuminate\Http\Response
-     */
-    public function getCarInfo(Request $request)
-    {    
-        $year_type      = config('tcl.year_type'); //获取配置文件中所有车款年份
-        $category_type  = config('tcl.category_type'); //获取配置文件中车型类别
-        $gearbox        = config('tcl.gearbox'); //获取配置文件中车型类别
-        $out_color      = config('tcl.out_color'); //获取配置文件中外观颜色
-        $inside_color   = config('tcl.inside_color'); //获取配置文件中内饰颜色
-        $sale_number    = config('tcl.want_sale_number'); //获取配置文件中过户次数
-        $customer_res   = config('tcl.customer_res'); //获取配置文件客户来源
-        $safe_type      = config('tcl.safe_type'); //获取配置文件保险类别
-        $capacity       = config('tcl.capacity'); //获取配置文件排量
-        $mileage_config = config('tcl.mileage'); //获取配置文件中车源状态
-        $car_age = config('tcl.age'); //获取配置文件中车源状态
-       
-        $car = $this->car->find($request->input('car_id'));
-        // dd(substr((date($car->created_at)), 0, 10));
-        $car->capacity = $capacity[$car->capacity];
-        $car->car_type = $category_type[$car->car_type];
-        $car->gearbox = $gearbox[$car->gearbox];
-        $car->out_color = $out_color[$car->out_color];
-        $car->sale_number = $car->sale_number;
-        $car->inside_color = $inside_color[$car->inside_color];
-        $car->safe_type = $safe_type[$car->safe_type];
-        $car->customer = $car->belongsToCustomer->customer_name;
-        $car->creater = $car->belongsToUser->nick_name;
-        $car->creater_tel = $car->belongsToUser->creater_telephone;
-        $car->shop_name = $car->belongsToShop->shop_name;
-        if(Auth::id() == $car->creater_id){
-            $car->customer_info = $car->belongsToCustomer->customer_name.'('.$car->belongsToCustomer->customer_telephone.')';
-        }else{
-            $car->customer_info = $car->belongsToCustomer->customer_name;
-        }       
-        $car->created = substr((date($car->created_at)), 0, 10);
-        $car->want_price = $car->bottom_price.'-'.$car->top_price;
-        $car->plate_city = $car->belongsToCity->city_name;
-
-        if(Auth::id() == $car->creater_id || Auth::user()->isSuperAdmin()){
-            $car->show_pg_info = true;
-        }
-        
-        // dd($car->belongsToArea->city_name);
-        return response()->json(array(
-            'status' => 1,
-            'msg' => 'ok',
-            'data' => $car->toJson(),
-        ));      
-    }
-
-    /**
-     * ajax修改首图
-     * @return \Illuminate\Http\Response
-     */
-    public function changeFristImg(Request $request){
-
-        DB::transaction(function() use ($request){
-            // dd($request->all());
-            $img = Image::where('original_name', $request->img_name)
-                        ->where('car_id',   $request->img_car_id)
-                        ->orWhere('filename', $request->img_name)
-                        ->first();
-            /*dd(lastSql());
-            dd($img);*/
-            /*$car = Cars::where('id', $request->img_car_id)->first();
-            $car->is_show = '1';
-            $car->save();*/
-
-            Cars::where('id', $request->img_car_id)->update(['is_show'=>'1']);
-
-            // dd($car);
-            $img->is_top = '1';
-            $img->save();
-            
-            Image::where('car_id', $request->img_car_id)
-                 ->where('id', '!=', $img->id)
-                 ->update(['is_top' => '0']);
-        // dd($img);      
-        }); 
-
-        return response()->json(array(
-            'status' => 200,
-            'msg' => '修改成功',
-        ));       
-    }
 }

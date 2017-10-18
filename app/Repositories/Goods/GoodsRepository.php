@@ -26,32 +26,22 @@ class GoodsRepository implements GoodsRepositoryContract
                    ->findOrFail($id);
     }
 
-    // 根据不同参数获得车源列表
+    // 根据不同参数获得商品列表
     public function getAllGoods($request)
     {   
         // dd($request->all());
         // $query = Order::query();  // 返回的是一个 QueryBuilder 实例
-        $query = new Order();       // 返回的是一个Order实例,两种方法均可
+        $query = new Goods();       // 返回的是一个Order实例,两种方法均可
 
         $query = $query->addCondition($request->all()); //根据条件组合语句
-
-        if($request->has('os_recommend') && $request->os_recommend == 'yes'){
-            //系统推荐信息scope添加
-            // $query = $query->osRecommend($request->all());
-        }       
+     
         // dd($query);
         // $query = $query->where('is_show', '1');
         // $query = $query->orWhere('car_status', '6');
         // $query = $query->where('car_status', $request->input('car_status', '1'));
 
-        if($request->has('home')){
-
-            return $query->select($this->select_columns)
-                     ->orderBy('created_at', 'desc')
-                     ->paginate(20);
-        }
         return $query->select($this->select_columns)
-                     ->orderBy('created_at', 'desc')
+                     // ->orderBy('created_at', 'desc')
                      ->paginate(10);
     }
 
@@ -331,99 +321,6 @@ class GoodsRepository implements GoodsRepositoryContract
             $car->save(); 
 
             Session::flash('sucess', '修改车源成功');
-            return $car;           
-        });     
-        // dd('sucess');
-        // dd($Car->toJson());       
-    }
-
-    // 评估师评估
-    public function updateByAppraiser($requestData, $id)
-    {
-        // dd($requestData->all());
-        DB::transaction(function() use ($requestData, $id){
-
-            $car         = Order::select($this->select_columns)->findorFail($id); //车源对象
-            $follow_info = new CarFollow(); //车源跟进对象
-
-            $original_content = $car->toArray(); //原有车源信息
-            $request_content  = $requestData->all(); //提交的车源信息
-            
-            /*$collection1 = collect(['type'=>2, 'type1'=>7, 'type2'=>3]);
-            $collection2 = collect(['type'=>0, 'type5'=>2, 'type2'=>3]);
-
-            $diff = $collection2->diffKeys($collection1);
-            // $diff = array_udiff($collection1, $collection2);
-
-            dd($diff);
-            p($original_content);
-            p($request_content);*/
-
-            $changed_content = getDiffArray($request_content, $original_content);//比较提交的数据与原数据差别
-            $update_content = '例行跟进';  //定义车源跟进时信息变化情况,即跟进描述
-            // dd(json_decode($update_content));
-            // dd($changed_content);
-            if($changed_content->count() != 0){
-                $update_content = array();
-                $need_del_array = ['capacity', 'gearbox','out_color','inside_color','safe_type','sale_number','is_top','recommend', 'car_type'];
-                foreach ($changed_content as $key => $value) {
-                    /*p($this->columns_annotate[$key]);
-                    p($requestData->$key);
-                    p($original_content[$key]);*/
-                    if(in_array($key, $need_del_array)){
-                        /*p($original_content[$key]);
-                        p($key);
-                        p($value);
-                        p(config('tcl.'.$key)[$value]);exit;*/
-                        $current_content = config('tcl.'.$key)[$original_content[$key]];
-                        $updated_content = config('tcl.'.$key)[$value];
-                        $update_content[] = $this->columns_annotate[$key].'['.$current_content.']修改为['.$updated_content.']';
-                    }elseif($key == 'plate_provence'){
-                        
-                        $area_before = Area::withTrashed()->findorFail($car->plate_provence);
-                        $area_after = Area::withTrashed()->findorFail($requestData->plate_provence);
-
-                        $update_content[] = $this->columns_annotate[$key].'['.$area_before->name.']修改为['.$area_after->name.']';                      
-                     }elseif($key == 'plate_city'){
-                        
-                        $city_before = Area::withTrashed()->findorFail($car->plate_city);
-                        $city_after = Area::withTrashed()->findorFail($requestData->plate_city);
-
-                        $update_content[] = $this->columns_annotate[$key].'['.$city_before->name.']修改为['.$city_after->name.']';
-                    }else{
-                        $update_content[] = $this->columns_annotate[$key].'['.$original_content[$key].']修改为['.$requestData->$key.']';
-                    }
-                }
-            }
-
-        
-            // dd($follow_info);
-            // dd(collect($update_content)->toJson());
-            // dd(json_decode(collect($update_content)->toJson())); //json_decode将json再转回数组
-            // dd($changed_content);
-        
-            // 评估信息
-            $car->appraiser_price = $requestData->appraiser_price;
-            $car->guide_price     = $requestData->guide_price;
-            $car->pg_description  = $requestData->pg_description;
-            $car->is_appraiser    = '1';
-            $car->appraiser_at    = Carbon::now()->toDateString();
-            
-            // dd(Carbon::now()->toDateString());
-            // 车源跟进信息
-            $follow_info->car_id       = $id;
-            $follow_info->user_id      = Auth::id();
-            $follow_info->follow_type  = '1';
-            $follow_info->operate_type = '2';
-            $follow_info->description  = collect($update_content)->toJson();
-            $follow_info->prev_update  = $car->updated_at;
-
-            // dd($car);
-         
-            $follow_info->save();
-            $car->save(); 
-
-            Session::flash('sucess', '评估成功');
             return $car;           
         });     
         // dd('sucess');
