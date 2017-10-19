@@ -59,7 +59,14 @@ class ExcelController extends Controller
             }
 
             $goods_info .= '发件人:'.$value->send_name;
-            $goods_info .= '  '.$value->send_telephone;
+            
+            if(!empty($value->remark)){
+                $goods_info .= "\r\n";
+                $goods_info .= '备注:';
+                $goods_info .= $value->remark;
+            }
+            
+
 
             $orders_info_content[] =  array(
                 $value->order_code,
