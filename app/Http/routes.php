@@ -53,6 +53,7 @@ Route::group(['middleware' => ['web', 'auth'], 'namespace' => 'Admin'], function
 	Route::post('user/address', 'UserController@address')->name('user.address');
 	//商品分类管理index
 	Route::match(['get', 'post'], 'category/index', 'CategoryController@index')->name('category.index');
+	Route::post('category/checkRepeat', 'CategoryController@checkRepeat')->name('category.checkRepeat');
 	//订单管理index
 	Route::match(['get', 'post'], 'order/index', 'OrderController@index')->name('order.index');
 	//ajax删除订单商品

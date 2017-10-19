@@ -29,7 +29,7 @@ class CategoryRepository implements CategoryRepositoryContract
     // 获得车型列表
     public function getAllCategory()
     {   
-        return Category::paginate(10);
+        return Category::where('status', '1')->paginate(10);
     }
 
     // 获得商品系列列表
@@ -49,18 +49,15 @@ class CategoryRepository implements CategoryRepositoryContract
         $category = new Category();
         // $input =  array_replace($requestData->all());
 
-        $input['brand_id']  = $requestData->brand_id;
-        $input['name']      = $requestData->name;
-        $input['year_type'] = $requestData->year_type;
-        $input['sort']      = $requestData->sort;
-        $input['status']    = $requestData->status;
-        $input['recommend'] = $requestData->recommend;
-        $input['user_id']   = Auth::id();
+        
+        $input['name']       = $requestData->name;
+        $input['status']     = $requestData->status;
+        $input['creater_id'] = Auth::id();
         // dd($input);
 
         $category = $category->insertIgnore($input);
 
-        Session::flash('sucess', '添加车型成功');
+        Session::flash('sucess', '添加成功');
         return $category;
     }
 
@@ -82,11 +79,12 @@ class CategoryRepository implements CategoryRepositoryContract
     {
         try {
             $category = Category::findorFail($id);
-            $category->delete();
-            Session::flash('sucess', '删除车型成功');
+            $category->status = '0';
+            $category->save();
+            Session::flash('sucess', '删除成功');
            
         } catch (\Illuminate\Database\QueryException $e) {
-            Session()->flash('faill', '删除车型失败');
+            Session()->flash('faill', '删除失败');
         }      
     }
 
@@ -103,9 +101,7 @@ class CategoryRepository implements CategoryRepositoryContract
     public function isRepeat($requestData){
 
         $cate = Category::select('id', 'name')
-                        ->where('brand_id', $requestData->brand_id)
                         ->where('name', $requestData->name)
-                        ->where('year_type', $requestData->year_type)
                         ->first();
         // dd(isset($cate));
         return isset($cate);

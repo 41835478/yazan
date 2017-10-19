@@ -1,110 +1,79 @@
 @extends('layouts.main')
 
+@section('head_content')
+    <style type="text/css">
+        input.shaddress{
+            margin-bottom:5px;
+        }
+    </style>
+@endsection
+
 <!-- 面包屑 -->
 @section('BreadcrumbTrail')
-<ul class="breadcrumb">
-	<li>
-		<i class="icon-home"></i>
-		<a href="{{route('admin.index')}}">主页</a>  
-		<i class="icon-angle-right"></i>
-	</li>
-	<li>
-		<i class="icon-home"></i>
-		<a href="{{route('admin.category.index')}}">车型列表</a> 
-		<i class="icon-angle-right"></i>
-	</li>
-	<li><a href="#1f">修改车型</a></li>
-</ul>
+
+<section class="content-header">
+    <div class="pull-left">
+        <ol class="breadcrumb">
+            <li><a href="{{route('admin.index')}}">首页</a></li>
+            <li><a href="{{route('category.index')}}">系列列表</a></li>
+            <li class="active">修改系列</li>
+        </ol>
+    </div>
+</section>
 @endsection
 <!-- 主体 -->
 @section('content')
 
 @include('layouts.message')
 
-<div class="row-fluid sortable">
-	<div class="box span12">
-		<div class="box-content">
-			<form class="form-horizontal" action="{{route('admin.category.update', ['category'=>$category_info->id])}}" method="post" enctype="multipart/form-data">
-				{!! csrf_field() !!}
-				{{ method_field('PUT') }}
-				<fieldset>
-				
-				<div class="control-group">
-					<label class="control-label" for="selectError3">品牌信息</label>
-					<div class="controls">
-					  	<input type="text" readonly="readonly" value="{{$pid_info['top_name']}} @if(isset($pid_info['perv_name'])) --- {{$pid_info['perv_name']}} @endif --- {{$category_info->belongsToBrand->brand_name}}">
-					</div>					
-				</div>
-				  
-				  <div class="control-group">
-					<label class="control-label" for="focusedInput">车型名称</label>
-					<div class="controls">
-					  <input type="hidden" name="brand_id" value="{{$category_info->brand_id}}">
-					  <input class="input-xlarge focused" id="name" name="name" type="text" value="{{$category_info->name}}">
-					</div>
-				  </div>
-				  <!-- <div class="control-group">
-					<label class="control-label" for="focusedInput">车型Logo</label>
-					<div class="controls">
-					  	<input class="input-xlarge focused" id="car_img" name="car_img" type="file" value="{{$category_info->car_img}}">
-					  	<a id="upload-img" href="#" class="btn btn-primary" style="margin-left:10px;">上传</a>
-					</div>					
-				  </div> -->
-				  <div class="control-group">
-					<label class="control-label" for="focusedInput">车款</label>
-					<div class="controls">
-					   <select id="year_type" name="year_type">
-					  		<option  value="">请选择年份</option>											
-					  		@foreach($year_type as $year)											
-					  		<option @if($category_info->year_type == $year) selected @endif  value="{{$year}}">{{$year}}</option>											
-					  		@endforeach											
-						</select>
-					</div>
-				  </div>
-				  <div class="control-group">
-					<label class="control-label" for="focusedInput">车型排序</label>
-					<div class="controls">
-					  <input class="input-xlarge focused" id="sort" name="sort" type="text" value="{{$category_info->sort}}">
-					</div>
-				  </div>
+<section class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <form action="{{route('category.update', ['category'=>$category->id])}}" class="form-horizontal" method="post">
+                    {!! csrf_field() !!}
+                    {{ method_field('PUT') }}
+                        <div class="form-group">
+                            <label class="col-md-1 control-label"><font style="color:red;">*</font>系列名</label>
+                            <div class="col-md-4">
+                                <input type="text" name="name" required placeholder="系列名" class="form-control" value="{{$category->name}}"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">状态</label>
+                            <div class="col-md-2">
+                                <select class="form-control" name="status">
+                                    <option @if($category->status == '1') selected @endif value="1">正常</option>
+                                    <option @if($category->status == '0') selected @endif value="0" >废弃</option>
+                                </select>
+                            </div>
+                        </div>
 
-				<div class="control-group">
-					<label class="control-label" for="selectError3">是否启用</label>
-					<div class="controls">
-					  <select id="status" name="status">
-					  	<option @if($category_info->status == '1') selected @endif value="1">启用</option>
-						<option @if($category_info->status == '0') selected @endif value="0">停用</option>
-						
-						</select>
-					</div>
-				  </div>	
+                        <div class="form-group">
 
-				  <div class="control-group">
-					<label class="control-label" for="selectError3">是否推荐</label>
-					<div class="controls">
-					  <select id="recommend" name="recommend" >
-					  	<option @if($category_info->recommend == '1') selected @endif value="1">推荐</option>
-						<option @if($category_info->recommend == '0') selected @endif value="0">不推荐</option>						
-						</select>
-					</div>
-				  </div>	  				
-				  <div class="form-actions">
-					<button type="submit" class="btn btn-primary">确定</button>
-					<button class="btn" onclick="window.history.go(-1);return false;">返回</button>
-				  </div>
-				</fieldset>
-			</form>				
-		</div>
-	</div>			
-</div>   
+                            <div class="col-md-4" style="text-align:center;">
+                                <button type="submit" class="btn btn-sm btn-success">修改</button>
+                                <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 @endsection
 @section('script_content')
-<!-- 引入车型级联js -->
-<!-- <script src="{{URL::asset('js/tcl/category.js')}}"></script>  -->
+<!-- 引入表单验证js -->
+<script src="{{URL::asset('yazan/assets/plugins/bootstrap-validator/js/bootstrapValidator.min.js')}}"></script>
+<script src="{{URL::asset('yazan/global/plugins/select2/select2.min.js')}}"></script>
+<script src="{{URL::asset('yazan/assets/js/form-validation.js')}}"></script>
+<!-- 引入category模块js -->
+<!-- <script src="{{URL::asset('yazan/js/category.js')}}"></script> -->
 <script>
-	$(document).ready(function(){
-
-		// $('#year_type').
-	});
+    $(document).ready(function(){
+        
+    });
 </script>
 @endsection

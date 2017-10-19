@@ -7,8 +7,8 @@ use App\GoodsPrice;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\Category\CategoryRepositoryContract;
-use App\Http\Requests\Category\UpdateCategoryRequest;
-use App\Http\Requests\Category\StoreCategoryRequest;
+//use App\Http\Requests\Category\UpdateCategoryRequest;
+//use App\Http\Requests\Category\StoreCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -31,11 +31,11 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
 
         $categorys = $this->category->getAllcategory();
         // dd(lastSql());
-        // dd($categorys[0]->belongsToBrand);
+        // dd($categorys);
         /*foreach ($category as $key => $value) {
            dd($value->belongsToShop);
         }*/
@@ -49,10 +49,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $all_top_brands = $this->brands->getChildBrand(0);
-        $year_type = config('tcl.year_type'); //获取配置文件中所有车款年份
-
-        return view('admin.category.create',compact('all_top_brands', 'year_type'));
+        return view('admin.category.create');
     }
 
     /**
@@ -61,12 +58,12 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCategoryRequest $catgoryRequest)
+    public function store(Request $catgoryRequest)
     {
         // dd($catgoryRequest->all());
         $getInsertedId = $this->category->create($catgoryRequest);
         // p(lastSql());exit;
-        return redirect()->route('admin.category.index')->withInput();    
+        return redirect()->route('category.index')->withInput();    
     }
 
     /**
@@ -88,20 +85,10 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        $category_info = $this->category->find($id);
-        $brand_tree = $this->brands->getBrandTree($category_info->brand_id);
-        $brand_parents = $brand_tree['parent'];
-        $pid_info['perv_name'] = $brand_parents[0]['name'];
-        $pid_info['top_name']  = $brand_parents[1]['name'];
+        $category = $this->category->find($id);
 
-        $year_type = config('tcl.year_type'); //获取配置文件中所有车款年份
-        
-        // dd(config('tcl.car_year'));
-        /*p($pid_info);
-        dd($brand_parents);
-        dd($category_info);*/
-
-        return view('admin.category.edit', compact('category_info', 'pid_info', 'year_type'));
+        // dd($category);
+        return view('admin.category.edit', compact('category'));
     }
 
     /**
@@ -111,11 +98,11 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCategoryRequest $catgoryRequest, $id)
+    public function update(Request $catgoryRequest, $id)
     {
         // dd($catgoryRequest->all());
         $this->category->update($catgoryRequest, $id);
-        return redirect()->route('admin.category.index')->withInput();
+        return redirect()->route('category.index')->withInput();
     }
 
     /**
@@ -125,9 +112,10 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
+    {   
+        // dd('删了');
         $this->category->destroy($id);        
-        return redirect()->route('admin.category.index');
+        return redirect()->route('category.index');
     }
 
     //获得指定品牌下车型
@@ -163,13 +151,13 @@ class CategoryController extends Controller
             return response()->json(array(
                 'status' => 1,
                 // 'data'   => $category,
-                'message'   => '该车型已经添加'
+                'message'   => '系列名称重复'
             ));
         }else{
             //车型不重复
             return response()->json(array(
                 'status' => 0,
-                'message'   => '车型不重复'
+                'message'   => '系列名称不重复'
             ));
         }
     }
