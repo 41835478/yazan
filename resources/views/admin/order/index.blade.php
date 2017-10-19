@@ -35,7 +35,7 @@
 						</li>
                         <li style="display: inline-block;line-height:20px;">
                             <!-- <a class="btn btn-search" href="#modal-default"><i class="halflings-icon search"></i>搜索订单</a> -->
-                            <a href="#modal-export" data-toggle="modal" class="btn btn-warning btn-sm">导出订单</a>
+                            <a href="javascript:void(0);" id="order_export" data-toggle="modal" class="btn btn-warning btn-sm">导出订单</a>
                         </li>
             		  	<li style="display: inline-block;line-height:20px;float:right;">
 							<a class="btn btn-primary" href="{{route('order.create')}}">添加订单</a>
@@ -55,6 +55,7 @@
                                 <th>总价</th>
                                 <th>创建者</th>
                                 <th>下单日期</th>
+                                <th>状态</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -72,7 +73,8 @@
                             <td>{{$order->goods_num}}</td>                           
                             <td>{{$order->total_price}}</td> 
                             <td>{{$order->belongsToCreater->nick_name}}</td>                          
-                            <td>{{substr($order->created_at, 0 ,10)}}</td>      
+                            <td>{{substr($order->created_at, 0 ,10)}}</td>  
+                            <td><span @if($order->status == 1) style="color:red;" @elseif($order->status == 2) style="color:green;" @endif >{{$order_status[$order->status]}}</span></td>    
                             <td class="center">
                                 <a class="btn btn-success" target="_blank" href="{{route('order.show', ['order'=>$order->id])}}">
                                     <i class="icon-edit icon-white"></i> 查看
@@ -141,18 +143,27 @@
                             <div class="col-md-12">
                                 <input type="text" value="{{$select_conditions['user_telephone'] or ''}}"  name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
                                 <input type="text" name="date" value="{{$select_conditions['date'] or ''}}" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" />
+                                <label class="control-label" for="category_type">订单状态:</label>
+                                <select name="status" class="col-md-4 form-control mbm">
+                                        <option value=''>不限</option>
+                                        @foreach($order_status as $key=>$status)
+                                            <option @if(isset($select_conditions['status']) && $select_conditions['status'] == $key && $select_conditions['status'] != '') selected @endif value='{{$key}}'>{{$status}}</option>  
+                                        @endforeach                                         
+                                </select>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">搜索</button>
-                            <a href="javascript:void(0);" class="btn" data-dismiss="modal">关闭</a>                            
+                            <button type="button" id="order_select" class="btn btn-primary">搜索</button>
+                            <a href="javascript:void(0);" class="btn" data-dismiss="modal">关闭</a>
+                            <input type="hidden" id="export_url" value="{{route('order.export')}}">
+                            <input type="hidden" id="select_url" value="{{route('order.index')}}/index">
                         </div>                       
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <div id="modal-export" class="modal fade">
+    <!-- <div id="modal-export" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -162,7 +173,7 @@
                 <div class="modal-body">
                     <form class="form-horizontal" id="condition_export" action="{{route('order.export')}}" method="post">
                     {!! csrf_field() !!}
-                        <!-- <fieldset>
+                        <fieldset>
                         <div class="control-group">
                             <label class="control-label" for="car_code">客户电话</label>
                                 <input class="input-xlarge focused" name="car_code" id="car_code" type="text" value="">
@@ -175,7 +186,7 @@
                                 <input type="text" class="input-xlarge one_line date-picker" name="end_date" id="end_date" value="{{$select_conditions['end_date'] or ''}}" placeholder="结束日期">
                             </div>
                         </div>                                
-                        </fieldset> -->
+                        </fieldset>
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="text" name="user_telephone" placeholder="客户电话" class="col-md-12 form-control mbm" />
@@ -190,7 +201,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </section>
 
 @endsection
@@ -236,22 +247,26 @@
             }
         });
 
-        /*$('#daterangepicker_export').daterangepicker({ 
-            format: 'YYYY-MM-DD',
-            startDate: new Date(),
-            endDate: new Date(),
-            // maxDate:new Date(),
-            locale:{
-                applyLabel: '确认',
-                cancelLabel: '取消',
-                fromLabel: '从',
-                toLabel: '到',
-                weekLabel: 'W',
-                customRangeLabel: 'Custom Range',
-                daysOfWeek:["日","一","二","三","四","五","六"],
-                monthNames: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
-            }
-        });*/
+        //导出订单
+        $('#order_export').click(function(event) {
+            var export_url = $('#export_url').val();
+            var form_obj   = $('#condition');
+
+            form_obj.attr('action', export_url);
+            form_obj.submit();
+            /*alert(export_url);
+            alert(form_obj_action);*/
+        });
+
+        //搜索订单
+        $('#order_select').click(function(event) {
+            /* Act on the event */
+            var select_url = $('#select_url').val();
+            var form_obj   = $('#condition');
+
+            form_obj.attr('action', select_url);
+            form_obj.submit();
+        });
 
         $('.pagination').children('li').children('a').click(function(){
 

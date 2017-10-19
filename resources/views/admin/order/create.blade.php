@@ -124,6 +124,21 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="control-label col-md-1">订单状态:</span></label>
+                                <div class="col-md-2">
+                                    <select class="form-control" name="status" style="width:100%;display: inline-block;">
+                                            <option value="1">未付款</option>
+                                            <option value="2" >已付款</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-1">备注:</span></label>
+                                <div class="col-md-4">
+                                    <textarea id="remark" name="remark" required style="width:400px;">{{old('remark')}}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <div class="col-md-12" style="text-align:center;">
                                     <input type="hidden" name="goods_ajax_request_url" value="{{route('goods.getChildGoods')}}">
                                     <input type="hidden" name="goods_price_ajax_request_url" value="{{route('goods.getGoodsPrice')}}">

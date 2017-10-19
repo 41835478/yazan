@@ -151,7 +151,7 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         PHPZen\LaravelRbac\RbacServiceProvider::class,
         Fenos\Notifynder\NotifynderServiceProvider::class,
-        Maatwebsite\Excel\ExcelServiceProvider::class,
+        // Maatwebsite\Excel\ExcelServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -216,7 +216,7 @@ return [
         'Datatables' => Yajra\Datatables\Datatables::class,
         'Carbon'     => Carbon\Carbon::class,
         'Notifynder' => Fenos\Notifynder\Facades\Notifynder::class,
-        'Excel'     => Maatwebsite\Excel\Facades\Excel::class,
+        // 'Excel'     => Maatwebsite\Excel\Facades\Excel::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
         'Image'    => Intervention\Image\Facades\Image::class,
         'Excel'    => Maatwebsite\Excel\Facades\Excel::class

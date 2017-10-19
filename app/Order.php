@@ -82,10 +82,10 @@ class Order extends Model
         }
 
         if(!empty($requestData['status'])){
-            //有车源状态选项
+            //有订单状态选项
             $query = $query->where('status', $requestData['status']);
         }else{
-            $query = $query->where('status', '1');
+            $query = $query->whereIn('status', ['1', '2']);
         }    
 
         if(!empty($requestData['date'])){

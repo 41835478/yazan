@@ -39,7 +39,7 @@ class UserController extends Controller {
 		// dd(Auth::user());
 		// 获取所有用户
 		$users = $this->users->getAllUsers();
-
+		// dd($users);
 		// $user_children = $this->users->getChildRecursive(5);
 		// dd($user_children);
 

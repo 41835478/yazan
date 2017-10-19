@@ -98,7 +98,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-md-7 col-sm-12">
+                <div class="col-md-9 col-sm-12">
                     <div class="dataTables_paginate paging_simple_numbers" style="float:left;">
                         <div class="pagination pagination-centered">
                           <ul class="pagination">

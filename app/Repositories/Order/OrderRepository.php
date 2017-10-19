@@ -131,6 +131,8 @@ class OrderRepository implements OrderRepositoryContract
             $order->sh_telephone   = $requestData->sh_telephone;
             $order->send_name      = $requestData->send_name;
             $order->send_telephone = $requestData->send_telephone;
+            $order->status         = $requestData->status;
+            $order->remark         = $requestData->remark;
             
             // dd($order);
             
