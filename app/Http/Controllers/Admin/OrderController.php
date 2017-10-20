@@ -136,7 +136,7 @@ class OrderController extends Controller
 
         Session::flash('sucess', '添加订单成功');
 
-        return redirect()->route('order.index')->withInput();
+         return redirect('order/index')->withInput();
     }
 
     /**
@@ -248,7 +248,8 @@ class OrderController extends Controller
         $orderRequest['order_goods_insert'] = $order_goods_insert;        //需插入订单商品
 
         $this->order->update($orderRequest, $id);
-        return redirect()->route('order.index')->withInput();
+        // return redirect()->route('order.index')->withInput();
+        return redirect('order/index')->withInput();
     }
 
     /**
@@ -262,7 +263,8 @@ class OrderController extends Controller
         // dd($id);
         $this->order->destroy($id);
 
-        return redirect()->route('order.index');
+        return redirect('order/index');
+        // return redirect('order/index')->route('order.index');
     }
 
     /**
