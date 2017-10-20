@@ -25,7 +25,7 @@ class OrderGoods extends Model
      * 定义可批量赋值字段
      * @var array
      */
-    protected $fillable = ['order_id', 'goods_id', 'goods_name', 'price_level', 'goods_price', 'price_rebate', 'total_price', 'goods_num', 'created_at', 'updated_at'];
+    protected $fillable = ['order_id', 'category_id', 'category_name', 'goods_id', 'goods_name', 'price_level', 'goods_price', 'price_rebate', 'total_price', 'goods_num', 'created_at', 'updated_at'];
 
     /**
      * The attributes excluded from the model's JSON form.

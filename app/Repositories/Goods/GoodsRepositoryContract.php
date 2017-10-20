@@ -14,5 +14,4 @@ interface GoodsRepositoryContract
 
     public function destroy($id);
 
-    public function isRepeat($vin_code);
 }

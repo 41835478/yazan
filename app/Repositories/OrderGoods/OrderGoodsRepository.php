@@ -18,7 +18,7 @@ use Debugbar;
 class OrderGoodsRepository implements OrderGoodsRepositoryContract
 {
     //默认查询数据
-    protected $select_columns = ['id','order_id', 'category_id', 'goods_id', 'goods_name', 'price_level', 'goods_price', 'price_rebate', 'total_price', 'goods_num'];
+    protected $select_columns = ['id','order_id', 'category_id', 'category_name', 'goods_id', 'goods_name', 'price_level', 'goods_price', 'price_rebate', 'total_price', 'goods_num'];
 
     // 根据ID获得车源信息
     public function find($id)

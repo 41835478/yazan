@@ -55,30 +55,12 @@ class Goods extends Model
 
         $query = $this;
 
+        if(!empty($requestData['goods_status'])){
 
-        //if(isset($requestData['car_status']) && $requestData['car_status'] != ''){
-        /*if(!empty($requestData['car_status'])){
-            //有车源状态选项
-            if($requestData['car_status'] == '1'){
-
-                $query = $query->where(function($query) use ($requestData){
-
-                    $query = $query->where('car_status', $requestData['car_status']);
-                    $query = $query->orWhere('car_status', '6');
-                });
-            }else{
-
-                $query = $query->where('car_status', $requestData['car_status']);
-            }
+            $query = $query->where('goods_status', $requestData['goods_status']);
         }else{
-
-            // $query = $query->whereIn('car_status', ['1', '2', '3', '4', '5', '6']);
-            if(!$is_self){
-                //非自身车源
-                $query = $query->where('car_status', '1');
-            }       
-        } */ 
-
+                $query = $query->where('goods_status', '1');
+        }       
 
         if(!empty($requestData['category_id'])){
 
@@ -107,7 +89,7 @@ class Goods extends Model
         return $query;
     }
 
-    // 定义Category表与Cars表一对多关系
+    // 定义Category表与Goods表一对多关系
     public function belongsToCategory(){
 
       return $this->belongsTo('App\Category', 'category_id', 'id')->select('id', 'name AS category_name');
@@ -119,7 +101,7 @@ class Goods extends Model
         return $this->hasMany('App\GoodsPrice', 'goods_id', 'id')->select('id', 'goods_id', 'price_level', 'price_status', 'goods_price')->orderBy('price_level', 'DESC');
     }
 
-    // 定义OrderGoods表与Cars表一对多关系
+    // 定义OrderGoods表与Goods表一对多关系
     public function belongsToOrderGoods(){
 
       return $this->belongsTo('App\OrderGoods', 'category_id', 'id');

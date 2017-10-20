@@ -2,6 +2,7 @@
 namespace App\Repositories\Goods;
 
 use App\Goods;
+use App\GoodsPrice;
 use App\Area;
 use Session;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class GoodsRepository implements GoodsRepositoryContract
         // $query = $query->where('car_status', $request->input('car_status', '1'));
 
         return $query->select($this->select_columns)
-                     // ->orderBy('created_at', 'desc')
+                     ->orderBy('created_at', 'desc')
                      ->paginate(10);
     }
 
@@ -55,6 +56,7 @@ class GoodsRepository implements GoodsRepositoryContract
         $query = new Goods();       // 返回的是一个Goods实例,两种方法均可
 
         return $query->select($this->select_columns)
+                     ->where('goods_status', '1')
                      ->where('category_id', $category_id)
                      ->get();
     }
@@ -74,294 +76,103 @@ class GoodsRepository implements GoodsRepositoryContract
         // p($goods->hasManyGoodsPrice->toArray());exit;
     }
 
-    // 前端显示车源列表
-    public function getAllOrderWithBefore($condition){   
-
-        // dd($condition);
-        // $query = Order::query();  // 返回的是一个 QueryBuilder 实例
-        $query = new Order();       // 返回的是一个Order实例,两种方法均可
-
-        //品牌筛选
-        if(!empty($condition['brand_id'])){
-            $query = $query->where('brand_id', $condition['brand_id']);
-        }
-        //车型类别筛选
-        if(!empty($condition['category_type'])){
-            $query = $query->where('categorey_type', $condition['category_type']);
-        }
-        //价格筛选
-        if(!empty($condition['price']) && $condition['price'] > 1){
-            
-            //p($price_begin);
-            //dd($price_end);
-            $query = $query->where(function($query) use ($condition){
-
-                $price_begin_end = config('tcl.price_begin_end'); //获取配置文件中价格区间起始
-                $price_begin = $price_begin_end[$condition['price']]['begin'];
-                $price_end   = $price_begin_end[$condition['price']]['end'];
-
-                if(!empty($price_end)){
-                    $query = $query->where('top_price', '<=', $price_end);
-                }
-
-                if(!empty($price_begin)){
-                    $query = $query->where('top_price', '>', $price_begin);
-                }               
-            });
-
-            //dd($query);
-        }
-        //车龄筛选
-        if(!empty($condition['age'])&& $condition['age'] > 1){
-
-            $query = $query->where(function($query) use ($condition){
-
-                $age_begin_end  = config('tcl.age_begin_end'); //获取配置文件中车龄区间起始
-                $age_begin      = $age_begin_end[$condition['age']]['begin'];
-                $age_end        = $age_begin_end[$condition['age']]['end'];
-
-                if(!empty($age_end)){
-                    $query = $query->where('age', '<=', $age_end);
-                }
-
-                if(!empty($age_begin)){
-                    $query = $query->where('age', '>', $age_begin);
-                } 
-            });
-        }
-        //车系筛选
-        if(!empty($condition['category_id'])){
-            $query = $query->where('category_id', $condition['category_id']);
-        }
-        //门店筛选
-        if(!empty($condition['shop_id'])){
-            $query = $query->where('shop_id', $condition['shop_id']);
-        }else{
-            $query = $query->whereIn('shop_id', $condition['shop_list']);
-        }
-        // dd($query);
-        $query = $query->where(function($query) use ($condition){
-
-                $query = $query->where('car_status', '1');
-                $query = $query->orWhere('car_status', '6');
-            });
-
-        $query = $query->where('is_show', '1');
-
-        return $query->select($this->select_columns)
-                     ->orderBy('updated_at', 'desc')
-                     ->paginate(20);
-    }
-
-    //获得推荐车源
-    public function getRecommendOrder($price){
-
-        // dd($price);
-        $query = new Order();
-        $query = $query->where('name', '!=', '');
-        $query = $query->where('car_status', '1');
-        $query = $query->where('top_price', '<=', ($price*1.2));
-        $query = $query->where('top_price', '>=', ($price*0.8));
-
-        return $query->select($this->select_columns)
-                     ->orderBy('updated_at', 'desc')
-                     ->limit(4)
-                     ->get();
-    }
-
     // 创建车源
     public function create($requestData)
     {   
-        if(!empty($requestData->vin_code) && $this->isRepeat($requestData->vin_code)){
-            //存在车架号并且存在该车架号记录
+        $goods_obj = (object) '';
+        DB::transaction(function() use ($requestData, $goods_obj){
+            // 添加商品并返回实例,处理跟进(添加商品)
+            $requestData['creater_id'] = Auth::id();
 
-            $car = $this->isRepeat($requestData->vin_code);
-            // dd(lastSql());
-            $car->isRepeat = true;
-            return $car;
-        }else{
-            $car_obj = (object) '';
-            DB::transaction(function() use ($requestData, $car_obj){
-                // 添加车源并返回实例,处理跟进(添加车源)
-                $requestData['creater_id']      = Auth::id();
-                $requestData['car_code']        = getCarCode('car');
-                $requestData['age']             = getCarAge($requestData->plate_date);
-                $requestData['categorey_type']  = $requestData['category_type'];
+            $goods = new Goods();
+            $input =  array_replace($requestData->all());
+            $goods->fill($input);
+            $goods = $goods->create($input);
 
-                //dd($requestData->all());
-                /*dd(Carbon::parse($requestData->plate_date));
-                dd(Carbon::now());*/
+            // $goods_price = new GoodsPrice(); //商品价格
+            // 
+            $price_info = array(
+                    [
+                        'goods_id'    => $goods->id,
+                        'price_level' => '0',
+                        'price_status'=> '1',
+                        'goods_price' => $requestData->agents_ceo,
+                        'created_at'  => Carbon::now()->toDateTimeString(),
+                    ],
+                    [
+                        'goods_id'    => $goods->id,
+                        'price_level' => '1',
+                        'price_status'=> '1',
+                        'goods_price' => $requestData->agents_total,
+                        'created_at'  => Carbon::now()->toDateTimeString(),
+                    ],
+                    [
+                        'goods_id'    => $goods->id,
+                        'price_level' => '2',
+                        'price_status'=> '1',
+                        'goods_price' => $requestData->agents_frist,
+                        'created_at'  => Carbon::now()->toDateTimeString(),
+                    ],
+                    [
+                        'goods_id'    => $goods->id,
+                        'price_level' => '3',
+                        'price_status'=> '1',
+                        'goods_price' => $requestData->agents_secend,
+                        'created_at'  => Carbon::now()->toDateTimeString(),
+                    ],
+                    [
+                        'goods_id'    => $goods->id,
+                        'price_level' => '4',
+                        'price_status'=> '1',
+                        'goods_price' => $requestData->agents_third,
+                        'created_at'  => Carbon::now()->toDateTimeString(),
+                    ],
+                    [
+                        'goods_id'    => $goods->id,
+                        'price_level' => '-1',
+                        'price_status'=> '1',
+                        'goods_price' => $requestData->retailer,
+                        'created_at'  => Carbon::now()->toDateTimeString(),
+                    ],
+                );
+            // 商品价格添加
+            // 
+            DB::table('yz_goods_price')->insert($price_info);
 
-                //unset($requestData['_token']);
-                //unset($requestData['ajax_request_url']);
-
-                $car = new Order();
-                $input =  array_replace($requestData->all());
-                $car->fill($input);
-                $car = $car->create($input);
-
-                $follow_info = new CarFollow(); //车源跟进对象
-
-                $create_content = collect(['创建车源'])->toJson();  //定义车源跟进时信息变化情况,即跟进描述
-
-                // 车源跟进信息
-                $follow_info->car_id       = $car->id;
-                $follow_info->user_id      = Auth::id();
-                $follow_info->follow_type  = '1';
-                $follow_info->operate_type = '1';
-                $follow_info->description  = $create_content;
-                $follow_info->prev_update  = $car->updated_at;
-            
-                $follow_info->save();
-
-                $car_obj->scalar = $car;
-                // dd($car_obj);
-                // return $car_obj;
-            });
-            return $car_obj;
-        }         
+            $goods_obj->scalar = $goods;
+            // dd($car_obj);
+            // return $car_obj;
+        });
+        return $goods_obj;         
     }
 
-    // 修改车源
+    // 修改商品
     public function update($requestData, $id)
     {
-        // dd($requestData->all());
-        DB::transaction(function() use ($requestData, $id){
-
-            $car         = Order::select($this->select_columns)->findorFail($id); //车源对象
-            $follow_info = new CarFollow(); //车源跟进对象
-
-            $original_content = $car->toArray(); //原有车源信息
-            $request_content  = $requestData->all(); //提交的车源信息
-            
-            /*$collection1 = collect(['type'=>2, 'type1'=>7, 'type2'=>3]);
-            $collection2 = collect(['type'=>0, 'type5'=>2, 'type2'=>3]);
-
-            $diff = $collection2->diffKeys($collection1);
-            // $diff = array_udiff($collection1, $collection2);
-
-            dd($diff);
-            p($original_content);
-            p($request_content);*/
-
-            $changed_content = getDiffArray($request_content, $original_content);//比较提交的数据与原数据差别
-            $update_content = '例行跟进';  //定义车源跟进时信息变化情况,即跟进描述
-            // dd(json_decode($update_content));
-            // dd($changed_content);
-            if($changed_content->count() != 0){
-                $update_content = array();
-                $need_del_array = ['capacity', 'gearbox','out_color','inside_color','safe_type','sale_number','is_top','recommend', 'car_type'];
-                foreach ($changed_content as $key => $value) {
-                    /*p($this->columns_annotate[$key]);
-                    p($requestData->$key);
-                    p($original_content[$key]);*/
-                    if(in_array($key, $need_del_array)){
-                        /*p($original_content[$key]);
-                        p($key);
-                        p($value);
-                        p(config('tcl.'.$key)[$value]);exit;*/
-                        $current_content = config('tcl.'.$key)[$original_content[$key]];
-                        $updated_content = config('tcl.'.$key)[$value];
-                        $update_content[] = $this->columns_annotate[$key].'['.$current_content.']修改为['.$updated_content.']';
-                    }elseif($key == 'plate_provence'){
-                        
-                        $area_before = Area::withTrashed()->findorFail($car->plate_provence);
-                        $area_after = Area::withTrashed()->findorFail($requestData->plate_provence);
-
-                        $update_content[] = $this->columns_annotate[$key].'['.$area_before->name.']修改为['.$area_after->name.']';                      
-                     }elseif($key == 'plate_city'){
-                        
-                        $city_before = Area::withTrashed()->findorFail($car->plate_city);
-                        $city_after = Area::withTrashed()->findorFail($requestData->plate_city);
-
-                        $update_content[] = $this->columns_annotate[$key].'['.$city_before->name.']修改为['.$city_after->name.']';
-                    }else{
-                        $update_content[] = $this->columns_annotate[$key].'['.$original_content[$key].']修改为['.$requestData->$key.']';
-                    }
-                }
-            }
-
         
-            // dd($follow_info);
-            // dd(collect($update_content)->toJson());
-            // dd(json_decode(collect($update_content)->toJson())); //json_decode将json再转回数组
-            // dd($changed_content);
+        $goods  = Goods::findorFail($id);
         
-            // 车源编辑信息
-            $car->vin_code       = $requestData->vin_code;
-            $car->capacity       = $requestData->capacity;
-            $car->gearbox        = $requestData->gearbox;
-            $car->out_color      = $requestData->out_color;
-            $car->inside_color   = $requestData->inside_color;
-            $car->plate_date     = $requestData->plate_date;
-            $car->plate_end      = $requestData->plate_end;
-            $car->sale_number    = $requestData->sale_number;
-            $car->safe_type      = $requestData->safe_type;
-            $car->safe_end       = $requestData->safe_end;
-            $car->mileage        = $requestData->mileage;
-            $car->description    = $requestData->description;
-            $car->xs_description = $requestData->xs_description;
-            $car->top_price      = $requestData->top_price;
-            $car->bottom_price   = $requestData->bottom_price;
-            $car->pg_description = $requestData->pg_description;
-            $car->guide_price    = $requestData->guide_price;
-            $car->is_top         = $requestData->is_top;
-            $car->recommend      = $requestData->recommend;
-            // $car->creater_id     = Auth::id();
-    
-            // 车源跟进信息
-            $follow_info->car_id       = $id;
-            $follow_info->user_id      = Auth::id();
-            $follow_info->follow_type  = '1';
-            $follow_info->operate_type = '2';
-            $follow_info->description  = collect($update_content)->toJson();
-            $follow_info->prev_update  = $car->updated_at;
-         
-            $follow_info->save();
-            $car->save(); 
+        $goods->name        = $requestData->name;
+        $goods->goods_specs = $requestData->goods_specs;
 
-            Session::flash('sucess', '修改车源成功');
-            return $car;           
-        });     
-        // dd('sucess');
-        // dd($Car->toJson());       
+        $goods->save();
+        // dd($shop->toJson());
+        Session::flash('sucess', '修改成功');
+        return $goods;
     }
 
-    // 删除车源
+    // 删除商品
     public function destroy($id)
     {
         try {
-            $car = Order::findorFail($id);
-            $car->delete();
-            Session::flash('sucess', '删除车源成功');
+            $goods = Goods::findorFail($id);
+            $goods->goods_status = '0';
+            $goods->save();
+            Session::flash('sucess', '删除成功');
            
         } catch (\Illuminate\Database\QueryException $e) {
-            Session()->flash('faill', '删除车源失败');
+            Session()->flash('faill', '删除失败');
         }      
-    }
-
-    //判断车架号号是否被使用
-    public function isRepeat($vin_code){
-
-        $car = Order::select('id', 'name')
-                          ->where('vin_code', $vin_code)
-                          ->whereIn('car_status', ['1', '2', '3', '4', '6'])
-                          ->first();
-
-        // dd($car);
-        return $car;
-    }
-
-    //判断车架号号使用次数
-    public function repeatCarNum($vin_code){
-
-        $car = Order::select('id', 'name')
-                          ->where('vin_code', $vin_code)
-                          ->whereIn('car_status', ['1', '2', '3', '4', '6'])
-                          ->count();
-
-        // dd($car);
-        return $car;
     }
 
     //车源状态转换，暂时只有激活-废弃转换
@@ -397,88 +208,5 @@ class GoodsRepository implements GoodsRepositoryContract
 
             return $car;
         });
-    }
-
-    // 快速跟进
-    public function quicklyFollow($id){
-
-        DB::transaction(function() use ($id){
-
-            $car         = Order::select($this->select_columns)->findorFail($id); //车源对象
-            $follow_info = new CarFollow(); //车源跟进对象
-
-            $update_content = collect(['例行跟进'])->toJson();
-            
-            // 车源编辑信息
-            // $car->creater_id = Auth::id();
-            $car->car_status = '1';
-
-            // 车源跟进信息
-            $follow_info->car_id       = $id;
-            $follow_info->user_id      = Auth::id();
-            $follow_info->follow_type  = '1';
-            $follow_info->operate_type = '2';
-            $follow_info->description  = $update_content;
-            $follow_info->prev_update  = $car->updated_at;
-         
-            $follow_info->save();
-            $car->save();
-            $car->touch();
-
-            return $car;
-        });
-    }
-
-    // 互动信息添加
-     public function interactiveAdd($requestData){
-
-        DB::transaction(function() use ($requestData){
-
-            $car         = Order::select($this->select_columns)->findorFail($requestData->car_id); //车源对象
-            $follow_info = new CarFollow(); //车源跟进对象
-
-            $update_content = collect([$requestData->content])->toJson();
-            
-            // 车源编辑信息
-            /*$car->creater_id = Auth::id();
-            $car->car_status = '1';*/
-
-            // 车源跟进信息
-            $follow_info->car_id       = $requestData->car_id;
-            $follow_info->user_id      = Auth::id();
-            $follow_info->follow_type  = '2';
-            $follow_info->operate_type = '2';
-            $follow_info->description  = $update_content;
-            $follow_info->prev_update  = $car->updated_at;
-         
-            $follow_info->save();
-            $car->save();
-            $car->touch();
-
-            return $car;
-        });
-    }
-
-    //判断车源是否属于自己
-    public function is_self_car($car_id){
-
-        $car = $this->find($car_id);
-
-        // dd($car);
-
-        return $car->creater_id == Auth::id();
-    }
-
-    //获得客户名下车源信息
-    public function getListByCustomerId($customer_id){      
-
-        $car = Order::select($this->select_columns)
-                          ->where('customer_id', $customer_id)
-                          ->paginate(5);
-
-        // dd($car);
-
-        return $car;
-
     }
 }

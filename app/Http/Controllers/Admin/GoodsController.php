@@ -50,20 +50,8 @@ class GoodsController extends Controller
      */
     public function index(Request $request)
     {     
-        /*$all_price_goods_id = GoodsPrice::select('goods_id')->groupBy('goods_id')->get();
-        $goods_price = new GoodsPrice;
-        // dd($all_price_goods_id->toArray());
-        foreach ($all_price_goods_id as $key => $value) {
-            $goods_list[] = $value->goods_id;
-        }
-        // dd($goods_list);
-        foreach ($goods_list as $key => $value) {
-            if(($value > 300) && ($value <= 518)){
-                DB::table('yz_goods_price')->insert(['goods_id' => $value, 'price_level' => 0, 'price_status' => 1, 'goods_price' => 0, 'created_at' => '2017-10-18 09:40:23']);
-            }
-            // usleep(200000);
-        }
-        dd('hehe');*/
+        
+        // dd('hehe');
         $select_conditions  = $request->all();
         // dd($select_conditions);
         $all_goods = $this->goods->getAllGoods($request);
@@ -153,9 +141,9 @@ class GoodsController extends Controller
         $goods_id = $request->input('goods_id');
         $user_id  = $request->input('user_id');
         
-        $goods_price = $this->goods->getGoodsPrice($goods_id);
-        $user        = $this->user->find($user_id);
-        $goods_name  = $this->goods->find($goods_id)->name;
+        $goods_price    = $this->goods->getGoodsPrice($goods_id);
+        $user           = $this->user->find($user_id);
+        $goods_name     = $this->goods->find($goods_id)->name;
         
         /*p($goods->toArray());
         p($goods->toJson());exit;*/
@@ -188,6 +176,19 @@ class GoodsController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        
+        $all_category = $this->category->getAllSeries();
+        // dd($all_category);
+        return view('admin.goods.create', compact('all_category'));
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -195,22 +196,9 @@ class GoodsController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * ajax存储车源
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function ajaxAdd(StoreCarsRequest $carRequest)
-    {
-        // dd($carRequest->all());
-        $cars = $this->car->create($carRequest);
-        /*p('hehe');
-        dd($car);*/
-        return response()->json($cars); 
+        // dd($request->all());
+        $getInsertedId = $this->goods->create($request);
+        return redirect('goods/index');
     }
 
     /**
@@ -240,37 +228,10 @@ class GoodsController extends Controller
      */
     public function edit($id)
     {
-        $cars = $this->car->find($id);
-
-        $area = Area::withTrashed()
-                    ->where('pid', '1')
-                    ->where('status', '1')
-                    ->get();
-        $citys = Area::withTrashed()
-                     ->where('pid', $cars->plate_provence)
-                     ->where('status', '1')
-                    ->get();
-        /*if (Gate::denies('update', $cars)) {
-            //不允许编辑,基于Policy
-            dd('no no');
-        }*/
-
-        foreach ($area as $key => $value) {
-            if($cars->plate_provence == $value->id){
-                $provence =  $value;
-            }
-        }
-
-        foreach ($citys as $key => $value) {
-            if($cars->plate_city == $value->id){
-                $city =  $value;
-            }
-        }
-        // dd($cars);
-        // dd($area);
-        // dd($city);
-        return view('admin.car.edit', compact(
-            'cars','provence','city','area'
+        $goods = $this->goods->find($id);
+        // dd($goods);
+        return view('admin.goods.edit', compact(
+            'goods'
         ));
     }
 
@@ -292,10 +253,11 @@ class GoodsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCarsRequest $carRequest, $id)
+    public function update(Request $goodsRequest, $id)
     {
-        $this->car->update($carRequest, $id);
-        return redirect()->route('admin.car.self')->withInput();
+        // dd($goodsRequest->all());
+        $this->goods->update($goodsRequest, $id);
+        return redirect('goods/index')->withInput();
     }
 
     /**
@@ -306,7 +268,8 @@ class GoodsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->goods->destroy($id);        
+        return redirect('goods/index');
     }
 
 }

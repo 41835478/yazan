@@ -125,7 +125,7 @@
 				<tbody>
 					@foreach ($order_goods as $goods)
     				<tr>
-						<td>{{$goods->belongsToCategory->name}}</td>
+						<td>{{$goods->category_name}}</td>
 						<td>{{$goods->goods_name}}</td>
 						<td>{{$goods->goods_price}}元</td>
 						<td>{{$goods->goods_num}}</td>							

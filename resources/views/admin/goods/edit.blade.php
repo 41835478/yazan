@@ -18,8 +18,8 @@
     <div class="pull-left">
         <ol class="breadcrumb">
             <li><a href="{{route('admin.index')}}">首页</a></li>
-            <li><a href="{{route('order.index')}}">用户列表</a></li>
-            <li class="active">修改订单</li>
+            <li><a href="{{route('goods.index')}}/index">商品列表</a></li>
+            <li class="active">修改商品</li>
         </ol>
     </div>
 </section>
@@ -34,106 +34,33 @@
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-body">
-                    <form id="orderCreate" action="{{route('order.update', ['order'=>$order->id])}}" class="form-horizontal" method="post">
+                    <form id="orderCreate" action="{{route('goods.update', ['goods'=>$goods->id])}}" class="form-horizontal" method="post">
                     {!! csrf_field() !!}
                     {{ method_field('PUT') }}
                         <div class="form-body">
                             <div class="form-group">
-                                <label class="control-label col-md-1">商户选择: <span class="required">*</span></label>
+                                <label class="control-label col-md-1">所属系列: <span class="required">*</span></label>
                                 <div class="col-md-2">
-                                    <select class="form-control" name="user_id" id="user_id" style="width:100%;display: inline-block;">
-                                        @foreach($all_merchant as $key=>$value)
-                                            @if(($order->user_id) == $value->id)
-                                                <option selected value="{{$value->id}}" >{{$value->nick_name}}</option>
-                                            @endif
-                                        @endforeach 
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <textarea id="merchant_info" disabled name="merchant_info" required style="width:400px;">
-                                    </textarea>
-                                    <input type="hidden" id="nick_name" name="nick_name" value="{{$order->nick_name}}">
-                                    <input type="hidden" id="level" name="level" value="{{$order->level}}">
-                                    <input type="hidden" id="user_telephone" name="user_telephone" value="{{$order->user_telephone}}">
-                                    <input type="hidden" id="user_top_id" name="user_top_id" value="{{$order->user_top_id}}">
+                                    <input style="display: inline-block;" readonly="" placeholder="所属系列" type="text" name="category_id" id="category_id" value="{{$goods->belongsToCategory->category_name}}" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-1">发货人: </label>
+                                <label class="control-label col-md-1">商品名称: </label>
                                 <div class="col-md-2">
-                                    <input style="display: inline-block;"  placeholder="姓名" type="text" name="send_name" value="{{$order->send_name}}" class="form-control" />
-                                </div>
-                                <div class="col-md-3">
-                                    <input style="display: inline-block;"  placeholder="电话" type="text" name="send_telephone" value="{{$order->send_telephone}}" class="form-control" />
+                                    <input style="display: inline-block;"  placeholder="商品名称" type="text" name="name" id="name" value="{{$goods->name}}" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-1">收货人: </label>
+                                <label class="control-label col-md-1">商品尺寸: </label>
                                 <div class="col-md-2">
-                                    <input style="display: inline-block;"  placeholder="姓名" type="text" name="sh_name" value="{{$order->sh_name}}" class="form-control" />
-                                </div>
-                                <div class="col-md-3">
-                                    <input style="display: inline-block;"  placeholder="电话" type="text" name="sh_telephone" value="{{$order->sh_telephone}}" class="form-control" />
-                                </div>
-                                <div class="col-md-6">
-                                    <input style="display: inline-block;"  placeholder="地址" type="text" name="address" value="{{$order->address}}" class="form-control" />
+                                    <input style="display: inline-block;"  placeholder="100*100" type="text" name="goods_specs" id="goods_specs" value="{{$goods->goods_specs}}" class="form-control" />
                                 </div>
                             </div>
-                            <!-- <div class="form-group">
-                                <label class="control-label col-md-1">收货地址: </label>
-                                <div class="col-md-4">
-                                    <input style="display: inline-block;" placeholder="收货地址" type="text" name="address" value="{{$order->address}}" class="form-control" />
-                                </div>
-                            </div> -->
-                            <div class="form-group">
-                                <label class="control-label col-md-1">快递单号: </label>
-                                <div class="col-md-4">
-                                    <input type="text" name="exp_code" value="{{$order->exp_code}}" placeholder="快递单号" class="form-control" />
-                                </div>
-                                <div class="col-md-3">
-                                    <select class="form-control" name="exp_company" style="width:60%;display: inline-block;">
-                                        <option  value="0">==快递公司==</option>
-                                        @foreach($exp_company as $key=>$company)
-                                        <option @if(($order->exp_company) == $key) selected @endif value="{{$key}}" >{{$company}}</option>
-                                        @endforeach                                  
-                                    </select>
-                                    <input style="width:25%;display: inline-block;" placeholder="快递费" type="text" name="exp_price" value="{{$order->exp_price}}" class="form-control" />
-                                </div>
-                            </div>
-                            @foreach($order_goods as $key=>$goods)
-                            <div class="form-group goods_list">                             
-                                <label class="control-label col-md-1">商品: <span class="required">*</span></label>
-                                <div class="col-md-8">
-                                    <select autocomplete="off" class="form-control goods_category" name="category_id[]" style="width:15%;display: inline-block;">
-                                        <option  value="">==系列==</option>
-                                        @foreach($all_series as $key=>$series)
-                                        <option  @if(($goods->category_id) == ($series->id)) selected='selected' @endif value="{{$series->id}}" >{{$series->name}}</option>
-                                        @endforeach                                  
-                                    </select>
-                                    <select class="form-control goods" name="goods_id[]" style="width:15%;display: inline-block;">
-                                        <option  value="">==系列==</option>
-                                        @foreach($goods->hasManyGoods as $key=>$goo)
-                                        <option @if(($goods->goods_id) == ($goo->goods_id)) selected='selected' @endif value="{{$goo->goods_id}}" >{{$goo->goods_name}}</option>
-                                        @endforeach
-                                    </select>
-                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="goods_num[]" value="{{$goods->goods_num}}" placeholder="商品数" class="form-control goods_num" />
-                                    <input style="margin-top: 5px;width:10%;display:inline-block;" value="{{$goods->goods_price}}" type="text" readonly = "readonly" placeholder="单价" name="goods_price[]" class="form-control goods_price" />
-                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="total_price[]" readonly = "readonly" placeholder="总价" value="{{$goods->total_price}}" class="form-control total_price" />
-                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="goods_name[]" placeholder="商品名称" value="{{$goods->goods_name}}" class="form-control goods_name" />
-                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="order_goods_id[]" placeholder="订单商品id" value="{{$goods->id}}" class="form-control order_goods_id" />                                  
-                                    <button style="display: inline-block;" type="button" class="btn btn-warning order_goods_delete">删除</button>
-                                </div>                               
-                            </div>
-                            @endforeach
                             <div class="form-group">
                                 <div class="col-md-12" style="text-align:center;">
-                                    <input type="hidden" name="goods_ajax_request_url" value="{{route('goods.getChildGoods')}}">
-                                    <input type="hidden" name="goods_price_ajax_request_url" value="{{route('goods.getGoodsPrice')}}">
-                                    <input type="hidden" name="user_ajax_request_url" value="{{route('user.getUserChain')}}">
-                                    <input type="hidden"  id="is_update" value='1'>
-                                    <button type="submit" id="orderAdd" style="float:left;" class="btn btn-sm btn-success">修改订单</button>
+                                    <button type="submit" style="float:left;" id="goodsUpdate" class="btn btn-sm btn-success">修改</button>
                                     <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
-                                    <button type="button" id="goods_add" class="btn btn-success">添加商品</button>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -154,8 +81,8 @@
 <script src="{{URL::asset('yazan/assets/plugins/multi-select/js/jquery.multi-select.js')}}"></script>
 <script src="{{URL::asset('yazan/assets/plugins/multi-select/js/jquery.quicksearch.js')}}"></script>
 <script src="{{URL::asset('yazan/assets/js/form-select.js')}}"></script>
-<!-- 引入order模块js -->
-<script src="{{URL::asset('yazan/js/order.js')}}"></script>
+<!-- 引入goods模块js -->
+<!-- <script src="{{URL::asset('yazan/js/goods.js')}}"></script> -->
 <script>
     $(document).ready(function(){
         // 删除商品

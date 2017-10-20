@@ -29,7 +29,7 @@ class CategoryRepository implements CategoryRepositoryContract
     // 获得车型列表
     public function getAllCategory()
     {   
-        return Category::where('status', '1')->paginate(10);
+        return Category::where('status', '1')->orderBy('created_at', 'DESC')->paginate(10);
     }
 
     // 获得商品系列列表

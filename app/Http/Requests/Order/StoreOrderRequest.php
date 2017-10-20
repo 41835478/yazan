@@ -23,7 +23,7 @@ class StoreOrderRequest extends Request
      */
     public function rules()
     {
-
+        // dd($this->all());
         return [
             'nick_name'      => 'required',
             'sh_name'        => 'required',
@@ -50,7 +50,7 @@ class StoreOrderRequest extends Request
             'sh_telephone.required'  => '请输入收件人电话',
             'address.required'       => '请输入收件人地址',
             'user_id.required'       => '请确认发件人',
-            'user_top_id.required'   => '请输入收件人',
+            'user_top_id.required'   => '该订单用户无CEO',
             'user_id.min'            => '请确认发件人',
             'user_top_id.min'        => '请确认总代',
 

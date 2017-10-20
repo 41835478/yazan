@@ -21,8 +21,8 @@
     <div class="pull-left">
         <ol class="breadcrumb">
             <li><a href="{{route('admin.index')}}">首页</a></li>
-            <li><a href="{{route('order.index')}}">订单列表</a></li>
-            <li class="active">添加订单</li>
+            <li><a href="{{route('goods.index')}}">商品列表</a></li>
+            <li class="active">添加商品</li>
         </ol>
     </div>
 </section>
@@ -37,100 +37,74 @@
         <div class="col-md-12">
             <div class="panel">
                 <div class="panel-body form">
-                    <form action="{{route('order.store')}}" id="orderCreate" class="form-horizontal form-seperated" method="post">
+                    <form action="{{route('goods.store')}}" id="orderCreate" class="form-horizontal form-seperated" method="post">
                         {!! csrf_field() !!}
                         <div class="form-body">
                             <div class="form-group">
-                                <label class="control-label col-md-1">下单商户: <span class="required">*</span></label>
+                                <label class="control-label col-md-1">所属系列: <span class="required">*</span></label>
                                 <div class="col-md-2">
-                                    <select class="form-control select2" name="user_id" id="user_id" style="width:100%;display: inline-block;">
-                                        <option  value="">--请选择商户--</option>
-                                        @foreach($all_merchant as $key=>$value)
-                                        <option value="{{$value->id}}" >{{$value->nick_name}}</option>
+                                    <select class="form-control select2" name="category_id" id="category_id" style="width:100%;display: inline-block;">
+                                        <option  value="">--请选择系列--</option>
+                                        @foreach($all_category as $key=>$value)
+                                        <option value="{{$value->id}}" >{{$value->name}}</option>
                                         @endforeach 
                                     </select>
                                 </div>
-                                <div class="col-md-4">
-                                    <textarea id="merchant_info" readonly name="merchant_info" required style="width:400px;">
-                                    </textarea>
-                                    <input type="hidden" id="nick_name" name="nick_name" value="">
-                                    <input type="hidden" id="level" name="level" value="">
-                                    <input type="hidden" id="user_telephone" name="user_telephone" value="">
-                                    <input type="hidden" id="user_top_id" name="user_top_id" value="">
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-1">商品名称: </label>
+                                <div class="col-md-2">
+                                    <input style="display: inline-block;"  placeholder="商品名称" type="text" name="name" id="name" value="" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-1">发货人: </label>
+                                <label class="control-label col-md-1">商品尺寸: </label>
                                 <div class="col-md-2">
-                                    <input style="display: inline-block;"  placeholder="姓名" type="text" name="send_name" id="send_name" value="" class="form-control" />
-                                </div>
-                                <div class="col-md-3">
-                                    <input style="display: inline-block;"  placeholder="电话" type="text" name="send_telephone" id="send_telephone" value="" class="form-control" />
+                                    <input style="display: inline-block;"  placeholder="100*100" type="text" name="goods_specs" id="goods_specs" value="" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-md-1">收货人: </label>
+                                <label class="control-label col-md-1">CEO价格: </label>
                                 <div class="col-md-2">
-                                    <input style="display: inline-block;"  placeholder="姓名" type="text" name="sh_name" value="" class="form-control" />
-                                </div>
-                                <div class="col-md-3">
-                                    <input style="display: inline-block;"  placeholder="电话" type="text" name="sh_telephone" value="" class="form-control" />
-                                </div>
-                                <div class="col-md-6">
-                                    <input style="display: inline-block;"  placeholder="地址" type="text" name="address" value="" class="form-control" />
+                                    <input style="display: inline-block;"  placeholder="CEO价格" type="text" name="agents_ceo" id="agents_ceo" value="" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <!-- <label class="control-label col-md-1">下单商户: <span class="required">*</span></label>
+                                <label class="control-label col-md-1">总代价格: </label>
                                 <div class="col-md-2">
-                                    <select class="form-control select2" name="user_id" id="user_id" style="width:100%;display: inline-block;">
-                                        <option  value="">--请选择商户--</option>
-                                        @foreach($all_merchant as $key=>$value)
-                                        <option value="{{$value->id}}" >{{$value->nick_name}}</option>
-                                        @endforeach 
-                                    </select>
-                                </div> -->
-                                <label class="control-label col-md-1">快递单号: </label>
-                                <div class="col-md-3">
-                                    <input type="text" name="exp_code" placeholder="快递单号" class="form-control" />
+                                    <input style="display: inline-block;"  placeholder="总代价格" type="text" name="agents_total" id="agents_total" value="" class="form-control" />
                                 </div>
-                                <div class="col-md-3">
-                                    <select class="form-control" name="exp_company" style="width:60%;display: inline-block;">
-                                        <option  value="">==快递公司==</option>
-                                        @foreach($exp_company as $key=>$company)
-                                        <option value="{{$key}}" >{{$company}}</option>
-                                        @endforeach                                  
-                                    </select>
-                                    <input style="width:25%;display: inline-block;" placeholder="快递费" type="text" name="exp_price" value="" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-1">一级价格: </label>
+                                <div class="col-md-2">
+                                    <input style="display: inline-block;"  placeholder="一级价格" type="text" name="agents_frist" id="agents_frist" value="" class="form-control" />
                                 </div>
-                            </div>                          
-                            <div class="form-group goods_list">
-                                <label class="control-label col-md-1">商品: <span class="required">*</span></label>
-                                <div class="col-md-8">
-                                    <select class="form-control goods_category" name="category_id[]" style="width:15%;display: inline-block;">
-                                        <option  value="">==系列==</option>
-                                        @foreach($all_series as $key=>$series)
-                                        <option value="{{$series->id}}" >{{$series->name}}</option>
-                                        @endforeach                                  
-                                    </select>
-                                    <select class="form-control goods" name="goods_id[]" style="width:15%;display: inline-block;">
-                                        <option  value="">==选择商品==</option>
-                                    </select>
-                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="goods_num[]" value="1" placeholder="商品数" class="form-control goods_num" />
-                                    <input style="margin-top: 5px;width:10%;display:inline-block;" value="" type="text" readonly = "readonly" placeholder="单价" name="goods_price[]" class="form-control goods_price" />
-                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="text" name="total_price[]" readonly = "readonly" placeholder="总价" value="" class="form-control total_price" />
-                                    <input style="margin-top: 5px;width:10%;display: inline-block;" type="hidden" name="goods_name[]" placeholder="商品名称" value="" class="form-control goods_name" />
-                                    <button style="display: inline-block;" type="button" class="btn btn-warning goods_delete">删除</button>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-1">二级价格: </label>
+                                <div class="col-md-2">
+                                    <input style="display: inline-block;"  placeholder="二级价格" type="text" name="agents_secend" id="agents_secend" value="" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-1">三级价格: </label>
+                                <div class="col-md-2">
+                                    <input style="display: inline-block;"  placeholder="三级价格" type="text" name="agents_third" id="agents_third" value="" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-1">零售价格: </label>
+                                <div class="col-md-2">
+                                    <input style="display: inline-block;"  placeholder="零售价格" type="text" name="retailer" id="retailer" value="" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-12" style="text-align:center;">
-                                    <input type="hidden" name="goods_ajax_request_url" value="{{route('goods.getChildGoods')}}">
-                                    <input type="hidden" name="goods_price_ajax_request_url" value="{{route('goods.getGoodsPrice')}}">
-                                    <input type="hidden" name="user_ajax_request_url" value="{{route('user.getUserChain')}}">
-                                    <button type="submit" style="float:left;" id="orderAdd" class="btn btn-sm btn-success">提交订单</button>
+                                    <button type="submit" id="orderAdd" class="btn btn-sm btn-success">添加</button>
                                     <button class="btn" onclick="window.history.go(-1);return false;">返回</button>
-                                    <button type="button" id="goods_add" class="btn btn-success">添加商品</button>
+                                    
                                 </div>
                             </div>
                         </div>

@@ -164,7 +164,7 @@ class UserController extends Controller {
     	$self_user['nick_name'] = $self->nick_name;
     	$self_user['level']     = $self->level;
     	$self_user['telephone'] = $self->telephone;
-
+    	// p($user_chains['parent']);exit;
     	foreach ($user_chains['parent'] as $key => $value) {
     		if($value['level'] == '0'){
     			$self_user['user_top_id'] = $value['id'];

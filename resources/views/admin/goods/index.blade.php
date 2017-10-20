@@ -37,7 +37,7 @@
                             <a href="#modal-select" data-toggle="modal" class="btn btn-primary btn-sm">搜索商品</a>
 						</li>
             		  	<li style="display: inline-block;line-height:20px;float:right;">
-							<a class="btn btn-primary" href="{{route('order.create')}}">添加商品</a>
+							<a class="btn btn-primary" href="{{route('goods.create')}}">添加商品</a>
 						</li>
 						<li style="display:inline-block;line-height:20px;float:right;">
 							<a href="#" onclick="window.history.go(-1);return false;" class="btn ">返回</a>
@@ -66,7 +66,7 @@
                                     {{$goods->name}}
                                 </a>
                             </td>
-                            <td>{{$goods->belongsToCategory->category_name}}</td>                           
+                            <td>{{$goods->belongsToCategory->category_name or ''}}</td>                           
                             <td>{{$goods->agents_ceo or ''}}</td>                           
                             <td>{{$goods->agents_total or ''}}</td>                           
                             <td>{{$goods->agents_frist or ''}}</td>                           
@@ -75,9 +75,9 @@
                             <td>{{$goods->retailer or ''}}</td>      
                             <td><a class="btn btn-primary edit" href="javascript:;">价格修改</a></td>      
                             <td class="center">
-                                <a class="btn btn-success" target="_blank" href="{{route('goods.show', ['goods'=>$goods->id])}}">
+                                <!-- <a class="btn btn-success" target="_blank" href="{{route('goods.show', ['goods'=>$goods->id])}}">
                                     <i class="icon-edit icon-white"></i> 查看
-                                </a>
+                                </a> -->
                                 <a class="btn btn-warning"  href="{{route('goods.edit', ['goods'=>$goods->id])}}">
                                     <i class="icon-edit icon-white"></i> 编辑
                                 </a>

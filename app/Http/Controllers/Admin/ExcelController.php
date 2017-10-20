@@ -52,7 +52,7 @@ class ExcelController extends Controller
             $goods_info = null;
 
             foreach ($value->hasManyOrderGoods as $key => $goods) {
-                $goods_info .= $goods->belongsToCategory->name;
+                $goods_info .= $goods->category_name;
                 $goods_info .= $goods->goods_name;
                 $goods_info .= $goods->goods_num;
                 $goods_info .= "\r\n";

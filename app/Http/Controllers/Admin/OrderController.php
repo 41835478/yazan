@@ -104,13 +104,15 @@ class OrderController extends Controller
         // dd($request->all());
         $order_goods = [];
         foreach ($request->category_id as $key => $value) {
-            $order_goods[$key]['category_id']  = $value;
-            $order_goods[$key]['goods_id']     = $request->goods_id[$key];
-            $order_goods[$key]['goods_num']    = $request->goods_num[$key];
-            $order_goods[$key]['goods_price']  = $request->goods_price[$key];
-            $order_goods[$key]['goods_name']   = $request->goods_name[$key];
-            $order_goods[$key]['price_level']  = $request->level;
-            $order_goods[$key]['total_price']  = ($request->goods_num[$key] * $request->goods_price[$key]);
+            $category_name = $this->category->find($value)->name;
+            $order_goods[$key]['category_id']   = $value;
+            $order_goods[$key]['category_name'] = $category_name;
+            $order_goods[$key]['goods_id']      = $request->goods_id[$key];
+            $order_goods[$key]['goods_num']     = $request->goods_num[$key];
+            $order_goods[$key]['goods_price']   = $request->goods_price[$key];
+            $order_goods[$key]['goods_name']    = $request->goods_name[$key];
+            $order_goods[$key]['price_level']   = $request->level;
+            $order_goods[$key]['total_price']   = ($request->goods_num[$key] * $request->goods_price[$key]);
         }
 
         $goods_num   = 0;
