@@ -67,13 +67,13 @@
                                     {{$order->order_code}}
                                 </a>
                             </td>
-                            <td>{{$order->belongsToUser->nick_name}}</td>                           
-                            <td>{{$agents_level[$order->user_level]}}</td>                           
-                            <td>{{$order->user_telephone}}</td>                           
-                            <td>{{$order->goods_num}}</td>                           
-                            <td>{{$order->total_price}}</td> 
-                            <td>{{$order->belongsToCreater->nick_name}}</td>                          
-                            <td>{{substr($order->created_at, 0 ,10)}}</td>  
+                            <td>{{$order->belongsToUser->nick_name or ''}}</td>                           
+                            <td>{{$agents_level[$order->user_level] or ''}}</td>                           
+                            <td>{{$order->user_telephone or ''}}</td>                           
+                            <td>{{$order->goods_num or ''}}</td>                           
+                            <td>{{$order->total_price or ''}}</td> 
+                            <td>{{$order->belongsToCreater->nick_name or ''}}</td>                          
+                            <td>{{substr($order->created_at, 0 ,10) or ''}}</td>  
                             <td><span @if($order->status == 1) style="color:red;" @elseif($order->status == 2) style="color:green;" @endif >{{$order_status[$order->status]}}</span></td>    
                             <td class="center">
                                 <a class="btn btn-success" target="_blank" href="{{route('order.show', ['order'=>$order->id])}}">

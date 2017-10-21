@@ -54,6 +54,7 @@ class GoodsController extends Controller
         // dd('hehe');
         $select_conditions  = $request->all();
         // dd($select_conditions);
+        $all_category = $this->category->getAllSeries();
         $all_goods = $this->goods->getAllGoods($request);
         /*$role_have_price = Role::whereIn('level', ['-1', '0', '1', '2', '3', '4',])
                                ->select('slug', 'level')
@@ -104,7 +105,7 @@ class GoodsController extends Controller
         exit;*/
         $goods_status_current = '1';
         
-        return view('admin.goods.index', compact('all_goods','goods_status_current','select_conditions'));
+        return view('admin.goods.index', compact('all_goods','goods_status_current', 'all_category', 'select_conditions'));
     }
 
     //获系列商品

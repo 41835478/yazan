@@ -98,7 +98,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-md-9 col-sm-12">
+                <div class="col-md-6 col-sm-12">
                     <div class="dataTables_paginate paging_simple_numbers" style="float:left;">
                         <div class="pagination pagination-centered">
                           <ul class="pagination">
@@ -141,8 +141,12 @@
                         </fieldset> -->
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="text" value="{{$select_conditions['category_id'] or ''}}"  name="category_id" placeholder="所属系列" class="col-md-12 form-control mbm" />
-                                <!-- <input type="text" name="date" value="{{$select_conditions['date'] or ''}}" placeholder="日期" id="daterangepicker_default" class="col-md-12 form-control mbm" /> -->
+                                <select class="form-control" name="category_id" id="category_id" style="width:100%;display: inline-block;">
+                                        <option  value="">--请选择系列--</option>
+                                        @foreach($all_category as $key=>$value)
+                                        <option @if(isset($select_conditions['category_id']) && ($select_conditions['category_id'] == $value->id) && $select_conditions['category_id'] != '') selected @endif value="{{$value->id}}" >{{$value->name}}</option>
+                                        @endforeach 
+                                </select>
                             </div>
                         </div>
                         <div class="modal-footer">
